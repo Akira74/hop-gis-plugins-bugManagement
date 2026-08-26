@@ -23,24 +23,23 @@ package com.atolcd.hop.pipeline.transforms.gisgroupby;
  */
 
 import com.atolcd.hop.core.row.value.ValueMetaGeometry;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.hop.core.CheckResult;
-import org.apache.hop.core.Const;
 import org.apache.hop.core.ICheckResult;
 import org.apache.hop.core.annotations.Transform;
-import org.apache.hop.core.exception.HopXmlException;
+import org.apache.hop.core.exception.HopPluginException;
 import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.core.row.IValueMeta;
 import org.apache.hop.core.row.RowMeta;
-import org.apache.hop.core.row.value.ValueMetaBase;
+import org.apache.hop.core.row.value.ValueMetaFactory;
 import org.apache.hop.core.variables.IVariables;
-import org.apache.hop.core.xml.XmlHandler;
 import org.apache.hop.i18n.BaseMessages;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
 import org.apache.hop.pipeline.transform.TransformMeta;
-import org.w3c.dom.Node;
 
 @Transform(
     id = "GisGroupBy",
@@ -157,66 +156,67 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
   };
 
   /** All rows need to pass, adding an extra row at the end of each group/block. */
+  @HopMetadataProperty(key = "all_rows")
   private boolean passAllRows;
 
   /** Directory to store the temp files */
+  @HopMetadataProperty(key = "directory")
   private String directory;
 
   /** Temp files prefix... */
+  @HopMetadataProperty(key = "prefix")
   private String prefix;
 
   /** Indicate that some rows don't need to be considered : TODO: make work in GUI & worker */
+  @HopMetadataProperty(key = "ignore_aggregate")
   private boolean aggregateIgnored;
 
   /**
    * name of the boolean field that indicates we need to ignore the row : TODO: make work in GUI &
    * worker
    */
+  @HopMetadataProperty(key = "field_ignore")
   private String aggregateIgnoredField;
 
   /** Fields to group over */
-  private String[] groupField;
+  @HopMetadataProperty(groupKey = "group", key = "field")
+  private List<GisGroupByField> groupFields;
 
-  /** Name of aggregate field */
-  private String[] aggregateField;
-
-  /** Field name to group over */
-  private String[] subjectField;
-
-  /** Type of aggregate */
-  private int[] aggregateType;
-
-  /** Value to use as separator for ex */
-  private String[] valueField;
+  /** Aggregate field definitions (aggregate name, subject, type, value field) */
+  @HopMetadataProperty(groupKey = "fields", key = "field")
+  private List<GisGroupByAggregateField> aggregateFields;
 
   /** Add a linenr in the group, resetting to 0 in a new group. */
+  @HopMetadataProperty(key = "add_linenr")
   private boolean addingLineNrInGroup;
 
   /** The fieldname that will contain the added integer field */
+  @HopMetadataProperty(key = "linenr_fieldname")
   private String lineNrInGroupField;
 
   /**
    * Flag to indicate that we always give back one row. Defaults to true for existing
    * transformations.
    */
+  @HopMetadataProperty(key = "give_back_row")
   private boolean alwaysGivingBackOneRow;
 
   public GisGroupByMeta() {
     super(); // allocate BaseStepMeta
+    this.groupFields = new ArrayList<GisGroupByField>();
+    this.aggregateFields = new ArrayList<GisGroupByAggregateField>();
   }
 
   /**
-   * @return Returns the aggregateField.
+   * @return Returns the aggregateField as array (abgeleitet aus aggregateFields, nur lesend sicher
+   *     zu verwenden).
    */
   public String[] getAggregateField() {
-    return aggregateField;
-  }
-
-  /**
-   * @param aggregateField The aggregateField to set.
-   */
-  public void setAggregateField(String[] aggregateField) {
-    this.aggregateField = aggregateField;
+    String[] result = new String[aggregateFields.size()];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = aggregateFields.get(i).getAggregateField();
+    }
+    return result;
   }
 
   /**
@@ -248,31 +248,27 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
   }
 
   /**
-   * @return Returns the aggregateType.
+   * @return Returns the aggregateType als Array (abgeleitet aus aggregateFields, nur lesend sicher
+   *     zu verwenden).
    */
   public int[] getAggregateType() {
-    return aggregateType;
+    int[] result = new int[aggregateFields.size()];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = getType(aggregateFields.get(i).getTypeDesc());
+    }
+    return result;
   }
 
   /**
-   * @param aggregateType The aggregateType to set.
-   */
-  public void setAggregateType(int[] aggregateType) {
-    this.aggregateType = aggregateType;
-  }
-
-  /**
-   * @return Returns the groupField.
+   * @return Returns the groupField als Array (abgeleitet aus groupFields, nur lesend sicher zu
+   *     verwenden).
    */
   public String[] getGroupField() {
-    return groupField;
-  }
-
-  /**
-   * @param groupField The groupField to set.
-   */
-  public void setGroupField(String[] groupField) {
-    this.groupField = groupField;
+    String[] result = new String[groupFields.size()];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = groupFields.get(i).getName();
+    }
+    return result;
   }
 
   /**
@@ -290,102 +286,64 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
   }
 
   /**
-   * @return Returns the subjectField.
+   * @return Returns the subjectField als Array (abgeleitet aus aggregateFields, nur lesend sicher
+   *     zu verwenden).
    */
   public String[] getSubjectField() {
-    return subjectField;
+    String[] result = new String[aggregateFields.size()];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = aggregateFields.get(i).getSubjectField();
+    }
+    return result;
   }
 
   /**
-   * @param subjectField The subjectField to set.
-   */
-  public void setSubjectField(String[] subjectField) {
-    this.subjectField = subjectField;
-  }
-
-  /**
-   * @return Returns the valueField.
+   * @return Returns the valueField als Array (abgeleitet aus aggregateFields, nur lesend sicher zu
+   *     verwenden).
    */
   public String[] getValueField() {
-    return valueField;
+    String[] result = new String[aggregateFields.size()];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = aggregateFields.get(i).getValueField();
+    }
+    return result;
   }
 
-  /**
-   * @param separatorField The valueField to set.
-   */
-  public void setValueField(String[] valueField) {
-    this.valueField = valueField;
+  // Neue, empfohlene List-basierte API - direkter Zugriff auf die
+  // tatsaechlich serialisierten Felder. Der GisGroupByDialog nutzt diese API
+  // zum Schreiben (siehe ok()), da die alten Array-Getter oben bei jedem
+  // Aufruf ein NEUES Array erzeugen und ein In-Place-Schreibzugriff wie
+  // `getGroupField()[i] = ...` daher nicht mehr persistiert wuerde.
+  public List<GisGroupByField> getGroupFields() {
+    return groupFields;
   }
 
-  @Override
-  public void loadXml(Node stepnode, IHopMetadataProvider metaStore) throws HopXmlException {
-    readData(stepnode);
+  public void setGroupFields(List<GisGroupByField> groupFields) {
+    this.groupFields = groupFields;
+  }
+
+  public List<GisGroupByAggregateField> getAggregateFields() {
+    return aggregateFields;
+  }
+
+  public void setAggregateFields(List<GisGroupByAggregateField> aggregateFields) {
+    this.aggregateFields = aggregateFields;
   }
 
   public void allocate(int sizegroup, int nrfields) {
-    groupField = new String[sizegroup];
-    aggregateField = new String[nrfields];
-    subjectField = new String[nrfields];
-    aggregateType = new int[nrfields];
-    valueField = new String[nrfields];
+    groupFields = new ArrayList<GisGroupByField>();
+    for (int i = 0; i < sizegroup; i++) {
+      groupFields.add(new GisGroupByField());
+    }
+    aggregateFields = new ArrayList<GisGroupByAggregateField>();
+    for (int i = 0; i < nrfields; i++) {
+      aggregateFields.add(new GisGroupByAggregateField());
+    }
   }
 
   public Object clone() {
     Object retval = super.clone();
     return retval;
-  }
-
-  private void readData(Node stepnode) throws HopXmlException {
-    try {
-      passAllRows = "Y".equalsIgnoreCase(XmlHandler.getTagValue(stepnode, "all_rows"));
-      aggregateIgnored = "Y".equalsIgnoreCase(XmlHandler.getTagValue(stepnode, "ignore_aggregate"));
-      aggregateIgnoredField = XmlHandler.getTagValue(stepnode, "field_ignore");
-
-      directory = XmlHandler.getTagValue(stepnode, "directory");
-      prefix = XmlHandler.getTagValue(stepnode, "prefix");
-
-      addingLineNrInGroup = "Y".equalsIgnoreCase(XmlHandler.getTagValue(stepnode, "add_linenr"));
-      lineNrInGroupField = XmlHandler.getTagValue(stepnode, "linenr_fieldname");
-
-      Node groupn = XmlHandler.getSubNode(stepnode, "group");
-      Node fields = XmlHandler.getSubNode(stepnode, "fields");
-
-      int sizegroup = XmlHandler.countNodes(groupn, "field");
-      int nrfields = XmlHandler.countNodes(fields, "field");
-
-      allocate(sizegroup, nrfields);
-
-      for (int i = 0; i < sizegroup; i++) {
-        Node fnode = XmlHandler.getSubNodeByNr(groupn, "field", i);
-        groupField[i] = XmlHandler.getTagValue(fnode, "name");
-      }
-
-      boolean hasNumberOfValues = false;
-      for (int i = 0; i < nrfields; i++) {
-        Node fnode = XmlHandler.getSubNodeByNr(fields, "field", i);
-        aggregateField[i] = XmlHandler.getTagValue(fnode, "aggregate");
-        subjectField[i] = XmlHandler.getTagValue(fnode, "subject");
-        aggregateType[i] = getType(XmlHandler.getTagValue(fnode, "type"));
-
-        if (aggregateType[i] == TYPE_GROUP_COUNT_ALL
-            || aggregateType[i] == TYPE_GROUP_COUNT_DISTINCT
-            || aggregateType[i] == TYPE_GROUP_COUNT_ANY) {
-          hasNumberOfValues = true;
-        }
-
-        valueField[i] = XmlHandler.getTagValue(fnode, "valuefield");
-      }
-
-      String giveBackRow = XmlHandler.getTagValue(stepnode, "give_back_row");
-      if (giveBackRow.isEmpty()) {
-        alwaysGivingBackOneRow = hasNumberOfValues;
-      } else {
-        alwaysGivingBackOneRow = "Y".equalsIgnoreCase(giveBackRow);
-      }
-    } catch (Exception e) {
-      throw new HopXmlException(
-          BaseMessages.getString(PKG, "GroupByMeta.Exception.UnableToLoadStepInfoFromXML"), e);
-    }
   }
 
   public static final int getType(String desc) {
@@ -445,8 +403,8 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
     if (!passAllRows) {
       // Add the grouping fields in the correct order...
       //
-      for (int i = 0; i < groupField.length; i++) {
-        IValueMeta valueMeta = r.searchValueMeta(groupField[i]);
+      for (int i = 0; i < groupFields.size(); i++) {
+        IValueMeta valueMeta = r.searchValueMeta(groupFields.get(i).getName());
         if (valueMeta != null) {
           fields.addValueMeta(valueMeta);
         }
@@ -459,15 +417,17 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
 
     // Re-add aggregates
     //
-    for (int i = 0; i < subjectField.length; i++) {
-      IValueMeta subj = r.searchValueMeta(subjectField[i]);
-      if (subj != null || aggregateType[i] == TYPE_GROUP_COUNT_ANY) {
-        String value_name = aggregateField[i];
+    for (int i = 0; i < aggregateFields.size(); i++) {
+      GisGroupByAggregateField aggField = aggregateFields.get(i);
+      int aggregateTypeI = getType(aggField.getTypeDesc());
+      IValueMeta subj = r.searchValueMeta(aggField.getSubjectField());
+      if (subj != null || aggregateTypeI == TYPE_GROUP_COUNT_ANY) {
+        String value_name = aggField.getAggregateField();
         int value_type = IValueMeta.TYPE_NONE;
         int length = -1;
         int precision = -1;
 
-        switch (aggregateType[i]) {
+        switch (aggregateTypeI) {
           case TYPE_GROUP_SUM:
           case TYPE_GROUP_AVERAGE:
           case TYPE_GROUP_CUMULATIVE_SUM:
@@ -511,17 +471,17 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
         // Change type from integer to number in case off averages for
         // cumulative average
         //
-        if (aggregateType[i] == TYPE_GROUP_CUMULATIVE_AVERAGE
+        if (aggregateTypeI == TYPE_GROUP_CUMULATIVE_AVERAGE
             && value_type == IValueMeta.TYPE_INTEGER) {
           value_type = IValueMeta.TYPE_NUMBER;
           precision = -1;
           length = -1;
-        } else if (aggregateType[i] == TYPE_GROUP_COUNT_ALL
-            || aggregateType[i] == TYPE_GROUP_COUNT_DISTINCT
-            || aggregateType[i] == TYPE_GROUP_COUNT_ANY) {
+        } else if (aggregateTypeI == TYPE_GROUP_COUNT_ALL
+            || aggregateTypeI == TYPE_GROUP_COUNT_DISTINCT
+            || aggregateTypeI == TYPE_GROUP_COUNT_ANY) {
           length = IValueMeta.DEFAULT_INTEGER_LENGTH;
           precision = 0;
-        } else if (aggregateType[i] == TYPE_GROUP_SUM
+        } else if (aggregateTypeI == TYPE_GROUP_SUM
             && value_type != IValueMeta.TYPE_INTEGER
             && value_type != IValueMeta.TYPE_NUMBER
             && value_type != IValueMeta.TYPE_BIGNUMBER) {
@@ -533,7 +493,12 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
         }
 
         if (value_type != IValueMeta.TYPE_NONE) {
-          IValueMeta v = new ValueMetaBase(value_name, value_type);
+          IValueMeta v = null;
+          try {
+            v = ValueMetaFactory.createValueMeta(value_name, value_type);
+          } catch (HopPluginException e) {
+            throw new RuntimeException(e);
+          }
           v.setOrigin(origin);
           v.setLength(length, precision);
           fields.addValueMeta(v);
@@ -544,7 +509,12 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
     if (passAllRows) {
       // If we pass all rows, we can add a line nr in the group...
       if (addingLineNrInGroup && !lineNrInGroupField.isEmpty()) {
-        IValueMeta lineNr = new ValueMetaBase(lineNrInGroupField, IValueMeta.TYPE_INTEGER);
+        IValueMeta lineNr = null;
+        try {
+          lineNr = ValueMetaFactory.createValueMeta(lineNrInGroupField, IValueMeta.TYPE_INTEGER);
+        } catch (HopPluginException e) {
+          throw new RuntimeException(e);
+        }
         lineNr.setLength(IValueMeta.DEFAULT_INTEGER_LENGTH, 0);
         lineNr.setOrigin(origin);
         fields.addValueMeta(lineNr);
@@ -558,42 +528,12 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
     r.addRowMeta(fields);
   }
 
-  @Override
-  public String getXml() {
-    StringBuffer retval = new StringBuffer(500);
-
-    retval.append("      ").append(XmlHandler.addTagValue("all_rows", passAllRows));
-    retval.append("      ").append(XmlHandler.addTagValue("ignore_aggregate", aggregateIgnored));
-    retval.append("      ").append(XmlHandler.addTagValue("field_ignore", aggregateIgnoredField));
-    retval.append("      ").append(XmlHandler.addTagValue("directory", directory));
-    retval.append("      ").append(XmlHandler.addTagValue("prefix", prefix));
-    retval.append("      ").append(XmlHandler.addTagValue("add_linenr", addingLineNrInGroup));
-    retval.append("      ").append(XmlHandler.addTagValue("linenr_fieldname", lineNrInGroupField));
-    retval.append("      ").append(XmlHandler.addTagValue("give_back_row", alwaysGivingBackOneRow));
-
-    retval.append("      <group>").append(Const.CR);
-    for (int i = 0; i < groupField.length; i++) {
-      retval.append("        <field>").append(Const.CR);
-      retval.append("          ").append(XmlHandler.addTagValue("name", groupField[i]));
-      retval.append("        </field>").append(Const.CR);
-    }
-    retval.append("      </group>").append(Const.CR);
-
-    retval.append("      <fields>").append(Const.CR);
-    for (int i = 0; i < subjectField.length; i++) {
-      retval.append("        <field>").append(Const.CR);
-      retval.append("          ").append(XmlHandler.addTagValue("aggregate", aggregateField[i]));
-      retval.append("          ").append(XmlHandler.addTagValue("subject", subjectField[i]));
-      retval
-          .append("          ")
-          .append(XmlHandler.addTagValue("type", getTypeDesc(aggregateType[i])));
-      retval.append("          ").append(XmlHandler.addTagValue("valuefield", valueField[i]));
-      retval.append("        </field>").append(Const.CR);
-    }
-    retval.append("      </fields>").append(Const.CR);
-
-    return retval.toString();
-  }
+  // Hinweis: getXml() und loadXml() wurden entfernt. Seit Apache Hop 2.18
+  // werden diese Overrides nicht mehr aufgerufen - die Serialisierung erfolgt
+  // jetzt ausschliesslich reflection-basiert ueber die
+  // @HopMetadataProperty-Annotationen oben. ACHTUNG: Bereits gespeicherte
+  // .hpl-Dateien mit dem alten Format enthalten diese Tags nicht - einmal neu
+  // speichern behebt das dauerhaft.
 
   @Override
   public void check(

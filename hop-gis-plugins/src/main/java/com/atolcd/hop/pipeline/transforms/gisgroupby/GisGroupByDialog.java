@@ -647,16 +647,17 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     // CHECKSTYLE:Indentation:OFF
     for (int i = 0; i < sizegroup; i++) {
       TableItem item = wGroup.getNonEmpty(i);
-      input.getGroupField()[i] = item.getText(1);
+      input.getGroupFields().get(i).setName(item.getText(1));
     }
 
     // CHECKSTYLE:Indentation:OFF
     for (int i = 0; i < nrfields; i++) {
       TableItem item = wAgg.getNonEmpty(i);
-      input.getAggregateField()[i] = item.getText(1);
-      input.getSubjectField()[i] = item.getText(2);
-      input.getAggregateType()[i] = GisGroupByMeta.getType(item.getText(3));
-      input.getValueField()[i] = item.getText(4);
+      GisGroupByAggregateField aggField = input.getAggregateFields().get(i);
+      aggField.setAggregateField(item.getText(1));
+      aggField.setSubjectField(item.getText(2));
+      aggField.setTypeDesc(GisGroupByMeta.getTypeDesc(GisGroupByMeta.getType(item.getText(3))));
+      aggField.setValueField(item.getText(4));
     }
 
     transformName = wTransformName.getText();

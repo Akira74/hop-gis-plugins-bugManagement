@@ -25,6 +25,7 @@ package com.atolcd.hop.gis.utils;
 import org.apache.hop.core.exception.HopException;
 import org.cts.IllegalCoordinateException;
 import org.cts.op.CoordinateOperation;
+import org.cts.op.CoordinateOperationException;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -302,6 +303,8 @@ public final class CoordinateTransformer {
 
     } catch (IllegalCoordinateException e) {
       new HopException(e);
+    } catch (CoordinateOperationException e) {
+      throw new RuntimeException(e);
     }
 
     return null;

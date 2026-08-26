@@ -38,13 +38,14 @@ import java.util.TreeSet;
 import org.apache.commons.math.stat.descriptive.rank.Percentile;
 import org.apache.hop.core.exception.HopException;
 import org.apache.hop.core.exception.HopFileException;
+import org.apache.hop.core.exception.HopPluginException;
 import org.apache.hop.core.exception.HopValueException;
 import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.core.row.IValueMeta;
 import org.apache.hop.core.row.RowDataUtil;
 import org.apache.hop.core.row.RowMeta;
 import org.apache.hop.core.row.ValueDataUtil;
-import org.apache.hop.core.row.value.ValueMetaBase;
+import org.apache.hop.core.row.value.ValueMetaFactory;
 import org.apache.hop.core.row.value.ValueMetaInteger;
 import org.apache.hop.core.row.value.ValueMetaNumber;
 import org.apache.hop.i18n.BaseMessages;
@@ -259,7 +260,7 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
           lineNr++;
 
           if (meta.isAddingLineNrInGroup() && !meta.getLineNrInGroupField().isEmpty()) {
-            Object lineNrValue = new Long(lineNr);
+            Object lineNrValue = Long.valueOf(lineNr);
             // IValueMeta lineNrValueMeta = new
             // ValueMeta(meta.getLineNrInGroupField(),
             // IValueMeta.TYPE_INTEGER);
@@ -316,7 +317,7 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
         lineNr++;
 
         if (meta.isAddingLineNrInGroup() && !meta.getLineNrInGroupField().isEmpty()) {
-          Object lineNrValue = new Long(lineNr);
+          Object lineNrValue = Long.valueOf(lineNr);
           // IValueMeta lineNrValueMeta = new
           // ValueMeta(meta.getLineNrInGroupField(),
           // IValueMeta.TYPE_INTEGER);
@@ -431,7 +432,7 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
         if (sum == null) {
           row[targetIndex] = null;
         } else {
-          row[targetIndex] = new Double(((Long) sum).doubleValue() / data.previousAvgCount[i]);
+          row[targetIndex] = Double.valueOf(((Long) sum).doubleValue() / data.previousAvgCount[i]);
         }
       } else {
         row[targetIndex] =
@@ -481,7 +482,7 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
             double n = data.counts[i];
             double x = subjMeta.getNumber(subj);
             // for standard deviation null is exact 0
-            double sum = value == null ? new Double(0) : (Double) value;
+            double sum = value == null ? Double.valueOf(0) : (Double) value;
             double mean = data.mean[i];
 
             double delta = x - mean;
@@ -504,7 +505,7 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
             if (!data.distinctObjs[i].contains(obj)) {
               data.distinctObjs[i].add(obj);
               // null is exact 0, or we will not be able to ++.
-              value = value == null ? new Long(0) : value;
+              value = value == null ? Long.valueOf(0) : value;
               data.agg[i] = (Long) value + 1;
             }
           }
@@ -652,7 +653,7 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
    *
    * @param r
    */
-  void newAggregate(Object[] r) {
+  void newAggregate(Object[] r) throws HopPluginException {
     // Put all the counters at 0
     for (int i = 0; i < data.counts.length; i++) {
       data.counts[i] = 0;
@@ -674,22 +675,26 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
         case GisGroupByMeta.TYPE_GROUP_CUMULATIVE_SUM:
         case GisGroupByMeta.TYPE_GROUP_CUMULATIVE_AVERAGE:
           vMeta =
-              new ValueMetaBase(
+              ValueMetaFactory.createValueMeta(
                   meta.getAggregateField()[i],
                   subjMeta.isNumeric() ? subjMeta.getType() : IValueMeta.TYPE_NUMBER);
           break;
         case GisGroupByMeta.TYPE_GROUP_MEDIAN:
         case GisGroupByMeta.TYPE_GROUP_PERCENTILE:
-          vMeta = new ValueMetaBase(meta.getAggregateField()[i], IValueMeta.TYPE_NUMBER);
+          vMeta =
+              ValueMetaFactory.createValueMeta(meta.getAggregateField()[i], IValueMeta.TYPE_NUMBER);
           v = new ArrayList<Double>();
           break;
         case GisGroupByMeta.TYPE_GROUP_STANDARD_DEVIATION:
-          vMeta = new ValueMetaBase(meta.getAggregateField()[i], IValueMeta.TYPE_NUMBER);
+          vMeta =
+              ValueMetaFactory.createValueMeta(meta.getAggregateField()[i], IValueMeta.TYPE_NUMBER);
           break;
         case GisGroupByMeta.TYPE_GROUP_COUNT_DISTINCT:
         case GisGroupByMeta.TYPE_GROUP_COUNT_ANY:
         case GisGroupByMeta.TYPE_GROUP_COUNT_ALL:
-          vMeta = new ValueMetaBase(meta.getAggregateField()[i], IValueMeta.TYPE_INTEGER);
+          vMeta =
+              ValueMetaFactory.createValueMeta(
+                  meta.getAggregateField()[i], IValueMeta.TYPE_INTEGER);
           break;
         case GisGroupByMeta.TYPE_GROUP_FIRST:
         case GisGroupByMeta.TYPE_GROUP_LAST:
@@ -702,11 +707,13 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
           v = r == null ? null : r[data.subjectnrs[i]];
           break;
         case GisGroupByMeta.TYPE_GROUP_CONCAT_COMMA:
-          vMeta = new ValueMetaBase(meta.getAggregateField()[i], IValueMeta.TYPE_STRING);
+          vMeta =
+              ValueMetaFactory.createValueMeta(meta.getAggregateField()[i], IValueMeta.TYPE_STRING);
           v = new StringBuilder();
           break;
         case GisGroupByMeta.TYPE_GROUP_CONCAT_STRING:
-          vMeta = new ValueMetaBase(meta.getAggregateField()[i], IValueMeta.TYPE_STRING);
+          vMeta =
+              ValueMetaFactory.createValueMeta(meta.getAggregateField()[i], IValueMeta.TYPE_STRING);
           v = new StringBuilder();
           break;
 
@@ -745,7 +752,7 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
     }
   }
 
-  private Object[] buildResult(Object[] r) throws HopValueException {
+  private Object[] buildResult(Object[] r) throws HopValueException, HopPluginException {
     Object[] result = null;
     if (r != null || meta.isAlwaysGivingBackOneRow()) {
       result = RowDataUtil.allocateRowData(data.groupnrs.length);
@@ -776,7 +783,7 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
    * @return
    * @throws HopValueException
    */
-  Object[] getAggregateResult() throws HopValueException {
+  Object[] getAggregateResult() throws HopValueException, HopPluginException {
     Object[] result = new Object[data.subjectnrs.length];
 
     if (data.subjectnrs != null) {
@@ -790,8 +797,8 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
                 ValueDataUtil.divide(
                     data.aggMeta.getValueMeta(i),
                     ag,
-                    new ValueMetaBase("c", IValueMeta.TYPE_INTEGER),
-                    new Long(data.counts[i]));
+                    ValueMetaFactory.createValueMeta("c", IValueMeta.TYPE_INTEGER),
+                    Long.valueOf(data.counts[i]));
             break;
           case GisGroupByMeta.TYPE_GROUP_MEDIAN:
           case GisGroupByMeta.TYPE_GROUP_PERCENTILE:
@@ -809,7 +816,7 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
             break;
           case GisGroupByMeta.TYPE_GROUP_COUNT_ANY:
           case GisGroupByMeta.TYPE_GROUP_COUNT_ALL:
-            ag = new Long(data.counts[i]);
+            ag = Long.valueOf(data.counts[i]);
             break;
           case GisGroupByMeta.TYPE_GROUP_COUNT_DISTINCT:
             break;

@@ -31,14 +31,20 @@ import org.apache.hop.core.Const;
 import org.apache.hop.core.row.value.ValueMetaBase;
 import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.i18n.BaseMessages;
+import org.apache.hop.pipeline.Pipeline;
 import org.apache.hop.pipeline.PipelineMeta;
+import org.apache.hop.pipeline.PipelinePreviewFactory;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
 import org.apache.hop.pipeline.transform.ITransformDialog;
+import org.apache.hop.ui.core.dialog.EnterNumberDialog;
 import org.apache.hop.ui.core.dialog.EnterSelectionDialog;
 import org.apache.hop.ui.core.dialog.EnterStringDialog;
+import org.apache.hop.ui.core.dialog.EnterTextDialog;
+import org.apache.hop.ui.core.dialog.PreviewRowsDialog;
 import org.apache.hop.ui.core.widget.ColumnInfo;
 import org.apache.hop.ui.core.widget.TableView;
 import org.apache.hop.ui.core.widget.TextVar;
+import org.apache.hop.ui.pipeline.dialog.PipelinePreviewProgressDialog;
 import org.apache.hop.ui.pipeline.transform.BaseTransformDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -59,6 +65,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -104,6 +111,8 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
   private FormData fdlRowLimit, fdRowLimit;
 
   private ColumnInfo[] paramsColumnInfo;
+
+  private Button wPreview;
 
   private GisFileInputMeta input;
 
@@ -378,12 +387,20 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     // Fin du groupe : Options
     // ///////////////////////////////////////////////
 
-    // Boutons Ok et Annuler
+    // Boutons Ok, Preview et Annuler
     wOk = new Button(shell, SWT.PUSH);
     wOk.setText(BaseMessages.getString(PKG, "System.Button.OK"));
+    wPreview = new Button(shell, SWT.PUSH);
+    // Annahme: "System.Button.Preview" ist ein bereits vorhandener globaler
+    // Hop-Core-i18n-Key (analog zu "System.Button.OK"/"System.Button.Cancel"
+    // oben, sowie "System.Button.Browse" beim FileName-Button). Falls dieser
+    // Key in eurer Hop-Version nicht existiert, zeigt der Button ersatzweise
+    // den rohen Schluessel an (kein Compile-Fehler) - dann bitte durch einen
+    // eigenen Key in euren messages_*.properties ersetzen.
+    wPreview.setText(BaseMessages.getString(PKG, "System.Button.Preview"));
     wCancel = new Button(shell, SWT.PUSH);
     wCancel.setText(BaseMessages.getString(PKG, "System.Button.Cancel"));
-    setButtonPositions(new Button[] {wOk, wCancel}, margin, null);
+    setButtonPositions(new Button[] {wOk, wPreview, wCancel}, margin, null);
 
     // Paramètres
     wlParams = new Label(shell, SWT.NONE);
@@ -425,8 +442,15 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
             ok();
           }
         };
+    Listener lsPreview =
+        new Listener() {
+          public void handleEvent(Event e) {
+            preview();
+          }
+        };
     wCancel.addListener(SWT.Selection, lsCancel);
     wOk.addListener(SWT.Selection, lsOk);
+    wPreview.addListener(SWT.Selection, lsPreview);
     SelectionListener lsDef =
         new SelectionAdapter() {
           public void widgetDefaultSelected(SelectionEvent e) {
@@ -526,7 +550,9 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
       wEncoding.setText(input.getEncoding());
     }
 
-    wRowLimit.setText(input.getRowLimit().toString());
+    // Absicherung: bei .hpl-Dateien, die vor dem Serialisierungs-Fix gespeichert
+    // wurden (fehlendes <rowLimit>-Tag), ist getRowLimit() null.
+    wRowLimit.setText(input.getRowLimit() != null ? input.getRowLimit().toString() : "0");
 
     wTransformName.selectAll();
   }
@@ -540,9 +566,18 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
   private void ok() {
 
     transformName = wTransformName.getText();
+    getInfo(input);
+    dispose();
+  }
+
+  // Schreibt die aktuellen Dialog-Werte in das uebergebene Meta-Objekt.
+  // Wird sowohl von ok() (mit dem echten "input") als auch von preview() (mit
+  // einem temporaeren Meta-Objekt, OHNE den Dialog zu schliessen) genutzt -
+  // Muster uebernommen aus TextFileInputDialog.getInfo(meta, preview).
+  private void getInfo(GisFileInputMeta meta) {
 
     String formatKey = getFormatKey(wInputFormat.getText());
-    input.setInputFormat(formatKey);
+    meta.setInputFormat(formatKey);
 
     List<GisInputFormatParameter> inputFormatParameters = new ArrayList<GisInputFormatParameter>();
     for (int i = 0; i < wParams.nrNonEmpty(); i++) {
@@ -559,12 +594,82 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
       }
     }
 
-    input.setInputFormatParameters(inputFormatParameters);
-    input.setInputFileName(wFileName.getText());
-    input.setGeometryFieldName(wGeometryField.getText());
-    input.setEncoding(wEncoding.getText());
-    input.setRowLimit(Long.valueOf(wRowLimit.getText()));
-    dispose();
+    meta.setInputFormatParameters(inputFormatParameters);
+    meta.setInputFileName(wFileName.getText());
+    meta.setGeometryFieldName(wGeometryField.getText());
+    meta.setEncoding(wEncoding.getText());
+    meta.setRowLimit(
+        wRowLimit.getText() != null && !wRowLimit.getText().trim().isEmpty()
+            ? Long.valueOf(wRowLimit.getText().trim())
+            : 0L);
+  }
+
+  // Preview der Daten - Muster 1:1 uebernommen aus TextFileInputDialog.preview()
+  // (Apache Hop 2.19 Referenzimplementierung).
+  private void preview() {
+
+    // Temporaeres Meta-Objekt mit den aktuellen (noch nicht gespeicherten)
+    // Dialog-Werten befuellen, OHNE das echte "input"-Objekt zu veraendern.
+    GisFileInputMeta oneMeta = new GisFileInputMeta();
+    getInfo(oneMeta);
+
+    if (oneMeta.getInputFileName() == null || oneMeta.getInputFileName().trim().isEmpty()) {
+      MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+      mb.setMessage(BaseMessages.getString(PKG, "GisFileInput.Dialog.SpecifyAFile.Message"));
+      mb.setText(BaseMessages.getString(PKG, "GisFileInput.Dialog.SpecifyAFile.Title"));
+      mb.open();
+      return;
+    }
+
+    PipelineMeta previewMeta =
+        PipelinePreviewFactory.generatePreviewPipeline(
+            pipelineMeta.getMetadataProvider(), oneMeta, wTransformName.getText());
+
+    EnterNumberDialog numberDialog =
+        new EnterNumberDialog(
+            shell,
+            props.getDefaultPreviewSize(),
+            BaseMessages.getString(PKG, "GisFileInput.PreviewSize.DialogTitle"),
+            BaseMessages.getString(PKG, "GisFileInput.PreviewSize.DialogMessage"));
+    int previewSize = numberDialog.open();
+    if (previewSize > 0) {
+      PipelinePreviewProgressDialog progressDialog =
+          new PipelinePreviewProgressDialog(
+              shell,
+              variables,
+              previewMeta,
+              new String[] {wTransformName.getText()},
+              new int[] {previewSize});
+      progressDialog.open();
+
+      Pipeline pipeline = progressDialog.getPipeline();
+      String loggingText = progressDialog.getLoggingText();
+
+      if (!progressDialog.isCancelled()
+          && pipeline.getResult() != null
+          && pipeline.getResult().getNrErrors() > 0) {
+        EnterTextDialog etd =
+            new EnterTextDialog(
+                shell,
+                BaseMessages.getString(PKG, "System.Dialog.PreviewError.Title"),
+                BaseMessages.getString(PKG, "System.Dialog.PreviewError.Message"),
+                loggingText,
+                true);
+        etd.setReadOnly();
+        etd.open();
+      }
+
+      PreviewRowsDialog prd =
+          new PreviewRowsDialog(
+              shell,
+              variables,
+              SWT.NONE,
+              wTransformName.getText(),
+              progressDialog.getPreviewRowsMeta(wTransformName.getText()),
+              progressDialog.getPreviewRows(wTransformName.getText()),
+              loggingText);
+      prd.open();
+    }
   }
 
   // Liste des encodages

@@ -22,12 +22,21 @@ package com.atolcd.hop.pipeline.transforms.gisfileoutput;
  * #L%
  */
 
+import org.apache.hop.metadata.api.HopMetadataProperty;
+
 public class GisOutputFormatParameter {
 
+  @HopMetadataProperty(key = "key")
   private String key;
-  private Object value;
 
-  public GisOutputFormatParameter(String key, Object value) {
+  @HopMetadataProperty(key = "value")
+  private String value;
+
+  // No-Arg-Konstruktor: wird von Hops Reflection-basierter (De-)Serialisierung
+  // (@HopMetadataProperty) benoetigt.
+  public GisOutputFormatParameter() {}
+
+  public GisOutputFormatParameter(String key, String value) {
     this.key = key;
     this.value = value;
   }
@@ -36,7 +45,15 @@ public class GisOutputFormatParameter {
     return key;
   }
 
-  public Object getValue() {
+  public void setKey(String key) {
+    this.key = key;
+  }
+
+  public String getValue() {
     return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
   }
 }
