@@ -1,0 +1,62 @@
+package com.atolcd.hop.pipeline.transforms.gisgeometryinfo;
+
+/*
+ * #%L
+ * Apache Hop GIS Plugin
+ * %%
+ * Copyright (C) 2021 Atol CD
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ *
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
+
+import org.apache.hop.metadata.api.HopMetadataProperty;
+
+// Ersetzt die vormalige LinkedHashMap<String, String> outputFields, damit
+// Hops reflection-basierte (@HopMetadataProperty) Serialisierung greift -
+// eine Map wird von Hop nicht unterstuetzt, eine Liste von POJOs schon.
+public class GisGeometryInfoOutputField {
+
+  @HopMetadataProperty(key = "infoKey")
+  private String infoKey;
+
+  @HopMetadataProperty(key = "infoFieldname")
+  private String infoFieldname;
+
+  // No-Arg-Konstruktor: wird von Hops Reflection-basierter Deserialisierung
+  // benoetigt.
+  public GisGeometryInfoOutputField() {}
+
+  public GisGeometryInfoOutputField(String infoKey, String infoFieldname) {
+    this.infoKey = infoKey;
+    this.infoFieldname = infoFieldname;
+  }
+
+  public String getInfoKey() {
+    return infoKey;
+  }
+
+  public void setInfoKey(String infoKey) {
+    this.infoKey = infoKey;
+  }
+
+  public String getInfoFieldname() {
+    return infoFieldname;
+  }
+
+  public void setInfoFieldname(String infoFieldname) {
+    this.infoFieldname = infoFieldname;
+  }
+}
