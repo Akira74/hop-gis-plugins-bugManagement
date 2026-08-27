@@ -38,15 +38,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.hop.core.CheckResult;
-import org.apache.hop.core.Const;
 import org.apache.hop.core.ICheckResult;
 import org.apache.hop.core.annotations.Transform;
 import org.apache.hop.core.exception.HopException;
-import org.apache.hop.core.exception.HopXmlException;
 import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.core.row.value.ValueMetaBase;
 import org.apache.hop.core.variables.IVariables;
-import org.apache.hop.core.xml.XmlHandler;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.pipeline.PipelineMeta;
@@ -55,7 +52,6 @@ import org.apache.hop.pipeline.transform.ITransformDialog;
 import org.apache.hop.pipeline.transform.ITransformMeta;
 import org.apache.hop.pipeline.transform.TransformMeta;
 import org.eclipse.swt.widgets.Shell;
-import org.w3c.dom.Node;
 
 @Transform(
     id = "GisFileInput",
@@ -74,6 +70,7 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
   @HopMetadataProperty(injectionKeyDescription = "GisFileInput.FileFormat.Label")
   private String inputFormat;
 
+  @HopMetadataProperty(groupKey = "params", key = "param")
   private List<GisInputFormatParameter> inputFormatParameters;
 
   @HopMetadataProperty(injectionKeyDescription = "GisFileInput.FileName.Label")
@@ -85,6 +82,7 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
   @HopMetadataProperty(injectionKeyDescription = "GisFileInput.Encoding.Label")
   private String encoding;
 
+  @HopMetadataProperty(key = "rowLimit", injectionKeyDescription = "GisFileInput.RowLimit.Label")
   private Long rowLimit;
 
   public GisFileInputMeta() {
@@ -262,34 +260,10 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
     this.rowLimit = rowLimit;
   }
 
-  @Override
-  public String getXml() {
-
-    StringBuffer retval = new StringBuffer();
-    retval.append("\t" + XmlHandler.addTagValue("inputFormat", inputFormat));
-
-    // Paramètres
-    retval.append("\t<params>").append(Const.CR);
-    for (GisInputFormatParameter parameter : inputFormatParameters) {
-
-      String key = parameter.getKey();
-      String value = (String) parameter.getValue();
-
-      retval.append("\t\t<param>").append(Const.CR);
-      retval.append("\t\t\t").append(XmlHandler.addTagValue("key", key));
-      retval.append("\t\t\t").append(XmlHandler.addTagValue("value", value));
-      retval.append("\t\t</param>").append(Const.CR);
-    }
-
-    retval.append("\t</params>").append(Const.CR);
-
-    retval.append("    " + XmlHandler.addTagValue("inputFileName", inputFileName));
-    retval.append("    " + XmlHandler.addTagValue("geometryFieldName", geometryFieldName));
-    retval.append("    " + XmlHandler.addTagValue("encoding", encoding));
-    retval.append("    " + XmlHandler.addTagValue("rowLimit", rowLimit));
-
-    return retval.toString();
-  }
+  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
+  // BaseTransformMeta.getXml() nicht mehr aufgerufen (@Deprecated seit 2.10.0,
+  // ignoriert seit 2.18) - die Serialisierung erfolgt jetzt ausschliesslich
+  // reflection-basiert ueber die @HopMetadataProperty-Annotationen oben.
 
   @Override
   public void getFields(
@@ -394,31 +368,13 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
     return retval;
   }
 
-  @Override
-  public void loadXml(Node stepnode, IHopMetadataProvider metadataProvider) throws HopXmlException {
-
-    try {
-
-      inputFormat = XmlHandler.getTagValue(stepnode, "inputFormat");
-      Node paramsNode = XmlHandler.getSubNode(stepnode, "params");
-      for (int i = 0; i < XmlHandler.countNodes(paramsNode, "param"); i++) {
-
-        Node paramNode = XmlHandler.getSubNodeByNr(paramsNode, "param", i);
-        String key = XmlHandler.getTagValue(paramNode, "key");
-        String value = XmlHandler.getTagValue(paramNode, "value");
-
-        inputFormatParameters.add(new GisInputFormatParameter(key, value));
-      }
-
-      inputFileName = XmlHandler.getTagValue(stepnode, "inputFileName");
-      geometryFieldName = XmlHandler.getTagValue(stepnode, "geometryFieldName");
-      encoding = XmlHandler.getTagValue(stepnode, "encoding");
-      rowLimit = Long.valueOf(XmlHandler.getTagValue(stepnode, "rowLimit"));
-
-    } catch (Exception e) {
-      throw new HopXmlException("Unable to read step info from XML node", e);
-    }
-  }
+  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml()
+  // (siehe oben). Das Laden erfolgt jetzt automatisch ueber die
+  // @HopMetadataProperty-Annotationen. ACHTUNG: Bereits gespeicherte .hpl-Dateien,
+  // die mit der alten (fehlerhaften) Serialisierung gespeichert wurden, enthalten
+  // KEIN <rowLimit> und KEINE <params> - beim erstmaligen Oeffnen dieser
+  // Alt-Dateien bleibt rowLimit dann null. Einmal neu speichern behebt das
+  // dauerhaft, da ab dann die korrekten Tags geschrieben werden.
 
   public void setDefault() {
 

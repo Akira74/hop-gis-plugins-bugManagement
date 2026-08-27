@@ -43,11 +43,14 @@ import org.apache.hop.ui.core.dialog.EnterSelectionDialog;
 import org.apache.hop.ui.core.dialog.EnterStringDialog;
 import org.apache.hop.ui.core.dialog.ErrorDialog;
 import org.apache.hop.ui.core.widget.ColumnInfo;
+import org.apache.hop.ui.core.widget.ComboVar;
 import org.apache.hop.ui.core.widget.TableView;
 import org.apache.hop.ui.core.widget.TextVar;
 import org.apache.hop.ui.pipeline.transform.BaseTransformDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -55,6 +58,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -98,6 +102,20 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
   private Button wbFileName;
   private TextVar wFileName;
   private FormData fdlFileName, fdbFileName, fdFileName;
+
+  // Créer le dossier parent automatiquement si absent
+  private Label wlCreateParentFolder;
+  private Button wCreateParentFolder;
+  private FormData fdlCreateParentFolder, fdCreateParentFolder;
+
+  // Nom de fichier depuis un champ (lu une seule fois, voir GisFileOutputMeta)
+  private Label wlFileNameInField;
+  private Button wFileNameInField;
+  private FormData fdlFileNameInField, fdFileNameInField;
+
+  private Label wlFileNameField;
+  private ComboVar wFileNameField;
+  private FormData fdlFileNameField, fdFileNameField;
 
   // Colonne contenant la géométrie
   private Label wlGeometryField;
@@ -357,13 +375,106 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     fdFileName.top = new FormAttachment(wCreateFileAtEnd, margin);
     wFileName.setLayoutData(fdFileName);
 
+    // Créer le dossier parent automatiquement si absent
+    wlCreateParentFolder = new Label(shell, SWT.RIGHT);
+    wlCreateParentFolder.setText(
+        BaseMessages.getString(PKG, "GisFileOutput.CreateParentFolder.Label"));
+    props.setLook(wlCreateParentFolder);
+    fdlCreateParentFolder = new FormData();
+    fdlCreateParentFolder.left = new FormAttachment(0, 0);
+    fdlCreateParentFolder.right = new FormAttachment(middle, -margin);
+    fdlCreateParentFolder.top = new FormAttachment(wbFileName, margin);
+    wlCreateParentFolder.setLayoutData(fdlCreateParentFolder);
+
+    wCreateParentFolder = new Button(shell, SWT.CHECK);
+    wCreateParentFolder.setToolTipText(
+        BaseMessages.getString(PKG, "GisFileOutput.CreateParentFolder.ToolTip"));
+    props.setLook(wCreateParentFolder);
+    fdCreateParentFolder = new FormData();
+    fdCreateParentFolder.left = new FormAttachment(middle, 0);
+    fdCreateParentFolder.right = new FormAttachment(100, 0);
+    fdCreateParentFolder.top = new FormAttachment(wlCreateParentFolder, 0, SWT.CENTER);
+    wCreateParentFolder.setLayoutData(fdCreateParentFolder);
+    wCreateParentFolder.addSelectionListener(
+        new SelectionAdapter() {
+          public void widgetSelected(SelectionEvent e) {
+            input.setChanged();
+          }
+        });
+
+    // Nom de fichier depuis un champ - Checkbox
+    // Hinweis (vereinfachte Variante, siehe GisFileOutputMeta.fileNameInField):
+    // der Feldwert wird EINMALIG aus der ersten Zeile gelesen, nicht pro Zeile
+    // neu (kein Schreiben mehrerer Dateien wie beim Standard-TextFileOutput).
+    wlFileNameInField = new Label(shell, SWT.RIGHT);
+    wlFileNameInField.setText(BaseMessages.getString(PKG, "GisFileOutput.FileNameInField.Label"));
+    props.setLook(wlFileNameInField);
+    fdlFileNameInField = new FormData();
+    fdlFileNameInField.left = new FormAttachment(0, 0);
+    fdlFileNameInField.right = new FormAttachment(middle, -margin);
+    fdlFileNameInField.top = new FormAttachment(wCreateParentFolder, margin);
+    wlFileNameInField.setLayoutData(fdlFileNameInField);
+
+    wFileNameInField = new Button(shell, SWT.CHECK);
+    wFileNameInField.setToolTipText(
+        BaseMessages.getString(PKG, "GisFileOutput.FileNameInField.ToolTip"));
+    props.setLook(wFileNameInField);
+    fdFileNameInField = new FormData();
+    fdFileNameInField.left = new FormAttachment(middle, 0);
+    fdFileNameInField.right = new FormAttachment(100, 0);
+    fdFileNameInField.top = new FormAttachment(wlFileNameInField, 0, SWT.CENTER);
+    wFileNameInField.setLayoutData(fdFileNameInField);
+    wFileNameInField.addSelectionListener(
+        new SelectionAdapter() {
+          public void widgetSelected(SelectionEvent e) {
+            input.setChanged();
+            activeFileNameField();
+          }
+        });
+
+    // Nom de fichier depuis un champ - Nom du champ
+    wlFileNameField = new Label(shell, SWT.RIGHT);
+    wlFileNameField.setText(BaseMessages.getString(PKG, "GisFileOutput.FileNameField.Label"));
+    props.setLook(wlFileNameField);
+    fdlFileNameField = new FormData();
+    fdlFileNameField.left = new FormAttachment(0, 0);
+    fdlFileNameField.right = new FormAttachment(middle, -margin);
+    fdlFileNameField.top = new FormAttachment(wFileNameInField, margin);
+    wlFileNameField.setLayoutData(fdlFileNameField);
+
+    wFileNameField = new ComboVar(variables, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+    props.setLook(wFileNameField);
+    wFileNameField.addModifyListener(lsMod);
+    fdFileNameField = new FormData();
+    fdFileNameField.left = new FormAttachment(middle, 0);
+    fdFileNameField.right = new FormAttachment(100, 0);
+    fdFileNameField.top = new FormAttachment(wFileNameInField, margin);
+    wFileNameField.setLayoutData(fdFileNameField);
+    wFileNameField.setEnabled(false);
+    wFileNameField.addFocusListener(
+        new FocusListener() {
+          @Override
+          public void focusLost(FocusEvent e) {
+            // Do nothing
+          }
+
+          @Override
+          public void focusGained(FocusEvent e) {
+            Cursor busy = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
+            shell.setCursor(busy);
+            populateFileNameFieldOptions();
+            shell.setCursor(null);
+            busy.dispose();
+          }
+        });
+
     // Colonne géométrie
     wlGeometryField = new Label(shell, SWT.RIGHT);
     wlGeometryField.setText(BaseMessages.getString(PKG, "GisFileOutput.GeometryFieldName.Label"));
     props.setLook(wlGeometryField);
     fdlGeometryField = new FormData();
     fdlGeometryField.left = new FormAttachment(0, 0);
-    fdlGeometryField.top = new FormAttachment(wbFileName, margin);
+    fdlGeometryField.top = new FormAttachment(wFileNameField, margin);
     fdlGeometryField.right = new FormAttachment(middle, -margin);
     wlGeometryField.setLayoutData(fdlGeometryField);
 
@@ -376,7 +487,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     fdGeometryField = new FormData();
     fdGeometryField.left = new FormAttachment(middle, 0);
     fdGeometryField.right = new FormAttachment(100, 0);
-    fdGeometryField.top = new FormAttachment(wbFileName, margin);
+    fdGeometryField.top = new FormAttachment(wFileNameField, margin);
     wGeometryField.setLayoutData(fdGeometryField);
 
     // ///////////////////////////////////////////////
@@ -635,6 +746,11 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
       wFileName.setText(input.getOutputFileName());
     }
 
+    wCreateParentFolder.setSelection(input.isCreateParentFolder());
+    wFileNameInField.setSelection(input.isFileNameInField());
+    wFileNameField.setText(Const.NVL(input.getFileNameField(), ""));
+    activeFileNameField();
+
     if (input.getGeometryFieldName() != null) {
       wGeometryField.setText(input.getGeometryFieldName());
     }
@@ -699,6 +815,9 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     input.setOutputFormatFieldParameters(outputFormatFieldParameters);
 
     input.setOutputFileName(wFileName.getText());
+    input.setCreateParentFolder(wCreateParentFolder.getSelection());
+    input.setFileNameInField(wFileNameInField.getSelection());
+    input.setFileNameField(wFileNameField.getText());
     input.setGeometryFieldName(wGeometryField.getText());
     input.setEncoding(wEncoding.getText());
     input.setCreateFileAtEnd(wCreateFileAtEnd.getSelection());
@@ -750,6 +869,43 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
       }
     }
     return fieldNamesFromType;
+  }
+
+  // Aktiviert/deaktiviert das Dateiname-Feld je nach Checkbox-Status
+  // (fileNameInField), analog zum Standard-TextFileOutput-Dialog.
+  private void activeFileNameField() {
+    boolean fileNameInField = wFileNameInField.getSelection();
+    wlFileNameField.setEnabled(fileNameInField);
+    wFileNameField.setEnabled(fileNameInField);
+    wlFileName.setEnabled(!fileNameInField);
+    wFileName.setEnabled(!fileNameInField);
+    wbFileName.setEnabled(!fileNameInField);
+  }
+
+  private boolean gotFileNameFieldOptions = false;
+
+  // Befuellt die Feldliste fuer wFileNameField "lazy" beim ersten Fokus,
+  // analog zum getFields()-Muster in TextFileOutputDialog.
+  private void populateFileNameFieldOptions() {
+    if (!gotFileNameFieldOptions) {
+      try {
+        String field = wFileNameField.getText();
+        IRowMeta r = pipelineMeta.getPrevTransformFields(variables, transformName);
+        if (r != null) {
+          wFileNameField.setItems(r.getFieldNames());
+        }
+        if (field != null) {
+          wFileNameField.setText(field);
+        }
+        gotFileNameFieldOptions = true;
+      } catch (HopException ke) {
+        new ErrorDialog(
+            shell,
+            BaseMessages.getString(PKG, "GisFileOutput.FailedToGetFields.DialogTitle"),
+            BaseMessages.getString(PKG, "GisFileOutput.FailedToGetFields.DialogMessage"),
+            ke);
+      }
+    }
   }
 
   // Liste des encodages

@@ -28,14 +28,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.hop.core.CheckResult;
-import org.apache.hop.core.Const;
 import org.apache.hop.core.ICheckResult;
 import org.apache.hop.core.annotations.Transform;
-import org.apache.hop.core.exception.HopXmlException;
 import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.core.row.value.ValueMetaBase;
 import org.apache.hop.core.variables.IVariables;
-import org.apache.hop.core.xml.XmlHandler;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
@@ -43,7 +41,6 @@ import org.apache.hop.pipeline.transform.ITransformDialog;
 import org.apache.hop.pipeline.transform.ITransformMeta;
 import org.apache.hop.pipeline.transform.TransformMeta;
 import org.eclipse.swt.widgets.Shell;
-import org.w3c.dom.Node;
 
 @Transform(
     id = "GisFileOutput",
@@ -56,14 +53,49 @@ import org.w3c.dom.Node;
 public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileOutputData> {
 
   private HashMap<String, GisOutputFormatDef> outputFormatDefs;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisFileOutput.FileFormat.Label")
   private String outputFormat;
+
+  @HopMetadataProperty(groupKey = "fieldParams", key = "param")
   private List<GisOutputFormatParameter> outputFormatFieldParameters;
+
+  @HopMetadataProperty(groupKey = "fixedParams", key = "param")
   private List<GisOutputFormatParameter> outputFormatFixedParameters;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisFileOutput.FileName.Label")
   private String outputFileName;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisFileOutput.GeometryFieldName.Label")
   private String geometryFieldName;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisFileOutput.Encoding.Label")
   private String encoding;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisFileOutput.CreateFileAtEnd.Label")
   private boolean createFileAtEnd;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisFileOutput.DataToServlet.Label")
   private boolean dataToServlet;
+
+  /**
+   * Vereinfachte Variante von "Accept file name from field" (im Vergleich zum
+   * Standard-TextFileOutput-Verhalten): Der Dateiname wird NICHT pro Zeile neu ausgewertet und es
+   * werden NICHT mehrere Dateien geschrieben. Stattdessen wird der Feldwert EINMALIG aus der ERSTEN
+   * verarbeiteten Zeile gelesen und fuer die gesamte (einzige) Ausgabedatei verwendet - passend zur
+   * bestehenden Architektur von GisFileOutput, die alle Features im Speicher sammelt und erst am
+   * Ende der Pipeline eine einzelne Datei schreibt.
+   */
+  @HopMetadataProperty(key = "fileNameInField")
+  private boolean fileNameInField;
+
+  /** Feldname, aus dem der Dateiname einmalig gelesen wird (siehe fileNameInField). */
+  @HopMetadataProperty(key = "fileNameField")
+  private String fileNameField;
+
+  /** Legt den Zielordner automatisch an, falls er noch nicht existiert. */
+  @HopMetadataProperty(key = "create_parent_folder", defaultBoolean = true)
+  private boolean createParentFolder;
 
   public GisFileOutputMeta() {
     super();
@@ -71,6 +103,8 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     this.outputFormatDefs = new HashMap<String, GisOutputFormatDef>();
     this.outputFormatFieldParameters = new ArrayList<GisOutputFormatParameter>();
     this.outputFormatFixedParameters = new ArrayList<GisOutputFormatParameter>();
+    this.createParentFolder = true;
+    this.fileNameInField = false;
 
     // ESRI Shapefile
     GisOutputFormatDef shpDef =
@@ -301,50 +335,34 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     this.dataToServlet = dataToServlet;
   }
 
-  @Override
-  public String getXml() {
-
-    StringBuffer retval = new StringBuffer();
-    retval.append("\t" + XmlHandler.addTagValue("outputFormat", outputFormat));
-
-    // Paramètres de champs
-    retval.append("\t<fieldParams>").append(Const.CR);
-    for (GisOutputFormatParameter parameter : outputFormatFieldParameters) {
-
-      String key = parameter.getKey();
-      String value = (String) parameter.getValue();
-
-      retval.append("\t\t<param>").append(Const.CR);
-      retval.append("\t\t\t").append(XmlHandler.addTagValue("key", key));
-      retval.append("\t\t\t").append(XmlHandler.addTagValue("value", value));
-      retval.append("\t\t</param>").append(Const.CR);
-    }
-
-    retval.append("\t</fieldParams>").append(Const.CR);
-
-    // Paramètres fixes
-    retval.append("\t<fixedParams>").append(Const.CR);
-    for (GisOutputFormatParameter parameter : outputFormatFixedParameters) {
-
-      String key = parameter.getKey();
-      String value = (String) parameter.getValue();
-
-      retval.append("\t\t<param>").append(Const.CR);
-      retval.append("\t\t\t").append(XmlHandler.addTagValue("key", key));
-      retval.append("\t\t\t").append(XmlHandler.addTagValue("value", value));
-      retval.append("\t\t</param>").append(Const.CR);
-    }
-
-    retval.append("\t</fixedParams>").append(Const.CR);
-
-    retval.append("    " + XmlHandler.addTagValue("outputFileName", outputFileName));
-    retval.append("    " + XmlHandler.addTagValue("geometryFieldName", geometryFieldName));
-    retval.append("    " + XmlHandler.addTagValue("encoding", encoding));
-    retval.append("    " + XmlHandler.addTagValue("createFileAtEnd", createFileAtEnd));
-    retval.append("    " + XmlHandler.addTagValue("dataToServlet", dataToServlet));
-
-    return retval.toString();
+  public boolean isFileNameInField() {
+    return fileNameInField;
   }
+
+  public void setFileNameInField(boolean fileNameInField) {
+    this.fileNameInField = fileNameInField;
+  }
+
+  public String getFileNameField() {
+    return fileNameField;
+  }
+
+  public void setFileNameField(String fileNameField) {
+    this.fileNameField = fileNameField;
+  }
+
+  public boolean isCreateParentFolder() {
+    return createParentFolder;
+  }
+
+  public void setCreateParentFolder(boolean createParentFolder) {
+    this.createParentFolder = createParentFolder;
+  }
+
+  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
+  // BaseTransformMeta.getXml() nicht mehr aufgerufen - die Serialisierung
+  // erfolgt jetzt ausschliesslich reflection-basiert ueber die
+  // @HopMetadataProperty-Annotationen oben.
 
   @Override
   public void getFields(
@@ -441,42 +459,11 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     return retval;
   }
 
-  @Override
-  public void loadXml(Node stepnode, IHopMetadataProvider metadataProvider) throws HopXmlException {
-
-    try {
-
-      outputFormat = XmlHandler.getTagValue(stepnode, "outputFormat");
-      Node fieldParamsNode = XmlHandler.getSubNode(stepnode, "fieldParams");
-      for (int i = 0; i < XmlHandler.countNodes(fieldParamsNode, "param"); i++) {
-
-        Node paramNode = XmlHandler.getSubNodeByNr(fieldParamsNode, "param", i);
-        String key = XmlHandler.getTagValue(paramNode, "key");
-        String value = XmlHandler.getTagValue(paramNode, "value");
-
-        outputFormatFieldParameters.add(new GisOutputFormatParameter(key, value));
-      }
-
-      Node fixedParamsNode = XmlHandler.getSubNode(stepnode, "fixedParams");
-      for (int i = 0; i < XmlHandler.countNodes(fixedParamsNode, "param"); i++) {
-
-        Node paramNode = XmlHandler.getSubNodeByNr(fixedParamsNode, "param", i);
-        String key = XmlHandler.getTagValue(paramNode, "key");
-        String value = XmlHandler.getTagValue(paramNode, "value");
-
-        outputFormatFixedParameters.add(new GisOutputFormatParameter(key, value));
-      }
-
-      outputFileName = XmlHandler.getTagValue(stepnode, "outputFileName");
-      geometryFieldName = XmlHandler.getTagValue(stepnode, "geometryFieldName");
-      encoding = XmlHandler.getTagValue(stepnode, "encoding");
-      createFileAtEnd = "Y".equalsIgnoreCase(XmlHandler.getTagValue(stepnode, "createFileAtEnd"));
-      dataToServlet = "Y".equalsIgnoreCase(XmlHandler.getTagValue(stepnode, "dataToServlet"));
-
-    } catch (Exception e) {
-      throw new HopXmlException("Unable to read step info from XML node", e);
-    }
-  }
+  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml() (siehe
+  // oben). Das Laden erfolgt jetzt automatisch ueber die
+  // @HopMetadataProperty-Annotationen. ACHTUNG: Bereits gespeicherte .hpl-Dateien
+  // mit dem alten Format enthalten diese Tags nicht - einmal neu speichern
+  // behebt das dauerhaft.
 
   public void setDefault() {
 

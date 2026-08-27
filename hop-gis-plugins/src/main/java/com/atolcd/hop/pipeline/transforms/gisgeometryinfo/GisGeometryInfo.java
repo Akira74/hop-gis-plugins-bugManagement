@@ -182,7 +182,7 @@ public class GisGeometryInfo extends BaseTransform<GisGeometryInfoMeta, GisGeome
   private static Long getIntegerAsLong(Integer value) {
 
     if (value != null) {
-      return new Long(value);
+      return Long.valueOf(value);
     }
     return null;
   }

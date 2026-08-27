@@ -40,6 +40,7 @@ import org.cts.crs.CRSException;
 import org.cts.crs.CoordinateReferenceSystem;
 import org.cts.crs.GeodeticCRS;
 import org.cts.op.CoordinateOperation;
+import org.cts.op.CoordinateOperationException;
 import org.cts.op.CoordinateOperationFactory;
 import org.cts.registry.EPSGRegistry;
 import org.cts.registry.ESRIRegistry;
@@ -206,8 +207,9 @@ public class GisCoordinateTransformation
       CoordinateReferenceSystem inputCRS = cRSFactory.getCRS(inputCRSCode);
       CoordinateReferenceSystem outputCRS = cRSFactory.getCRS(outputCRSCode);
       List<CoordinateOperation> transformations =
-          CoordinateOperationFactory.createCoordinateOperations(
-              (GeodeticCRS) inputCRS, (GeodeticCRS) outputCRS);
+          (List<CoordinateOperation>)
+              CoordinateOperationFactory.createCoordinateOperations(
+                  (GeodeticCRS) inputCRS, (GeodeticCRS) outputCRS);
 
       if (!transformations.isEmpty()) {
         transformation = transformations.get(0);
@@ -218,6 +220,8 @@ public class GisCoordinateTransformation
     } catch (CRSException e) {
 
       new HopException(e);
+    } catch (CoordinateOperationException e) {
+      throw new RuntimeException(e);
     }
     return transformation;
   }

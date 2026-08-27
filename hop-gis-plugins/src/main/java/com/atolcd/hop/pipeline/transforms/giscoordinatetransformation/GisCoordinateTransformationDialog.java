@@ -50,13 +50,9 @@ import org.cts.crs.CRSException;
 import org.cts.crs.CoordinateReferenceSystem;
 import org.cts.crs.GeodeticCRS;
 import org.cts.op.CoordinateOperation;
+import org.cts.op.CoordinateOperationException;
 import org.cts.op.CoordinateOperationFactory;
-import org.cts.registry.EPSGRegistry;
-import org.cts.registry.ESRIRegistry;
-import org.cts.registry.IGNFRegistry;
-import org.cts.registry.Registry;
-import org.cts.registry.RegistryException;
-import org.cts.registry.RegistryManager;
+import org.cts.registry.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusListener;
@@ -539,11 +535,10 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
               inputCodeDialog.setViewOnly();
 
               if (wInputCRSCode.getText() != null) {
-
                 Registry registry = registryManager.getRegistry(wInputCRSAuthority.getText());
                 try {
-                  Map<String, String> map = registry.getParameters(wInputCRSCode.getText());
-
+                  Map<String, String> map =
+                      ((AbstractProjRegistry) registry).getParameters(wInputCRSCode.getText());
                   if (map != null) {
 
                     Integer index =
@@ -596,10 +591,9 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
 
                 Registry registry = registryManager.getRegistry(wOutputCRSAuthority.getText());
                 try {
-                  Map<String, String> map = registry.getParameters(wOutputCRSCode.getText());
-
+                  Map<String, String> map =
+                      ((AbstractProjRegistry) registry).getParameters(wOutputCRSCode.getText());
                   if (map != null) {
-
                     Integer index =
                         Arrays.binarySearch(
                             descriptions,
@@ -711,9 +705,15 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
               // Existence de la transformation
               if (inputCRS != null && outputCRS != null) {
 
-                List<CoordinateOperation> transformations =
-                    CoordinateOperationFactory.createCoordinateOperations(
-                        (GeodeticCRS) inputCRS, (GeodeticCRS) outputCRS);
+                List<CoordinateOperation> transformations = null;
+                try {
+                  transformations =
+                      (List<CoordinateOperation>)
+                          CoordinateOperationFactory.createCoordinateOperations(
+                              (GeodeticCRS) inputCRS, (GeodeticCRS) outputCRS);
+                } catch (CoordinateOperationException ex) {
+                  throw new RuntimeException(ex);
+                }
 
                 if (!transformations.isEmpty() && transformations.get(0) != null) {
 

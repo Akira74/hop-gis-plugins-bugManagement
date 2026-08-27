@@ -1,4 +1,4 @@
-package com.atolcd.hop.pipeline.transforms.gisfileoutput;
+package com.atolcd.hop.pipeline.transforms.gisgroupby;
 
 /*
  * #%L
@@ -24,36 +24,24 @@ package com.atolcd.hop.pipeline.transforms.gisfileoutput;
 
 import org.apache.hop.metadata.api.HopMetadataProperty;
 
-public class GisOutputFormatParameter {
+// Ersetzt das vormalige String[] groupField, damit Hops reflection-basierte
+// (@HopMetadataProperty) Serialisierung greift.
+public class GisGroupByField {
 
-  @HopMetadataProperty(key = "key")
-  private String key;
+  @HopMetadataProperty(key = "name")
+  private String name;
 
-  @HopMetadataProperty(key = "value")
-  private String value;
+  public GisGroupByField() {}
 
-  // No-Arg-Konstruktor: wird von Hops Reflection-basierter (De-)Serialisierung
-  // (@HopMetadataProperty) benoetigt.
-  public GisOutputFormatParameter() {}
-
-  public GisOutputFormatParameter(String key, String value) {
-    this.key = key;
-    this.value = value;
+  public GisGroupByField(String name) {
+    this.name = name;
   }
 
-  public String getKey() {
-    return key;
+  public String getName() {
+    return name;
   }
 
-  public void setKey(String key) {
-    this.key = key;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
+  public void setName(String name) {
+    this.name = name;
   }
 }
