@@ -24,17 +24,17 @@ package com.atolcd.hop.pipeline.transforms.gisrelate;
 
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.hop.core.CheckResult;
 import org.apache.hop.core.annotations.Transform;
 import org.apache.hop.core.exception.HopException;
+import org.apache.hop.core.exception.HopPluginException;
 import org.apache.hop.core.exception.HopTransformException;
-import org.apache.hop.core.exception.HopXmlException;
 import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.core.row.IValueMeta;
-import org.apache.hop.core.row.value.ValueMetaBase;
+import org.apache.hop.core.row.value.ValueMetaFactory;
 import org.apache.hop.core.variables.IVariables;
-import org.apache.hop.core.xml.XmlHandler;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
@@ -44,7 +44,6 @@ import org.apache.hop.pipeline.transform.TransformMeta;
 import org.apache.hop.pipeline.transform.stream.IStream;
 import org.apache.hop.resource.IResourceNaming;
 import org.eclipse.swt.widgets.Shell;
-import org.w3c.dom.Node;
 
 @Transform(
     id = "GisRelate",
@@ -58,6 +57,7 @@ public class GisRelateMeta extends BaseTransformMeta<GisRelate, GisRelateData> {
 
   private static final Class<?> PKG = GisRelateMeta.class; // Needed by Translator
 
+  @HopMetadataProperty(injectionKeyDescription = "GisRelate.Operator.Label")
   private String operator;
 
   // Opérateurs avec résultat de type boolean
@@ -81,21 +81,33 @@ public class GisRelateMeta extends BaseTransformMeta<GisRelate, GisRelateData> {
   // Opérateurs avec résultat de type numérique
   private static String[] numericResultOperators = new String[] {"DISTANCE_MIN", "DISTANCE_MAX"};
 
+  @HopMetadataProperty(injectionKeyDescription = "GisRelate.FirstGeometryFieldName.Label")
   private String firstGeometryFieldName;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisRelate.SecondGeometryFieldName.Label")
   private String secondGeometryFieldName;
 
   // Filtrage de lignes
   private static String[] returnTypes = new String[] {"ALL", "FALSE", "TRUE"};
+
+  @HopMetadataProperty(injectionKeyDescription = "GisRelate.ReturnType.Label")
   private String returnType;
 
   // Pour opérateurs avec besoin de distance
   private static String[] withDistanceOperators =
       new String[] {"IS_WITHIN_DISTANCE", "IS_NOT_WITHIN_DISTANCE"};
+
+  @HopMetadataProperty(injectionKeyDescription = "GisRelate.DistanceDynamic.Label")
   private boolean dynamicDistance;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisRelate.DistanceFieldName.ToolTip")
   private String distanceFieldName;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisRelate.DistanceValue.ToolTip")
   private String distanceValue;
 
   // Colonne de sortie
+  @HopMetadataProperty(injectionKeyDescription = "GisRelate.OutputFieldName.Label")
   private String outputFieldName;
 
   public String getOperator() {
@@ -178,22 +190,10 @@ public class GisRelateMeta extends BaseTransformMeta<GisRelate, GisRelateData> {
     this.distanceValue = distanceValue;
   }
 
-  @Override
-  public String getXml() {
-
-    StringBuffer retval = new StringBuffer();
-    retval.append("    " + XmlHandler.addTagValue("operator", operator));
-    retval.append("    " + XmlHandler.addTagValue("returnType", returnType));
-    retval.append(
-        "    " + XmlHandler.addTagValue("firstGeometryFieldName", firstGeometryFieldName));
-    retval.append(
-        "    " + XmlHandler.addTagValue("secondGeometryFieldName", secondGeometryFieldName));
-    retval.append("    " + XmlHandler.addTagValue("dynamicDistance", dynamicDistance));
-    retval.append("    " + XmlHandler.addTagValue("distanceFieldName", distanceFieldName));
-    retval.append("    " + XmlHandler.addTagValue("distanceValue", distanceValue));
-    retval.append("    " + XmlHandler.addTagValue("outputFieldName", outputFieldName));
-    return retval.toString();
-  }
+  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
+  // BaseTransformMeta.getXml() nicht mehr aufgerufen - die Serialisierung
+  // erfolgt jetzt ausschliesslich reflection-basiert ueber die
+  // @HopMetadataProperty-Annotationen oben.
 
   @Override
   public void getFields(
@@ -205,8 +205,12 @@ public class GisRelateMeta extends BaseTransformMeta<GisRelate, GisRelateData> {
       IHopMetadataProvider metadataProvider) {
 
     if (ArrayUtils.contains(numericResultOperators, operator)) {
-      IValueMeta valueMeta =
-          (IValueMeta) new ValueMetaBase(outputFieldName, ValueMetaBase.TYPE_NUMBER);
+      IValueMeta valueMeta = null;
+      try {
+        valueMeta = ValueMetaFactory.createValueMeta(outputFieldName, IValueMeta.TYPE_NUMBER);
+      } catch (HopPluginException e) {
+        throw new RuntimeException(e);
+      }
       valueMeta.setOrigin(origin);
       r.addValueMeta(valueMeta);
     }
@@ -214,7 +218,12 @@ public class GisRelateMeta extends BaseTransformMeta<GisRelate, GisRelateData> {
     if (ArrayUtils.contains(boolResultOperators, operator)) {
 
       if (returnType.equalsIgnoreCase("ALL")) {
-        IValueMeta valueMeta = new ValueMetaBase(outputFieldName, ValueMetaBase.TYPE_BOOLEAN);
+        IValueMeta valueMeta = null;
+        try {
+          valueMeta = ValueMetaFactory.createValueMeta(outputFieldName, IValueMeta.TYPE_BOOLEAN);
+        } catch (HopPluginException e) {
+          throw new RuntimeException(e);
+        }
         valueMeta.setOrigin(origin);
         r.addValueMeta(valueMeta);
       }
@@ -227,24 +236,10 @@ public class GisRelateMeta extends BaseTransformMeta<GisRelate, GisRelateData> {
     return retval;
   }
 
-  @Override
-  public void loadXml(Node stepnode, IHopMetadataProvider metadataProvider) throws HopXmlException {
-
-    try {
-
-      operator = XmlHandler.getTagValue(stepnode, "operator");
-      returnType = XmlHandler.getTagValue(stepnode, "returnType");
-      firstGeometryFieldName = XmlHandler.getTagValue(stepnode, "firstGeometryFieldName");
-      secondGeometryFieldName = XmlHandler.getTagValue(stepnode, "secondGeometryFieldName");
-      dynamicDistance = "Y".equalsIgnoreCase(XmlHandler.getTagValue(stepnode, "dynamicDistance"));
-      distanceFieldName = XmlHandler.getTagValue(stepnode, "distanceFieldName");
-      distanceValue = XmlHandler.getTagValue(stepnode, "distanceValue");
-      outputFieldName = XmlHandler.getTagValue(stepnode, "outputFieldName");
-
-    } catch (Exception e) {
-      throw new HopXmlException("Unable to read step info from XML node", e);
-    }
-  }
+  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml()
+  // (siehe oben). ACHTUNG: Bereits gespeicherte .hpl-Dateien mit dem alten
+  // Format enthalten diese Tags nicht - einmal neu speichern behebt das
+  // dauerhaft.
 
   public void setDefault() {
     operator = "CONTAINS";

@@ -2,27 +2,27 @@ package com.atolcd.gis.svg.type;
 
 public interface IElement {
 
-  public void setId(String id);
+  void setId(String id);
 
-  public void setTitle(String title);
+  void setTitle(String title);
 
-  public void setDescription(String description);
+  void setDescription(String description);
 
-  public void setSvgStyle(String svgStyle);
+  void setSvgStyle(String svgStyle);
 
-  public void setCssClass(String cssClass);
+  void setCssClass(String cssClass);
 
-  public void setTransform(String transform);
+  void setTransform(String transform);
 
-  public String getId();
+  String getId();
 
-  public String getTitle();
+  String getTitle();
 
-  public String getDescription();
+  String getDescription();
 
-  public String getSvgStyle();
+  String getSvgStyle();
 
-  public String getCssClass();
+  String getCssClass();
 
-  public String getTransform();
+  String getTransform();
 }

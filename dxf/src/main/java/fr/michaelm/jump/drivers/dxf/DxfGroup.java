@@ -112,15 +112,13 @@ public class DxfGroup {
   }
 
   public boolean equals(Object other) {
-    if (other instanceof DxfGroup
+    return other instanceof DxfGroup
         && code == ((DxfGroup) other).getCode()
-        && value.equals(((DxfGroup) other).getValue())) {
-      return true;
-    } else return false;
+        && value.equals(((DxfGroup) other).getValue());
   }
 
   public String toString() {
-    String codeString = "    " + Integer.toString(code);
+    String codeString = "    " + code;
     int stringLength = codeString.length();
     codeString = codeString.substring(stringLength - (code < 1000 ? 3 : 4), stringLength);
     return codeString + "\r\n" + value + "\r\n";
@@ -128,7 +126,7 @@ public class DxfGroup {
 
   public void print(int indent) {
     for (int i = 0; i < indent; i++) System.out.print(" ");
-    System.out.println("" + code + " = " + value);
+    System.out.println(code + " = " + value);
   }
 
   public boolean isValid() {
@@ -136,14 +134,14 @@ public class DxfGroup {
   }
 
   public static String int34car(int code) {
-    if (code < 10) return "  " + Integer.toString(code);
-    else if (code < 100) return " " + Integer.toString(code);
+    if (code < 10) return "  " + code;
+    else if (code < 100) return " " + code;
     else return Integer.toString(code);
   }
 
   public static String int6car(int value) {
-    String s = "     " + Integer.toString(value);
-    return s.substring(s.length() - 6, s.length());
+    String s = "     " + value;
+    return s.substring(s.length() - 6);
   }
 
   public static String toString(int code, String value) {
@@ -155,10 +153,7 @@ public class DxfGroup {
   }
 
   public static String toString(int code, float value, int decimalPartLength) {
-    return int34car(code)
-        + "\r\n"
-        + decimalFormats[decimalPartLength].format((double) value)
-        + "\r\n";
+    return int34car(code) + "\r\n" + decimalFormats[decimalPartLength].format(value) + "\r\n";
   }
 
   public static String toString(int code, double value, int decimalPartLength) {

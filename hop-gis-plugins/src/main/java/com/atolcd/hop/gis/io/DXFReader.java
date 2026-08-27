@@ -35,12 +35,12 @@ import org.apache.hop.core.exception.HopException;
 
 public class DXFReader extends AbstractFileReader {
 
-  private String dxfFileName;
-  private boolean dxfFileExist;
-  private boolean circleAsPolygon;
-  private boolean ellipseAsPolygon;
-  private boolean lineAsPolygon;
-  private boolean readXData;
+  private final String dxfFileName;
+  private final boolean dxfFileExist;
+  private final boolean circleAsPolygon;
+  private final boolean ellipseAsPolygon;
+  private final boolean lineAsPolygon;
+  private final boolean readXData;
 
   public DXFReader(
       String fileName,
@@ -132,7 +132,7 @@ public class DXFReader extends AbstractFileReader {
                           + "\" type = \""
                           + xData.getType()
                           + "\">"
-                          + String.valueOf(xData.getValue())
+                          + xData.getValue()
                           + "</attribute>";
                 }
                 xmlXData += "</attributes>";

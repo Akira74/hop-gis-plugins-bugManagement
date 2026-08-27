@@ -154,11 +154,7 @@ public class ParametricPlane {
 
     v = this.base.getX() + (this.directionX.getX() * para[0]) + (this.directionY.getX() * para[1]);
 
-    if (!(Math.abs((p.getX() - v)) < MathUtils.DISTANCE_DELTA)) {
-      return false;
-    }
-
-    return true;
+    return Math.abs((p.getX() - v)) < MathUtils.DISTANCE_DELTA;
   }
 
   public Point getBasePoint() {

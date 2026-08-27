@@ -41,6 +41,7 @@ import com.atolcd.hop.gis.utils.GeometryUtils;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -64,9 +65,9 @@ public class SVGWriter extends AbstractFileWriter {
   public static String SYMBOL_DEFAULT_ID = "symbolDefault";
   public static String GROUP_PREFIX = "layer_";
 
-  private String svgFileName;
+  private final String svgFileName;
   private Writer writer;
-  private boolean isServletOutput;
+  private final boolean isServletOutput;
 
   private double height;
   private double width;
@@ -280,7 +281,7 @@ public class SVGWriter extends AbstractFileWriter {
   private String getMD5(String chaine)
       throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
-    byte[] chaineBytes = chaine.getBytes("UTF-8");
+    byte[] chaineBytes = chaine.getBytes(StandardCharsets.UTF_8);
     MessageDigest messageDigest = MessageDigest.getInstance("MD5");
     byte[] hash = messageDigest.digest(chaineBytes);
 
@@ -429,13 +430,11 @@ public class SVGWriter extends AbstractFileWriter {
 
           if (!symbols.containsKey(symbolId)) {
 
-            boolean encodeImage = false;
+            boolean encodeImage =
+                this.symbolMode != null
+                    && this.symbolMode.equalsIgnoreCase(SVGWriter.RESSOURCE_EMBEDDED);
 
             // Conversion en base 64
-            if (this.symbolMode != null
-                && this.symbolMode.equalsIgnoreCase(SVGWriter.RESSOURCE_EMBEDDED)) {
-              encodeImage = true;
-            }
 
             Image image = SvgUtil.toSvgImage(imageURL, encodeImage);
             image.setId(symbolId);
@@ -490,7 +489,7 @@ public class SVGWriter extends AbstractFileWriter {
     for (long key : groups.keySet()) {
 
       Group groupElement = new Group();
-      groupElement.setId(GROUP_PREFIX + String.valueOf(key));
+      groupElement.setId(GROUP_PREFIX + key);
 
       for (Feature feature : groups.get(key)) {
 
@@ -530,7 +529,6 @@ public class SVGWriter extends AbstractFileWriter {
           }
 
           Puntal puntal = (Puntal) GeometryUtils.getLessPrecisionGeometry(geometry, this.precision);
-          ;
 
           // Simple point
           if (geometry instanceof Point) {
@@ -659,7 +657,7 @@ public class SVGWriter extends AbstractFileWriter {
     // Ajout des labels
     if (!labels.isEmpty()) {
       Group groupElement = new Group();
-      groupElement.setId(GROUP_PREFIX + String.valueOf("Labels"));
+      groupElement.setId(GROUP_PREFIX + "Labels");
       groupElement.getElements().addAll(labels);
       svgDocument.getElements().add(groupElement);
     }

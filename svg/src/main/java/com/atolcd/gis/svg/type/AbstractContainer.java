@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class AbstractContainer extends AbstractElement {
 
-  private List<AbstractElement> elements;
+  private final List<AbstractElement> elements;
 
   public AbstractContainer() {
     this.elements = new ArrayList<AbstractElement>();

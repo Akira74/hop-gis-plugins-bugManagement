@@ -15,9 +15,9 @@ public class Document {
   private String version;
   private String creator;
   private Metadata metadata;
-  private List<WayPoint> wayPoints;
-  private List<Track> tracks;
-  private List<Route> routes;
+  private final List<WayPoint> wayPoints;
+  private final List<Track> tracks;
+  private final List<Route> routes;
 
   public Document() {
     this.version = GPX_VERSION_1_1;

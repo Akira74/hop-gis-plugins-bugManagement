@@ -12,7 +12,7 @@ import org.locationtech.jts.geom.LineString;
 public class Route extends AbstractSpatialElement implements ISpatialElement {
 
   private Integer number;
-  private List<WayPoint> points;
+  private final List<WayPoint> points;
 
   public Route() {
     this.number = null;

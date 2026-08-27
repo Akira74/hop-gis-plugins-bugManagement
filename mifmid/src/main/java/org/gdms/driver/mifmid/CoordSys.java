@@ -140,13 +140,13 @@ public class CoordSys {
     if (type.equalsIgnoreCase("EARTH")) {
       sb.append("Earth ");
       if (projection != null) {
-        sb.append(projection.toString());
+        sb.append(projection);
       }
       if (affine != null) {
-        sb.append(affine.toString());
+        sb.append(affine);
       }
       if (bounds != null) {
-        sb.append(bounds.toString());
+        sb.append(bounds);
       }
     }
     return sb.toString();

@@ -19,8 +19,8 @@ import java.util.Iterator;
 import org.kabeja.dxf.helpers.Point;
 
 public class NURBSFixedNTELSPointIterator implements Iterator {
-  private NURBS nurbs;
-  private int ntels;
+  private final NURBS nurbs;
+  private final int ntels;
   private double dt = 0;
   private double t = 0;
   private int interval;

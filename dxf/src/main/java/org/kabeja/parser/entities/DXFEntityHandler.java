@@ -40,28 +40,28 @@ public interface DXFEntityHandler extends Handler {
   /**
    * @return the DXFEntity name (LINE,POLYLINE,TEXT,...)
    */
-  public abstract String getDXFEntityName();
+  String getDXFEntityName();
 
-  public void setDXFDocument(DXFDocument doc);
+  void setDXFDocument(DXFDocument doc);
 
   /** Will called if the entity block starts. */
-  public abstract void startDXFEntity();
+  void startDXFEntity();
 
-  public abstract void parseGroup(int groupCode, DXFValue value);
+  void parseGroup(int groupCode, DXFValue value);
 
   /**
    * Called after endDXFEntity.
    *
    * @return the parsed Entity
    */
-  public abstract DXFEntity getDXFEntity();
+  DXFEntity getDXFEntity();
 
   /** Will called if the entity block ends. */
-  public abstract void endDXFEntity();
+  void endDXFEntity();
 
   /**
    * @return true if the this DXFEntityHandler have to parse the following entities (like POLYLINE),
    *     otherwise false (like TEXT,LINE).
    */
-  public abstract boolean isFollowSequence();
+  boolean isFollowSequence();
 }

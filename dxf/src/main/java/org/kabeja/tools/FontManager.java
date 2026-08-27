@@ -26,9 +26,9 @@ import java.util.Hashtable;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public class FontManager {
-  private static FontManager instance = new FontManager();
+  private static final FontManager instance = new FontManager();
   private String fontDescription = "conf/font.properties";
-  private Hashtable fontProperties = new Hashtable();
+  private final Hashtable fontProperties = new Hashtable();
 
   private FontManager() {
     loadFontDescription();
@@ -86,11 +86,7 @@ public class FontManager {
   public boolean hasFontDescription(String font) {
     font = getFontKey(font);
 
-    if (fontProperties.containsKey(font)) {
-      return true;
-    }
-
-    return false;
+    return fontProperties.containsKey(font);
   }
 
   public String getFontDescription(String font) {

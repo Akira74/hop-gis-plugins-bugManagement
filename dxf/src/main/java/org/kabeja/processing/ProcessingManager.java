@@ -36,12 +36,12 @@ import org.kabeja.xml.SAXSerializer;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public class ProcessingManager {
-  private Map saxfilters = new HashMap();
-  private Map saxserializers = new HashMap();
-  private Map postprocessors = new HashMap();
-  private Map pipelines = new HashMap();
-  private Map saxgenerators = new HashMap();
-  private List parsers = new ArrayList();
+  private final Map saxfilters = new HashMap();
+  private final Map saxserializers = new HashMap();
+  private final Map postprocessors = new HashMap();
+  private final Map pipelines = new HashMap();
+  private final Map saxgenerators = new HashMap();
+  private final List parsers = new ArrayList();
 
   public void addSAXFilter(SAXFilter filter, String name) {
     this.saxfilters.put(name, filter);

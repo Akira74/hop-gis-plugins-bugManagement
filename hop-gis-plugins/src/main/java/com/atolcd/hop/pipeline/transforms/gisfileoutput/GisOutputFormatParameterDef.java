@@ -30,11 +30,11 @@ public class GisOutputFormatParameterDef {
   public static String TYPE_FIELD = "FIELD_VALUE";
   public static String TYPE_FIXED = "FIXED_VALUE";
 
-  private String key;
-  private int valueMetaType;
-  private boolean required;
-  private List<String> predefinedValues;
-  private String defaultValue;
+  private final String key;
+  private final int valueMetaType;
+  private final boolean required;
+  private final List<String> predefinedValues;
+  private final String defaultValue;
 
   public GisOutputFormatParameterDef(String key, int valueMetaType, boolean required) {
     this.key = key;

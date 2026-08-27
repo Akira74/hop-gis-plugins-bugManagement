@@ -67,7 +67,7 @@ public class PolygonHandler implements ShapeHandler {
       file.readDoubleLE();
       actualReadWords += 4 * 4;
 
-      int partOffsets[];
+      int[] partOffsets;
 
       int numParts = file.readIntLE();
       int numPoints = file.readIntLE();
@@ -131,7 +131,7 @@ public class PolygonHandler implements ShapeHandler {
           finish = partOffsets[part + 1];
         }
         length = finish - start;
-        Coordinate points[] = new Coordinate[length];
+        Coordinate[] points = new Coordinate[length];
         for (int i = 0; i < length; i++) {
           points[i] = coords[offset];
           offset++;
@@ -166,7 +166,7 @@ public class PolygonHandler implements ShapeHandler {
           shells.removeAll(holes);
           ArrayList ccwHoles = new ArrayList(holes.size());
           for (int i = 0; i < holes.size(); i++) {
-            ccwHoles.add(reverseRing((LinearRing) holes.get(i)));
+            ccwHoles.add(reverseRing(holes.get(i)));
           }
           holes = ccwHoles;
         }
@@ -189,14 +189,14 @@ public class PolygonHandler implements ShapeHandler {
       } else {
         // find holes
         for (int i = 0; i < holes.size(); i++) {
-          LinearRing testRing = (LinearRing) holes.get(i);
+          LinearRing testRing = holes.get(i);
           LinearRing minShell = null;
           Envelope minEnv = null;
           Envelope testEnv = testRing.getEnvelopeInternal();
           Coordinate testPt = testRing.getCoordinateN(0);
           LinearRing tryRing;
           for (int j = 0; j < shells.size(); j++) {
-            tryRing = (LinearRing) shells.get(j);
+            tryRing = shells.get(j);
             Envelope tryEnv = tryRing.getEnvelopeInternal();
             if (minShell != null) minEnv = minShell.getEnvelopeInternal();
             boolean isContained = false;
@@ -223,7 +223,7 @@ public class PolygonHandler implements ShapeHandler {
       for (int i = 0; i < shells.size(); i++) {
         polygons[i] =
             geometryFactory.createPolygon(
-                (LinearRing) shells.get(i),
+                shells.get(i),
                 (LinearRing[]) ((ArrayList) holesForShells.get(i)).toArray(new LinearRing[0]));
       }
 

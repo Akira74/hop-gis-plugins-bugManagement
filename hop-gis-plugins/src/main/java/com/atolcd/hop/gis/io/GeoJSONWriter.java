@@ -43,11 +43,11 @@ import org.wololo.geojson.GeoJSON;
 
 public class GeoJSONWriter extends AbstractFileWriter {
 
-  private static GeometryFactory geometryFactory = new GeometryFactory();
-  private String geoJsonFileName;
+  private static final GeometryFactory geometryFactory = new GeometryFactory();
+  private final String geoJsonFileName;
 
-  private Writer writer;
-  private boolean isServletOutput;
+  private final Writer writer;
+  private final boolean isServletOutput;
 
   private String featureIdField;
 
@@ -90,7 +90,7 @@ public class GeoJSONWriter extends AbstractFileWriter {
     List<org.wololo.geojson.Feature> geoJsonfeatures = new ArrayList<org.wololo.geojson.Feature>();
 
     // Boucle sur chaque feature
-    Geometry geometries[] = new Geometry[features.size()];
+    Geometry[] geometries = new Geometry[features.size()];
     int i = 0;
     boolean first = true;
     for (Feature feature : features) {
@@ -152,10 +152,10 @@ public class GeoJSONWriter extends AbstractFileWriter {
           "Error writing features to "
               + this.geoJsonFileName
               + " : Mixed SRID are not supported "
-              + srids.toString());
+              + srids);
     } else {
 
-      if (srids != null && !(srids.get(0) != null) && !srids.get(0).equals(0)) {
+      if (srids != null && srids.get(0) == null && !srids.get(0).equals(0)) {
 
         HashMap<String, Object> crsProperties = new HashMap<String, Object>();
         crsProperties.put("name", "urn:ogc:def:crs:EPSG::" + srids.get(0));
@@ -180,7 +180,7 @@ public class GeoJSONWriter extends AbstractFileWriter {
 
       try {
 
-        PrintWriter printWriter = new PrintWriter(this.geoJsonFileName, this.charset.name());
+        PrintWriter printWriter = new PrintWriter(this.geoJsonFileName, this.charset);
         printWriter.print(json);
         printWriter.close();
 

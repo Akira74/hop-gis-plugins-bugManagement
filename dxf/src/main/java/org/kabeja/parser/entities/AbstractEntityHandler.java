@@ -97,11 +97,11 @@ public abstract class AbstractEntityHandler implements DXFEntityHandler {
 
         } else if (groupCode == GROUPCODE_XDATA_INTEGER) {
           this.currentExtendedData.setType(Integer.class);
-          this.currentExtendedData.setValue(new Integer(value.getIntegerValue()));
+          this.currentExtendedData.setValue(Integer.valueOf(value.getIntegerValue()));
 
         } else if (groupCode == GROUPCODE_XDATA_LONG) {
           this.currentExtendedData.setType(Long.class);
-          this.currentExtendedData.setValue(new Long(value.getIntegerValue()));
+          this.currentExtendedData.setValue(Long.valueOf(value.getIntegerValue()));
 
         } else {
           this.currentExtendedData.setType(String.class);

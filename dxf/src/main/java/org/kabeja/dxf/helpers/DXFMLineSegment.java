@@ -57,6 +57,6 @@ public class DXFMLineSegment {
   }
 
   public DXFMLineSegmentElement getDXFMLineSegmentElement(int index) {
-    return (DXFMLineSegmentElement) this.elements.get(index);
+    return this.elements.get(index);
   }
 }

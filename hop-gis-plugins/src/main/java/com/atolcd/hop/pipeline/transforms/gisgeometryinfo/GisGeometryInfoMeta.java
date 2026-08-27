@@ -24,20 +24,21 @@ package com.atolcd.hop.pipeline.transforms.gisgeometryinfo;
 
 import com.atolcd.hop.core.row.value.ValueMetaGeometry;
 import com.atolcd.hop.pipeline.transforms.gisfileinput.GisFileInputDialog;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import org.apache.hop.core.CheckResult;
-import org.apache.hop.core.Const;
 import org.apache.hop.core.ICheckResult;
 import org.apache.hop.core.annotations.Transform;
-import org.apache.hop.core.exception.HopXmlException;
+import org.apache.hop.core.exception.HopPluginException;
 import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.core.row.IValueMeta;
 import org.apache.hop.core.row.value.ValueMetaBase;
+import org.apache.hop.core.row.value.ValueMetaFactory;
 import org.apache.hop.core.variables.IVariables;
-import org.apache.hop.core.xml.XmlHandler;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
@@ -45,7 +46,6 @@ import org.apache.hop.pipeline.transform.ITransformDialog;
 import org.apache.hop.pipeline.transform.ITransformMeta;
 import org.apache.hop.pipeline.transform.TransformMeta;
 import org.eclipse.swt.widgets.Shell;
-import org.w3c.dom.Node;
 
 @Transform(
     id = "GisGeometryInfo",
@@ -58,14 +58,18 @@ import org.w3c.dom.Node;
 public class GisGeometryInfoMeta extends BaseTransformMeta<GisGeometryInfo, GisGeometryInfoData> {
 
   private HashMap<String, Integer> infosTypes;
+
+  @HopMetadataProperty(injectionKeyDescription = "GisGeometryInfo.GeometryFieldName.Label")
   private String geometryFieldName;
-  private LinkedHashMap<String, String> outputFields;
+
+  @HopMetadataProperty(groupKey = "outputs", key = "output")
+  private List<GisGeometryInfoOutputField> outputFieldList;
 
   public GisGeometryInfoMeta() {
 
     super();
     this.infosTypes = new HashMap<String, Integer>();
-    this.outputFields = new LinkedHashMap<String, String>();
+    this.outputFieldList = new ArrayList<GisGeometryInfoOutputField>();
 
     this.infosTypes.put("NULL_OR_EMPTY", ValueMetaBase.TYPE_BOOLEAN);
     this.infosTypes.put("AREA", ValueMetaBase.TYPE_NUMBER);
@@ -99,37 +103,42 @@ public class GisGeometryInfoMeta extends BaseTransformMeta<GisGeometryInfo, GisG
     this.geometryFieldName = geometryFieldName;
   }
 
+  // WICHTIG: Hops reflection-basierte (De-)Serialisierung sucht Getter/Setter
+  // anhand des exakten Feldnamens (hier: outputFieldList) - NICHT anhand der
+  // @HopMetadataProperty-Annotation oder irgendeines anderen Methodennamens.
+  // Diese beiden Methoden sind daher zwingend erforderlich, zusaetzlich zur
+  // LinkedHashMap-Wrapper-API unten (die weiterhin fuer Dialog/Runtime bleibt).
+  public List<GisGeometryInfoOutputField> getOutputFieldList() {
+    return outputFieldList;
+  }
+
+  public void setOutputFieldList(List<GisGeometryInfoOutputField> outputFieldList) {
+    this.outputFieldList = outputFieldList;
+  }
+
+  // Oeffentliche API bleibt unveraendert (LinkedHashMap<String,String>), damit
+  // Dialog und Laufzeit-Klasse nicht angepasst werden muessen. Intern wird
+  // jetzt aber outputFieldList (siehe oben) serialisiert, da Hop seit 2.18
+  // keine Maps annotieren kann, nur Listen von POJOs.
   public LinkedHashMap<String, String> getOutputFields() {
-    return outputFields;
+    LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+    for (GisGeometryInfoOutputField field : outputFieldList) {
+      map.put(field.getInfoKey(), field.getInfoFieldname());
+    }
+    return map;
   }
 
   public void setOutputFields(LinkedHashMap<String, String> outputFields) {
-    this.outputFields = outputFields;
-  }
-
-  @Override
-  public String getXml() {
-
-    StringBuffer retval = new StringBuffer();
-
-    retval.append("    " + XmlHandler.addTagValue("geometryFieldName", geometryFieldName));
-
-    retval.append("\t<outputs>").append(Const.CR);
-    for (Entry<String, String> output : outputFields.entrySet()) {
-
-      String key = output.getKey();
-      String value = output.getValue();
-
-      retval.append("\t\t<output>").append(Const.CR);
-      retval.append("\t\t\t").append(XmlHandler.addTagValue("infoKey", key));
-      retval.append("\t\t\t").append(XmlHandler.addTagValue("infoFieldname", value));
-      retval.append("\t\t</output>").append(Const.CR);
+    this.outputFieldList = new ArrayList<GisGeometryInfoOutputField>();
+    for (Entry<String, String> entry : outputFields.entrySet()) {
+      this.outputFieldList.add(new GisGeometryInfoOutputField(entry.getKey(), entry.getValue()));
     }
-
-    retval.append("\t</outputs>").append(Const.CR);
-
-    return retval.toString();
   }
+
+  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
+  // BaseTransformMeta.getXml() nicht mehr aufgerufen - die Serialisierung
+  // erfolgt jetzt ausschliesslich reflection-basiert ueber die
+  // @HopMetadataProperty-Annotationen oben.
 
   @Override
   public void getFields(
@@ -140,17 +149,21 @@ public class GisGeometryInfoMeta extends BaseTransformMeta<GisGeometryInfo, GisG
       IVariables space,
       IHopMetadataProvider metadataProvider) {
 
-    for (Entry<String, String> output : outputFields.entrySet()) {
+    for (GisGeometryInfoOutputField output : outputFieldList) {
 
-      String fieldName = output.getValue();
-      int valueMetaType = infosTypes.get(output.getKey());
+      String fieldName = output.getInfoFieldname();
+      int valueMetaType = infosTypes.get(output.getInfoKey());
 
       IValueMeta valueMeta = null;
 
       if (valueMetaType == ValueMetaGeometry.TYPE_GEOMETRY) {
         valueMeta = new ValueMetaGeometry(fieldName);
       } else {
-        valueMeta = new ValueMetaBase(fieldName, valueMetaType);
+        try {
+          valueMeta = ValueMetaFactory.createValueMeta(fieldName, valueMetaType);
+        } catch (HopPluginException e) {
+          throw new RuntimeException(e);
+        }
       }
 
       valueMeta.setOrigin(origin);
@@ -164,26 +177,10 @@ public class GisGeometryInfoMeta extends BaseTransformMeta<GisGeometryInfo, GisG
     return retval;
   }
 
-  @Override
-  public void loadXml(Node stepnode, IHopMetadataProvider metadataProvider) throws HopXmlException {
-
-    try {
-
-      geometryFieldName = XmlHandler.getTagValue(stepnode, "geometryFieldName");
-      Node outputsNode = XmlHandler.getSubNode(stepnode, "outputs");
-      for (int i = 0; i < XmlHandler.countNodes(outputsNode, "output"); i++) {
-
-        Node outputNode = XmlHandler.getSubNodeByNr(outputsNode, "output", i);
-        String key = XmlHandler.getTagValue(outputNode, "infoKey");
-        String value = XmlHandler.getTagValue(outputNode, "infoFieldname");
-
-        outputFields.put(key, value);
-      }
-
-    } catch (Exception e) {
-      throw new HopXmlException("Unable to read step info from XML node", e);
-    }
-  }
+  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml()
+  // (siehe oben). ACHTUNG: Bereits gespeicherte .hpl-Dateien mit dem alten
+  // Format enthalten diese Tags nicht - einmal neu speichern behebt das
+  // dauerhaft.
 
   public void setDefault() {}
 
@@ -192,8 +189,8 @@ public class GisGeometryInfoMeta extends BaseTransformMeta<GisGeometryInfo, GisG
       PipelineMeta transmeta,
       TransformMeta stepMeta,
       IRowMeta prev,
-      String input[],
-      String output[],
+      String[] input,
+      String[] output,
       IRowMeta info) {
 
     CheckResult cr;

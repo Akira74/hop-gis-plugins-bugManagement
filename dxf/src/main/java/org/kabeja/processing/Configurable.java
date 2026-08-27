@@ -23,12 +23,12 @@ public interface Configurable {
    *
    * @param properties
    */
-  public void setProperties(Map properties);
+  void setProperties(Map properties);
 
   /**
    * Get the configuration Properties of the component.
    *
    * @return
    */
-  public Map getProperties();
+  Map getProperties();
 }

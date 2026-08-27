@@ -29,7 +29,7 @@ import org.kabeja.dxf.helpers.DXFUtils;
 import org.kabeja.dxf.helpers.Point;
 
 public class PolylineQueue {
-  private List elements = new ArrayList();
+  private final List elements = new ArrayList();
   private Point startPoint;
   private Point endPoint;
   private double radius = DXFConstants.POINT_CONNECTION_RADIUS;

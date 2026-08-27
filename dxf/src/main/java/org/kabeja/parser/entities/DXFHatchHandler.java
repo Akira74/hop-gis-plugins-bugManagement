@@ -181,29 +181,25 @@ public class DXFHatchHandler extends AbstractEntityHandler {
 
           switch (value.getIntegerValue()) {
             case 1:
-              boundaryHandler =
-                  (DXFEntityHandler) boundaryHandlers.get(DXFConstants.ENTITY_TYPE_LINE);
+              boundaryHandler = boundaryHandlers.get(DXFConstants.ENTITY_TYPE_LINE);
               boundaryHandler.startDXFEntity();
 
               break;
 
             case 2:
-              boundaryHandler =
-                  (DXFEntityHandler) boundaryHandlers.get(DXFConstants.ENTITY_TYPE_ARC);
+              boundaryHandler = boundaryHandlers.get(DXFConstants.ENTITY_TYPE_ARC);
               boundaryHandler.startDXFEntity();
 
               break;
 
             case 3:
-              boundaryHandler =
-                  (DXFEntityHandler) boundaryHandlers.get(DXFConstants.ENTITY_TYPE_ELLIPSE);
+              boundaryHandler = boundaryHandlers.get(DXFConstants.ENTITY_TYPE_ELLIPSE);
               boundaryHandler.startDXFEntity();
 
               break;
 
             case 4:
-              boundaryHandler =
-                  (DXFEntityHandler) boundaryHandlers.get(DXFConstants.ENTITY_TYPE_SPLINE);
+              boundaryHandler = boundaryHandlers.get(DXFConstants.ENTITY_TYPE_SPLINE);
               boundaryHandler.startDXFEntity();
 
               break;
@@ -385,7 +381,7 @@ public class DXFHatchHandler extends AbstractEntityHandler {
     Iterator<DXFEntityHandler> i = this.boundaryHandlers.values().iterator();
 
     while (i.hasNext()) {
-      DXFEntityHandler handler = (DXFEntityHandler) i.next();
+      DXFEntityHandler handler = i.next();
       handler.setDXFDocument(doc);
     }
   }

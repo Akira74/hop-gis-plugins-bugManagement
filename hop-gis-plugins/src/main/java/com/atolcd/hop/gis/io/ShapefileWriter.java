@@ -55,12 +55,12 @@ import org.locationtech.jts.geom.Polygon;
 
 public class ShapefileWriter extends AbstractFileWriter {
 
-  private static GeometryFactory geometryFactory = new GeometryFactory();
+  private static final GeometryFactory geometryFactory = new GeometryFactory();
 
-  private String shpFileName;
-  private String shxFileName;
-  private String dbfFileName;
-  private String prjFileName;
+  private final String shpFileName;
+  private final String shxFileName;
+  private final String dbfFileName;
+  private final String prjFileName;
   boolean multiPointShapefile;
   boolean zOnlyShapefile;
   boolean forceTo2DGeometry;
@@ -209,14 +209,14 @@ public class ShapefileWriter extends AbstractFileWriter {
             if (value != null) {
               row.add(Long.parseLong(String.valueOf(value)));
             } else {
-              row.add(new Long(0));
+              row.add(Long.valueOf(0));
             }
 
             // Double
           } else if (field.getType().equals(FieldType.DOUBLE)) {
 
             if (value != null) {
-              row.add((Double) value);
+              row.add(value);
             } else {
               row.add(new Double(0.0));
             }
@@ -234,7 +234,7 @@ public class ShapefileWriter extends AbstractFileWriter {
           } else if (field.getType().equals(FieldType.BOOLEAN)) {
 
             if (value != null) {
-              row.add((Boolean) value);
+              row.add(value);
             } else {
               row.add(false);
             }
@@ -243,7 +243,7 @@ public class ShapefileWriter extends AbstractFileWriter {
           } else if (field.getType().equals(FieldType.STRING)) {
 
             if (value != null) {
-              row.add((String) value);
+              row.add(value);
             } else {
               row.add("");
             }
@@ -256,7 +256,7 @@ public class ShapefileWriter extends AbstractFileWriter {
             if (!field.getType().equals(FieldType.GEOMETRY)) {
 
               if (value != null) {
-                row.add((String) value);
+                row.add(value);
               } else {
                 row.add("");
               }
@@ -322,7 +322,7 @@ public class ShapefileWriter extends AbstractFileWriter {
         CoordinateReferenceSystem crs = cRSFactory.getCRS("EPSG:" + srid);
         if (crs != null) {
 
-          PrintWriter printWriter = new PrintWriter(this.prjFileName, this.charset.name());
+          PrintWriter printWriter = new PrintWriter(this.prjFileName, this.charset);
           printWriter.print(crs.toWKT());
           printWriter.close();
         }
@@ -359,7 +359,7 @@ public class ShapefileWriter extends AbstractFileWriter {
           "Error writing features to "
               + this.shpFileName
               + " : Mixed SRID are not supported "
-              + srids.toString());
+              + srids);
     } else {
 
       if (!srids.get(0).equals(0)) {
@@ -380,7 +380,7 @@ public class ShapefileWriter extends AbstractFileWriter {
           "Error writing features to "
               + this.shpFileName
               + " : Mixed types of geometries are not supported "
-              + types.toString());
+              + types);
     } else {
 
       // Cas différencié POINT / MULTIPOINT pour shapefile

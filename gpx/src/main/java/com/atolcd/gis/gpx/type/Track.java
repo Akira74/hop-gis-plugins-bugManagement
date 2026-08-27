@@ -12,7 +12,7 @@ import org.locationtech.jts.geom.MultiLineString;
 public class Track extends AbstractSpatialElement implements ISpatialElement {
 
   private Integer number;
-  private List<TrackSegment> segments;
+  private final List<TrackSegment> segments;
 
   public Track() {
     this.number = null;

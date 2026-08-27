@@ -66,9 +66,9 @@ public final class MifMidReader {
   private String version = "300";
   // private String charset = "WindowsLatin1";
   private String delimiter = "\t";
-  private ArrayList<String> headerLines = new ArrayList<String>();
-  private ArrayList<String> schemaLines = new ArrayList<String>();
-  private GeometryFactory factory = new GeometryFactory();
+  private final ArrayList<String> headerLines = new ArrayList<String>();
+  private final ArrayList<String> schemaLines = new ArrayList<String>();
+  private final GeometryFactory factory = new GeometryFactory();
   private List<Long> mifAdresses = null;
   private List<Long> midAdresses = null;
   private Pattern pCSV =
@@ -83,9 +83,9 @@ public final class MifMidReader {
               + "     ([^\"\\t]*+)                                                 \n"
               + "  )                                                               \n",
           Pattern.COMMENTS);
-  private Pattern pQuote = Pattern.compile("\"\"");
-  private LinkedHashMap<String, String> columns = new LinkedHashMap<String, String>();
-  private Charset charset;
+  private final Pattern pQuote = Pattern.compile("\"\"");
+  private final LinkedHashMap<String, String> columns = new LinkedHashMap<String, String>();
+  private final Charset charset;
 
   /**
    * Creates and initialises a MifMid object with the name of the Mif file to read from ot to write
@@ -215,7 +215,7 @@ public final class MifMidReader {
     pCSV = Pattern.compile(regex, Pattern.COMMENTS);
   }
 
-  public void populateMMFileFeatureSchema() throws IOException, FileNotFoundException, Exception {
+  public void populateMMFileFeatureSchema() throws Exception {
     String line;
     mifRaf.seek(0);
     while (null != (line = mifRaf.readLine())) {
@@ -304,7 +304,7 @@ public final class MifMidReader {
     return values;
   }
 
-  public Geometry getGeometry(int index) throws IOException, Exception {
+  public Geometry getGeometry(int index) throws Exception {
 
     Geometry geometry = null;
     long addressGeometry = mifAdresses.get(index).longValue();
@@ -520,13 +520,11 @@ public final class MifMidReader {
         if (currentPoly.contains(polygons[i])) {
           LinearRing[] holes = new LinearRing[currentPoly.getNumInteriorRing() + 1];
           for (int h = 0; h < holes.length - 1; h++) {
-            holes[h] = (LinearRing) currentPoly.getInteriorRingN(h);
+            holes[h] = currentPoly.getInteriorRingN(h);
           }
-          holes[holes.length - 1] = (LinearRing) polygons[i].getExteriorRing();
+          holes[holes.length - 1] = polygons[i].getExteriorRing();
           finalPolys.set(
-              p,
-              new GeometryFactory()
-                  .createPolygon((LinearRing) currentPoly.getExteriorRing(), holes));
+              p, new GeometryFactory().createPolygon(currentPoly.getExteriorRing(), holes));
           polygons[i] = null;
           break;
         }
@@ -591,7 +589,7 @@ public final class MifMidReader {
     return list.toArray(new String[list.size()]);
   }
 
-  public int createIndexes() throws IOException, FileNotFoundException {
+  public int createIndexes() throws IOException {
     if (mifAdresses != null || midAdresses != null) {
       nbFeatures = 0;
       return mifAdresses.size();

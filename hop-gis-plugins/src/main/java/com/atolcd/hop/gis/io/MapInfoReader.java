@@ -37,9 +37,9 @@ import org.locationtech.jts.geom.Geometry;
 
 public class MapInfoReader extends AbstractFileReader {
 
-  private String mifFileName;
-  private boolean mifFileExist;
-  private boolean midFileExist;
+  private final String mifFileName;
+  private final boolean mifFileExist;
+  private final boolean midFileExist;
 
   public MapInfoReader(String fileName, String geometryFieldName, String charsetName)
       throws HopException {

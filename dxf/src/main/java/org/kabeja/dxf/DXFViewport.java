@@ -60,7 +60,7 @@ public class DXFViewport extends DXFEntity {
   private boolean grid;
   private boolean active = false;
   private int renderMode;
-  private Set frozenLayerSet = new HashSet();
+  private final Set frozenLayerSet = new HashSet();
 
   /**
    * @return Returns the backClippingPlane.

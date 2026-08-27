@@ -22,12 +22,22 @@ package com.atolcd.hop.pipeline.transforms.gisfileinput;
  * #L%
  */
 
+import org.apache.hop.metadata.api.HopMetadataProperty;
+
 public class GisInputFormatParameter {
 
+  @HopMetadataProperty(key = "key")
   private String key;
-  private Object value;
 
-  public GisInputFormatParameter(String key, Object value) {
+  @HopMetadataProperty(key = "value")
+  private String value;
+
+  // No-Arg-Konstruktor: wird von Hops Reflection-basierter (De-)Serialisierung
+  // (@HopMetadataProperty) benoetigt, um die Liste beim Laden aus der .hpl
+  // wieder mit Objekten zu befuellen.
+  public GisInputFormatParameter() {}
+
+  public GisInputFormatParameter(String key, String value) {
     this.key = key;
     this.value = value;
   }
@@ -36,7 +46,15 @@ public class GisInputFormatParameter {
     return key;
   }
 
-  public Object getValue() {
+  public void setKey(String key) {
+    this.key = key;
+  }
+
+  public String getValue() {
     return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
   }
 }

@@ -67,15 +67,16 @@ public class Bounds {
 
   @Override
   public String toString() {
-    StringBuffer sb = new StringBuffer(" Bounds (");
-    sb.append(format.format(minx.doubleValue()));
-    sb.append(", ");
-    sb.append(format.format(miny.doubleValue()));
-    sb.append(")(");
-    sb.append(format.format(maxx.doubleValue()));
-    sb.append(", ");
-    sb.append(format.format(minx.doubleValue()));
-    sb.append(')');
-    return sb.toString();
+    String sb =
+        " Bounds ("
+            + format.format(minx.doubleValue())
+            + ", "
+            + format.format(miny.doubleValue())
+            + ")("
+            + format.format(maxx.doubleValue())
+            + ", "
+            + format.format(minx.doubleValue())
+            + ')';
+    return sb;
   }
 }

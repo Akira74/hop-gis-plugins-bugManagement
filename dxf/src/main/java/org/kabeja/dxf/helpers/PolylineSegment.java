@@ -33,8 +33,8 @@ public class PolylineSegment {
   private double bulgeHeight;
   private double innerRadius;
   private double outerRadius;
-  private DXFVertex start;
-  private DXFPolyline p;
+  private final DXFVertex start;
+  private final DXFPolyline p;
 
   public PolylineSegment(DXFVertex start, DXFVertex end, DXFPolyline p) {
     this.start = start;

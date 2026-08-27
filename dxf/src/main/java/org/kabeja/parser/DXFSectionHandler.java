@@ -32,11 +32,11 @@ import org.kabeja.parser.dxf.DXFHandler;
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  */
 public interface DXFSectionHandler extends Handler, DXFHandler {
-  public String getSectionKey();
+  String getSectionKey();
 
-  public void setDXFDocument(DXFDocument doc);
+  void setDXFDocument(DXFDocument doc);
 
-  public void startSection();
+  void startSection();
 
-  public void endSection();
+  void endSection();
 }

@@ -34,11 +34,11 @@ import org.kabeja.dxf.DXFDocument;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface StreamGenerator {
-  public void setProperties(Map properties);
+  void setProperties(Map properties);
 
-  public String getSuffix();
+  String getSuffix();
 
-  public String getMimeType();
+  String getMimeType();
 
   /**
    * Output the generation result to the given stream.
@@ -46,5 +46,5 @@ public interface StreamGenerator {
    * @param doc the @see DXFDocument to output
    * @param out
    */
-  public void generate(DXFDocument doc, OutputStream out);
+  void generate(DXFDocument doc, OutputStream out);
 }

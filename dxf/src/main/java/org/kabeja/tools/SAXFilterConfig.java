@@ -22,7 +22,7 @@ import java.util.Map;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public class SAXFilterConfig {
-  private Map properties;
+  private final Map properties;
   private String filterName;
 
   public SAXFilterConfig(Map properties) {

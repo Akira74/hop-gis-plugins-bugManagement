@@ -23,13 +23,13 @@ import org.kabeja.parser.Handler;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface DXFTableHandler extends Handler {
-  public String getTableKey();
+  String getTableKey();
 
-  public void setDXFDocument(DXFDocument doc);
+  void setDXFDocument(DXFDocument doc);
 
-  public void startParsing();
+  void startParsing();
 
-  public void parseGroup(int groupCode, DXFValue value);
+  void parseGroup(int groupCode, DXFValue value);
 
-  public void endParsing();
+  void endParsing();
 }

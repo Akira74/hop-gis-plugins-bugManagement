@@ -9,10 +9,10 @@ public class Field {
   public static String TYPE_NUMERIC = "NUMERIC";
   public static String TYPE_NONE = "NONE";
 
-  private String name;
-  private String type;
-  private GeometryProperties geometryProperties;
-  private boolean spatial;
+  private final String name;
+  private final String type;
+  private final GeometryProperties geometryProperties;
+  private final boolean spatial;
 
   public Field(String name, GeometryProperties geometryProperties) {
     this.name = name;

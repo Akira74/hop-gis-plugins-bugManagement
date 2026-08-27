@@ -60,7 +60,7 @@ public final class DXFValue {
   public boolean getBooleanValue() {
     // 0 -> true
     // else -> false
-    return (getIntegerValue() == 0) ? true : false;
+    return getIntegerValue() == 0;
   }
 
   public String toString() {

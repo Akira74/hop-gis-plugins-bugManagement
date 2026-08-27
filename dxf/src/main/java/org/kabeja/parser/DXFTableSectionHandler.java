@@ -29,7 +29,7 @@ public class DXFTableSectionHandler extends AbstractSectionHandler implements Ha
   public final int TABLE_CODE = 0;
   private String table = "";
   private DXFTableHandler handler;
-  private Hashtable handlers = new Hashtable();
+  private final Hashtable handlers = new Hashtable();
   private boolean parse = false;
 
   public DXFTableSectionHandler() {}

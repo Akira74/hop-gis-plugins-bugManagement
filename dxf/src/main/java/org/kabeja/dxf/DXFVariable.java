@@ -22,7 +22,7 @@ import java.util.Iterator;
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  */
 public class DXFVariable {
-  private Hashtable values = new Hashtable();
+  private final Hashtable values = new Hashtable();
   private String name = "";
 
   public DXFVariable(String name) {

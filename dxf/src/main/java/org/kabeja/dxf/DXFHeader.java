@@ -22,7 +22,7 @@ import java.util.Iterator;
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  */
 public class DXFHeader {
-  private Hashtable variables = new Hashtable();
+  private final Hashtable variables = new Hashtable();
 
   public DXFHeader() {}
 
@@ -43,11 +43,7 @@ public class DXFHeader {
   }
 
   public boolean isFillMode() {
-    if (hasVariable("$FILLMODE") && (getVariable("$FILLMODE").getDoubleValue("70") > 0)) {
-      return true;
-    }
-
-    return false;
+    return hasVariable("$FILLMODE") && (getVariable("$FILLMODE").getDoubleValue("70") > 0);
   }
 
   /**

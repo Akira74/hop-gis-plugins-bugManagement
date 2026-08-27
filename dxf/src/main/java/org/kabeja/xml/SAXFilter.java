@@ -24,5 +24,5 @@ import org.xml.sax.ContentHandler;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface SAXFilter extends ContentHandler, Configurable {
-  public void setContentHandler(ContentHandler handler);
+  void setContentHandler(ContentHandler handler);
 }

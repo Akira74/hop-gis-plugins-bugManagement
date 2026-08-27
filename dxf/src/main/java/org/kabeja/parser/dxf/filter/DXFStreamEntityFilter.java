@@ -19,7 +19,7 @@ import org.kabeja.parser.DXFValue;
 import org.kabeja.parser.ParseException;
 
 abstract class DXFStreamEntityFilter extends DXFStreamSectionFilter {
-  private static String SECTION_KEY = "ENTITIES";
+  private static final String SECTION_KEY = "ENTITIES";
   public static final int ENTITY_START = 0;
   protected boolean entitySection = false;
   protected boolean parseEntity = false;

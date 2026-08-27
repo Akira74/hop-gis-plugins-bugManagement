@@ -23,15 +23,15 @@ import javax.swing.JComponent;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface ViewComponent extends ProcessingUIComponent {
-  public static final String SERVICE = ViewComponent.class.getName();
+  String SERVICE = ViewComponent.class.getName();
 
   /**
    * @return the title of the component
    */
-  abstract String getTitle();
+  String getTitle();
 
   /**
    * @return the view of this component
    */
-  abstract JComponent getView();
+  JComponent getView();
 }

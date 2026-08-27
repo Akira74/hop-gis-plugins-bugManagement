@@ -4,7 +4,7 @@ import com.atolcd.gis.svg.type.AbstractGraphic;
 
 public class Path extends AbstractGraphic {
 
-  private String data;
+  private final String data;
 
   public Path(String data) {
     this.data = data;

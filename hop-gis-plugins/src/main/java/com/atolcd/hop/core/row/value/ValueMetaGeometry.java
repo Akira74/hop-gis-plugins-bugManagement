@@ -31,11 +31,15 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.SocketTimeoutException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Types;
 import java.util.Date;
+import net.postgis.jdbc.PGgeometryLW;
+import net.postgis.jdbc.geometry.binary.BinaryParser;
+import net.postgis.jdbc.geometry.binary.BinaryWriter;
 import oracle.spatial.geometry.JGeometry;
 import oracle.spatial.util.WKT;
 import org.apache.hop.core.Const;
@@ -63,9 +67,6 @@ import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.io.WKTWriter;
-import org.postgis.PGgeometryLW;
-import org.postgis.binary.BinaryParser;
-import org.postgis.binary.BinaryWriter;
 
 @ValueMetaPlugin(
     id = "" + ValueMetaGeometry.TYPE_GEOMETRY,
@@ -148,7 +149,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               break;
             default:
               throw new HopValueException(
-                  toString() + " : Unknown storage type " + storageType + " specified.");
+                  this + " : Unknown storage type " + storageType + " specified.");
           }
           if (string != null) string = trim(string);
           break;
@@ -169,7 +170,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               break;
             default:
               throw new HopValueException(
-                  toString() + " : Unknown storage type " + storageType + " specified.");
+                  this + " : Unknown storage type " + storageType + " specified.");
           }
           break;
 
@@ -190,7 +191,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               break;
             default:
               throw new HopValueException(
-                  toString() + " : Unknown storage type " + storageType + " specified.");
+                  this + " : Unknown storage type " + storageType + " specified.");
           }
           break;
 
@@ -211,7 +212,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               break;
             default:
               throw new HopValueException(
-                  toString() + " : Unknown storage type " + storageType + " specified.");
+                  this + " : Unknown storage type " + storageType + " specified.");
           }
           break;
 
@@ -233,7 +234,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               break;
             default:
               throw new HopValueException(
-                  toString() + " : Unknown storage type " + storageType + " specified.");
+                  this + " : Unknown storage type " + storageType + " specified.");
           }
           break;
 
@@ -255,7 +256,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               break;
             default:
               throw new HopValueException(
-                  toString() + " : Unknown storage type " + storageType + " specified.");
+                  this + " : Unknown storage type " + storageType + " specified.");
           }
           break;
 
@@ -275,7 +276,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               break;
             default:
               throw new HopValueException(
-                  toString() + " : Unknown storage type " + storageType + " specified.");
+                  this + " : Unknown storage type " + storageType + " specified.");
           }
           break;
 
@@ -292,12 +293,12 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               break; // just go for the default toString()
             default:
               throw new HopValueException(
-                  toString() + " : Unknown storage type " + storageType + " specified.");
+                  this + " : Unknown storage type " + storageType + " specified.");
           }
           break;
 
         default:
-          throw new HopValueException(toString() + " : Unknown type " + type + " specified.");
+          throw new HopValueException(this + " : Unknown type " + type + " specified.");
       }
 
       if (isOutputPaddingEnabled() && getLength() > 0) {
@@ -307,7 +308,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
       return string;
     } catch (ClassCastException e) {
       throw new HopValueException(
-          toString()
+          this
               + " : There was a data type error: the data type of "
               + object.getClass().getName()
               + " object ["
@@ -320,27 +321,27 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
 
   @Override
   public Double getNumber(Object object) throws HopValueException {
-    throw new HopValueException(toString() + " : can't be converted to a number");
+    throw new HopValueException(this + " : can't be converted to a number");
   }
 
   @Override
   public Long getInteger(Object object) throws HopValueException {
-    throw new HopValueException(toString() + " : can't be converted to an integer");
+    throw new HopValueException(this + " : can't be converted to an integer");
   }
 
   @Override
   public BigDecimal getBigNumber(Object object) throws HopValueException {
-    throw new HopValueException(toString() + " : can't be converted to a big number");
+    throw new HopValueException(this + " : can't be converted to a big number");
   }
 
   @Override
   public Boolean getBoolean(Object object) throws HopValueException {
-    throw new HopValueException(toString() + " : can't be converted to a boolean");
+    throw new HopValueException(this + " : can't be converted to a boolean");
   }
 
   @Override
   public Date getDate(Object object) throws HopValueException {
-    throw new HopValueException(toString() + " : can't be converted to a date");
+    throw new HopValueException(this + " : can't be converted to a date");
   }
 
   @Override
@@ -373,7 +374,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
       switch (type) {
         case IValueMeta.TYPE_NUMBER:
           throw new HopValueException(
-              toString() + " : I don't know how to convert a number to a geometry.");
+              this + " : I don't know how to convert a number to a geometry.");
         case IValueMeta.TYPE_STRING:
           switch (storageType) {
             case IValueMeta.STORAGE_TYPE_NORMAL:
@@ -385,33 +386,32 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               return convertStringToGeometry((String) index[((Integer) object).intValue()]);
             default:
               throw new HopValueException(
-                  toString() + " : Unknown storage type " + storageType + " specified.");
+                  this + " : Unknown storage type " + storageType + " specified.");
           }
         case IValueMeta.TYPE_DATE:
           throw new HopValueException(
-              toString() + " : I don't know how to convert a date to a geometry.");
+              this + " : I don't know how to convert a date to a geometry.");
         case IValueMeta.TYPE_INTEGER:
           throw new HopValueException(
-              toString() + " : I don't know how to convert an integer to a geometry.");
+              this + " : I don't know how to convert an integer to a geometry.");
         case IValueMeta.TYPE_BIGNUMBER:
           throw new HopValueException(
-              toString() + " : I don't know how to convert a big number to a geometry.");
+              this + " : I don't know how to convert a big number to a geometry.");
         case IValueMeta.TYPE_BOOLEAN:
           throw new HopValueException(
-              toString() + " : I don't know how to convert a boolean to a geometry.");
+              this + " : I don't know how to convert a boolean to a geometry.");
         case IValueMeta.TYPE_BINARY:
           throw new HopValueException(
-              toString() + " : I don't know how to convert binary values to numbers.");
+              this + " : I don't know how to convert binary values to numbers.");
         case IValueMeta.TYPE_SERIALIZABLE:
           throw new HopValueException(
-              toString() + " : I don't know how to convert serializable values to numbers.");
+              this + " : I don't know how to convert serializable values to numbers.");
         default:
-          throw new HopValueException(toString() + " : Unknown type " + type + " specified.");
+          throw new HopValueException(this + " : Unknown type " + type + " specified.");
       }
     } catch (Exception e) {
       throw new HopValueException(
-          "Unexpected conversion error while converting value [" + toString() + "] to a Geometry",
-          e);
+          "Unexpected conversion error while converting value [" + this + "] to a Geometry", e);
     }
   }
 
@@ -426,7 +426,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
 
   @Override
   public Object readData(DataInputStream inputStream)
-      throws HopFileException, HopEofException, SocketTimeoutException {
+      throws HopFileException, SocketTimeoutException {
     try {
       // Is the value NULL?
       if (inputStream.readBoolean()) {
@@ -454,15 +454,14 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
           return readSmallInteger(inputStream);
 
         default:
-          throw new HopFileException(toString() + " : Unknown storage type " + getStorageType());
+          throw new HopFileException(this + " : Unknown storage type " + getStorageType());
       }
     } catch (EOFException e) {
       throw new HopEofException(e);
     } catch (SocketTimeoutException e) {
       throw e;
     } catch (IOException e) {
-      throw new HopFileException(
-          toString() + " : Unable to read value geometry from input stream", e);
+      throw new HopFileException(this + " : Unable to read value geometry from input stream", e);
     }
   }
 
@@ -491,12 +490,12 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
             break;
 
           default:
-            throw new HopFileException(toString() + " : Unknown storage type " + getStorageType());
+            throw new HopFileException(this + " : Unknown storage type " + getStorageType());
         }
       }
     } catch (ClassCastException e) {
       throw new RuntimeException(
-          toString()
+          this
               + " : There was a data type error: the data type of "
               + object.getClass().getName()
               + " object ["
@@ -505,8 +504,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               + toStringMeta()
               + "]");
     } catch (IOException e) {
-      throw new HopFileException(
-          toString() + " : Unable to write value geometry to output stream", e);
+      throw new HopFileException(this + " : Unable to write value geometry to output stream", e);
     }
   }
 
@@ -560,16 +558,11 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
 
         isDatabaseGeometryColumn = true;
         // MSSQL
-      } else if (databaseMeta.getIDatabase() instanceof MsSqlServerDatabaseMeta
-          && type == java.sql.Types.VARBINARY
-          && columnTypeName.equalsIgnoreCase("GEOMETRY")) {
-
-        isDatabaseGeometryColumn = true;
-
-      } else {
-
-        isDatabaseGeometryColumn = false;
-      }
+      } else
+        isDatabaseGeometryColumn =
+            databaseMeta.getIDatabase() instanceof MsSqlServerDatabaseMeta
+                && type == Types.VARBINARY
+                && columnTypeName.equalsIgnoreCase("GEOMETRY");
 
       // Return ValueMetaGeometry
       if (isDatabaseGeometryColumn) {
@@ -611,7 +604,8 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
 
         String wkt = resultSet.getString(index + 1);
         if (wkt != null) {
-          org.postgis.Geometry pgGeometry = pgGeometryParser.parse(resultSet.getString(index + 1));
+          net.postgis.jdbc.geometry.Geometry pgGeometry =
+              pgGeometryParser.parse(resultSet.getString(index + 1));
           String type = pgGeometry.getTypeString().trim();
           String coords = pgGeometry.getValue().trim();
           srid = pgGeometry.getSrid();
@@ -642,7 +636,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
                     + "D  from resultset at index "
                     + index
                     + " for "
-                    + databaseInterface.getDriverClass().toString());
+                    + databaseInterface.getDriverClass());
           }
 
           String wkt = new String(ociWktReaderWriter.fromJGeometry(ociGeometry));
@@ -656,7 +650,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
                     + "' from resultset at index "
                     + index
                     + " for "
-                    + databaseInterface.getDriverClass().toString());
+                    + databaseInterface.getDriverClass());
           }
         }
 
@@ -706,7 +700,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
               + " : Unable to get Geometry from resultset at index "
               + index
               + " for "
-              + databaseInterface.getDriverClass().toString(),
+              + databaseInterface.getDriverClass(),
           e);
     }
   }
@@ -814,12 +808,9 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
 
         // Oracle Spatial/Locator
       } else if (databaseMeta.getIDatabase().isOracleVariant()) {
-
         Geometry geometry = getGeometry(data);
 
         if (geometry != null) {
-
-          String wkt = null;
 
           // TODO : gerer la 3D sans passer par du WKT
           /*
@@ -833,21 +824,54 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
                 toStringMeta()
                     + " : Unable to set Geometry 3D on prepared statement on index "
                     + index);
+          }
+
+          // Convertir en WKT
+          String wkt = new WKTWriter(2).write(geometry);
+          int srid = geometry.getSRID() > 0 ? geometry.getSRID() : 0;
+
+          Connection conn = preparedStatement.getConnection();
+
+          // Si le WKT est long, utiliser un CLOB
+          if (wkt.length() > 4000) {
+            // Créer SDO_GEOMETRY via CLOB pour les grandes géométries
+            String sql = "SELECT MDSYS.SDO_GEOMETRY(?, ?) FROM DUAL";
+
+            try (PreparedStatement geomPs = conn.prepareStatement(sql)) {
+              // Créer un CLOB pour le WKT
+              java.sql.Clob clob = conn.createClob();
+              clob.setString(1, wkt);
+
+              geomPs.setClob(1, clob);
+              geomPs.setInt(2, srid);
+
+              try (java.sql.ResultSet rs = geomPs.executeQuery()) {
+                if (rs.next()) {
+                  Object sdoGeometry = rs.getObject(1);
+                  preparedStatement.setObject(index, sdoGeometry, Types.STRUCT);
+                }
+              }
+
+              clob.free();
+            }
           } else {
-            wkt = new WKTWriter(2).write(geometry);
+            // Pour les petites géométries, utiliser String directement
+            String sql = "SELECT MDSYS.SDO_GEOMETRY(?, ?) FROM DUAL";
+
+            try (PreparedStatement geomPs = conn.prepareStatement(sql)) {
+              geomPs.setString(1, wkt);
+              geomPs.setInt(2, srid);
+
+              try (java.sql.ResultSet rs = geomPs.executeQuery()) {
+                if (rs.next()) {
+                  Object sdoGeometry = rs.getObject(1);
+                  preparedStatement.setObject(index, sdoGeometry, Types.STRUCT);
+                }
+              }
+            }
           }
-
-          JGeometry ociGeometry = ociWktReaderWriter.toJGeometry(wkt.getBytes());
-          if (geometry.getSRID() > 0) {
-            ociGeometry.setSRID(geometry.getSRID());
-          }
-
-          preparedStatement.setObject(
-              index, JGeometry.store(ociGeometry, preparedStatement.getConnection()), Types.STRUCT);
-
         } else {
-
-          preparedStatement.setObject(index, null, Types.STRUCT);
+          preparedStatement.setNull(index, Types.STRUCT);
         }
 
         // Mysql
@@ -996,7 +1020,7 @@ public class ValueMetaGeometry extends ValueMetaBase implements GeometryInterfac
 
       default:
         throw new HopValueException(
-            toString() + " : Comparing values can not be done with data type : " + getType());
+            this + " : Comparing values can not be done with data type : " + getType());
     }
 
     if (isSortedDescending()) {

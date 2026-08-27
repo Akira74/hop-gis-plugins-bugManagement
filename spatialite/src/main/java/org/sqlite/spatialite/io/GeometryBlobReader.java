@@ -21,7 +21,7 @@ import org.locationtech.jts.io.WKBConstants;
 
 public class GeometryBlobReader {
 
-  private GeometryFactory factory = new GeometryFactory();
+  private final GeometryFactory factory = new GeometryFactory();
 
   @SuppressWarnings("unused")
   public Geometry read(byte[] bytes) throws IOException, ParseException {

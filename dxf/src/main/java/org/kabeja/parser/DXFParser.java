@@ -189,7 +189,6 @@ public class DXFParser implements HandlerManager, Handler, Parser, DXFHandler {
         currentHandler.parseGroup(keyCode, value);
       }
 
-      return;
     } catch (NumberFormatException e) {
       e.printStackTrace();
       throw new ParseException(
@@ -253,7 +252,7 @@ public class DXFParser implements HandlerManager, Handler, Parser, DXFHandler {
   }
 
   public boolean supportedExtension(String extension) {
-    return extension.toLowerCase().equals(EXTENSION);
+    return extension.equalsIgnoreCase(EXTENSION);
   }
 
   public void addDXFStreamFilter(DXFStreamFilter filter) {

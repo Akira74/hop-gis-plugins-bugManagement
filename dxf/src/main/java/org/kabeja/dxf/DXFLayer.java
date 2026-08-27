@@ -25,7 +25,7 @@ import java.util.List;
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  */
 public class DXFLayer {
-  private Hashtable entities = new Hashtable();
+  private final Hashtable entities = new Hashtable();
   private String name = "";
   private int color = 7;
   private DXFDocument doc;

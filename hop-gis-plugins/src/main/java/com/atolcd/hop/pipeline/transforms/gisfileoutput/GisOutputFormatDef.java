@@ -28,11 +28,11 @@ import java.util.List;
 
 public class GisOutputFormatDef {
 
-  private String key;
-  private String[] extensions;
-  private String[] extensionsNames;
-  private LinkedHashMap<String, GisOutputFormatParameterDef> parameterFieldDefs;
-  private LinkedHashMap<String, GisOutputFormatParameterDef> parameterFixedDefs;
+  private final String key;
+  private final String[] extensions;
+  private final String[] extensionsNames;
+  private final LinkedHashMap<String, GisOutputFormatParameterDef> parameterFieldDefs;
+  private final LinkedHashMap<String, GisOutputFormatParameterDef> parameterFixedDefs;
 
   public GisOutputFormatDef(String key, String[] extensions, String[] extensionsNames) {
     this.key = key;

@@ -6,7 +6,6 @@ import com.atolcd.gis.gpx.type.Route;
 import com.atolcd.gis.gpx.type.Track;
 import com.atolcd.gis.gpx.type.TrackSegment;
 import com.atolcd.gis.gpx.type.WayPoint;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
@@ -33,7 +32,7 @@ public class GpxWriter extends AbstractReaderWriter {
   }
 
   public void write(Document gpxDocument, String filename, String charsetName)
-      throws FileNotFoundException, IOException, DatatypeConfigurationException {
+      throws IOException, DatatypeConfigurationException {
 
     org.jdom2.Document document = getGpxDocument(gpxDocument);
     Format format = Format.getPrettyFormat();
@@ -45,7 +44,7 @@ public class GpxWriter extends AbstractReaderWriter {
   }
 
   private org.jdom2.Document getGpxDocument(Document gpxDocument)
-      throws FileNotFoundException, IOException, DatatypeConfigurationException {
+      throws IOException, DatatypeConfigurationException {
 
     // Namespace
     Namespace gpxNameSpace = null;

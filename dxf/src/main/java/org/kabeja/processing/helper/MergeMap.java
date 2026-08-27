@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class MergeMap implements Map {
-  private Map base;
-  private Map override;
+  private final Map base;
+  private final Map override;
 
   public MergeMap(Map base, Map override) {
     this.base = base;

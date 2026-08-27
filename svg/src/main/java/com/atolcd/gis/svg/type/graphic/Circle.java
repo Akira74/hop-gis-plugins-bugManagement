@@ -4,9 +4,9 @@ import com.atolcd.gis.svg.type.AbstractGraphic;
 
 public class Circle extends AbstractGraphic {
 
-  private double x;
-  private double y;
-  private double radius;
+  private final double x;
+  private final double y;
+  private final double radius;
 
   public Circle(double x, double y, double radius) {
     this.x = x;

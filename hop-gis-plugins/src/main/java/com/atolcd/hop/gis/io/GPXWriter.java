@@ -45,9 +45,9 @@ import org.locationtech.jts.geom.Point;
 
 public class GPXWriter extends AbstractFileWriter {
 
-  private static String GPX_CREATOR = "Pentaho Data Integration - GIS plugins";
+  private static final String GPX_CREATOR = "Pentaho Data Integration - GIS plugins";
 
-  private String gpxFileName;
+  private final String gpxFileName;
   private String version;
   private String documentName;
   private String documentDescription;
@@ -59,8 +59,8 @@ public class GPXWriter extends AbstractFileWriter {
   private String featureNameField;
   private String featureDescriptionField;
 
-  private Writer writer;
-  private boolean isServletOutput;
+  private final Writer writer;
+  private final boolean isServletOutput;
 
   public GPXWriter(String fileName, String geometryFieldName, String charsetName)
       throws HopException {

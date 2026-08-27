@@ -22,7 +22,7 @@ import java.util.Map;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public class SAXSerializerConfig {
-  private Map properties = new HashMap();
+  private final Map properties = new HashMap();
   private String saxSerializerName;
 
   public Map getProperties() {

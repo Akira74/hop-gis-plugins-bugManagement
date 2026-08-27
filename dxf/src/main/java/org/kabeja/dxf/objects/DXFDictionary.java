@@ -168,7 +168,7 @@ public class DXFDictionary extends DXFObject {
 
   private class DXFDictionaryRecord {
     private String id;
-    private String name;
+    private final String name;
     private DXFObject obj;
 
     public DXFDictionaryRecord(String name, String id) {

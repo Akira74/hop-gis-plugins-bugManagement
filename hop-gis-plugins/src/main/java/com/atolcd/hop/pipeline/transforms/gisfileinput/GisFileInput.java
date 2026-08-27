@@ -42,7 +42,7 @@ import org.apache.hop.pipeline.transform.BaseTransform;
 import org.apache.hop.pipeline.transform.TransformMeta;
 
 public class GisFileInput extends BaseTransform<GisFileInputMeta, GisFileInputData> {
-  private static Class<?> PKG = GisFileInput.class;
+  private static final Class<?> PKG = GisFileInput.class;
 
   private AbstractFileReader fileReader;
 
@@ -62,6 +62,21 @@ public class GisFileInput extends BaseTransform<GisFileInputMeta, GisFileInputDa
     if (first) {
 
       first = false;
+
+      // "Do not start until data": generischer Synchronisations-Schalter.
+      // Blockiert (sofern ein eingehender Hop existiert) bis der Vorgaenger
+      // mindestens eine Zeile sendet oder das Ende seines Datenstroms
+      // signalisiert. Der Zeileninhalt wird bewusst ignoriert - es geht nur
+      // darum, dass der Vorgaenger (z.B. "Execute a process" mit OGR/GDAL)
+      // nachweislich gelaufen/fertig ist, bevor die Datei geoeffnet wird.
+      // Ohne eingehenden Hop liefert getRow() sofort null (kein Blockieren),
+      // die Option ist damit fuer bestehende Pipelines gefahrlos.
+      if (meta.isWaitForPreviousTransform()) {
+        logBasic("Waiting for previous transform before opening file...");
+        getRow();
+        logBasic("Continuing after previous transform sent data or finished.");
+      }
+
       data.outputRowMeta = new RowMeta();
       meta.getFields(data.outputRowMeta, getTransformName(), null, null, this, metadataProvider);
 
@@ -165,7 +180,7 @@ public class GisFileInput extends BaseTransform<GisFileInputMeta, GisFileInputDa
       while (processRow() && !isStopped())
         ;
     } catch (Exception e) {
-      logError("Unexpected error : " + e.toString());
+      logError("Unexpected error : " + e);
       logError(Const.getStackTracker(e));
       setErrors(1);
       stopAll();

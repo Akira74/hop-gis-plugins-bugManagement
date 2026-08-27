@@ -26,7 +26,7 @@ public class DbfFieldDef implements DbfConsts {
   }
 
   public String toString() {
-    return new String("" + fieldname + " " + fieldtype + " " + fieldlen + "." + fieldnumdec);
+    return fieldname + " " + fieldtype + " " + fieldlen + "." + fieldnumdec;
   }
 
   // [Matthias Scholz 04.Sept.2010] Charset changes
@@ -68,7 +68,7 @@ public class DbfFieldDef implements DbfConsts {
       strbuf[j] = b; // <---- read string's byte data
     }
     if (term == -1) term = j;
-    String name = new String(strbuf, 0, term + 1, charset.name());
+    String name = new String(strbuf, 0, term + 1, charset);
 
     fieldname.append(name.trim()); // <- append byte array to String Buffer
 
@@ -83,16 +83,16 @@ public class DbfFieldDef implements DbfConsts {
       case 'L':
       case 'M':
       case 'G':
-        fieldlen = (int) dFile.readUnsignedByteLE();
-        fieldnumdec = (int) dFile.readUnsignedByteLE();
+        fieldlen = dFile.readUnsignedByteLE();
+        fieldnumdec = dFile.readUnsignedByteLE();
         fieldnumdec = 0;
         break;
       case 'N':
       case 'n':
       case 'F':
       case 'f':
-        fieldlen = (int) dFile.readUnsignedByteLE();
-        fieldnumdec = (int) dFile.readUnsignedByteLE();
+        fieldlen = dFile.readUnsignedByteLE();
+        fieldnumdec = dFile.readUnsignedByteLE();
         break;
       default:
         System.out.println("Help - wrong field type: " + fieldtype);

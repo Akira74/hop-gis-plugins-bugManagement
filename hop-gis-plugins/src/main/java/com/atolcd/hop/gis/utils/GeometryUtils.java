@@ -47,7 +47,7 @@ import org.locationtech.jts.precision.GeometryPrecisionReducer;
 
 public final class GeometryUtils {
 
-  private static GeometryFactory geometryFactory = new GeometryFactory();
+  private static final GeometryFactory geometryFactory = new GeometryFactory();
 
   /**
    * Returns a geometry from WKT/EWKT string
@@ -62,7 +62,7 @@ public final class GeometryUtils {
 
     try {
 
-      String wktParts[] = wkt.toUpperCase().split(";");
+      String[] wktParts = wkt.toUpperCase().split(";");
 
       if (wktParts[0].replace("SRID=", "").matches("[0-9]+")) {
 
@@ -339,11 +339,7 @@ public final class GeometryUtils {
    */
   public static boolean isNullOrEmptyGeometry(Geometry geometry) {
 
-    if (geometry != null && !geometry.isEmpty()) {
-      return false;
-    } else {
-      return true;
-    }
+    return geometry == null || geometry.isEmpty();
   }
 
   /**
@@ -401,9 +397,9 @@ public final class GeometryUtils {
    * @param coordinates
    * @return
    */
-  private static Coordinate[] get2DCoordinates(Coordinate coordinates[]) {
+  private static Coordinate[] get2DCoordinates(Coordinate[] coordinates) {
 
-    Coordinate outCoordinates[] = new Coordinate[coordinates.length];
+    Coordinate[] outCoordinates = new Coordinate[coordinates.length];
     for (int i = 0; i < coordinates.length; i++) {
       outCoordinates[i] = get2DCoordinate(coordinates[i]);
     }
@@ -447,8 +443,7 @@ public final class GeometryUtils {
       // Point
       if (geometry instanceof Point) {
 
-        outputGeometry =
-            geometryFactory.createPoint(get2DCoordinate(((Point) geometry).getCoordinate()));
+        outputGeometry = geometryFactory.createPoint(get2DCoordinate(geometry.getCoordinate()));
 
         // MultiPoint
       } else if (geometry instanceof MultiPoint) {
@@ -465,21 +460,20 @@ public final class GeometryUtils {
         // MultiLineString
       } else if (geometry instanceof MultiLineString) {
 
-        LineString lineStrings[] = new LineString[geometry.getNumGeometries()];
+        LineString[] lineStrings = new LineString[geometry.getNumGeometries()];
         for (int i = 0; i < geometry.getNumGeometries(); i++) {
-          lineStrings[i] = (LineString) get2DGeometry((LineString) geometry.getGeometryN(i));
+          lineStrings[i] = (LineString) get2DGeometry(geometry.getGeometryN(i));
         }
 
         outputGeometry = geometryFactory.createMultiLineString(lineStrings);
 
         // Polygon
-      } else if (geometry instanceof Polygon) {
+      } else if (geometry instanceof Polygon polygon) {
 
-        Polygon polygon = (Polygon) geometry;
         LinearRing exteriorRing =
             geometryFactory.createLinearRing(
                 get2DGeometry(polygon.getExteriorRing()).getCoordinates());
-        LinearRing interiorRings[] = new LinearRing[polygon.getNumInteriorRing()];
+        LinearRing[] interiorRings = new LinearRing[polygon.getNumInteriorRing()];
         for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
           interiorRings[i] =
               geometryFactory.createLinearRing(
@@ -488,20 +482,18 @@ public final class GeometryUtils {
 
         outputGeometry = geometryFactory.createPolygon(exteriorRing, interiorRings);
 
-      } else if (geometry instanceof MultiPolygon) {
+      } else if (geometry instanceof MultiPolygon multiPolygon) {
 
-        MultiPolygon multiPolygon = (MultiPolygon) geometry;
-        Polygon polygons[] = new Polygon[multiPolygon.getNumGeometries()];
+        Polygon[] polygons = new Polygon[multiPolygon.getNumGeometries()];
         for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
-          polygons[i] = (Polygon) get2DGeometry((Polygon) multiPolygon.getGeometryN(i));
+          polygons[i] = (Polygon) get2DGeometry(multiPolygon.getGeometryN(i));
         }
 
         outputGeometry = geometryFactory.createMultiPolygon(polygons);
 
-      } else if (geometry instanceof GeometryCollection) {
+      } else if (geometry instanceof GeometryCollection geometryCollection) {
 
-        GeometryCollection geometryCollection = (GeometryCollection) geometry;
-        Geometry geometries[] = new Geometry[geometryCollection.getNumGeometries()];
+        Geometry[] geometries = new Geometry[geometryCollection.getNumGeometries()];
         for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
 
           geometries[i] = get2DGeometry(geometry);

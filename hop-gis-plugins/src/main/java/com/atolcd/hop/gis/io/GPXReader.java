@@ -37,8 +37,8 @@ import org.locationtech.jts.geom.Geometry;
 
 public class GPXReader extends AbstractFileReader {
 
-  private String gpxFileName;
-  private boolean gpxFileExist;
+  private final String gpxFileName;
+  private final boolean gpxFileExist;
 
   public GPXReader(String fileName, String geometryFieldName, String charsetName)
       throws HopException {

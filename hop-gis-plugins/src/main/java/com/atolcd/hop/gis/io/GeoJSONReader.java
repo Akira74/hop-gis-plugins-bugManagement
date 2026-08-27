@@ -41,9 +41,9 @@ import org.wololo.geojson.GeoJSONFactory;
 
 public class GeoJSONReader extends AbstractFileReader {
 
-  private String geoJsonFileName;
-  private boolean geoJsonFileExist;
-  private GeoJSON json;
+  private final String geoJsonFileName;
+  private final boolean geoJsonFileExist;
+  private final GeoJSON json;
 
   private FieldType inferFieldType(Object value) {
     if (value instanceof String) return FieldType.STRING;
@@ -133,7 +133,7 @@ public class GeoJSONReader extends AbstractFileReader {
 
           String csrName = (String) crs.getProperties().get("name");
           int sridIndex = csrName.lastIndexOf(':');
-          srid = Integer.valueOf(csrName.substring(sridIndex + 1, csrName.length()));
+          srid = Integer.valueOf(csrName.substring(sridIndex + 1));
 
         } catch (Exception e) {
           srid = 0;
@@ -142,7 +142,7 @@ public class GeoJSONReader extends AbstractFileReader {
     }
 
     // Traitement des features
-    org.wololo.geojson.Feature geoJsonfeatures[] = featureCollection.getFeatures();
+    org.wololo.geojson.Feature[] geoJsonfeatures = featureCollection.getFeatures();
     if (this.limit == 0 || this.limit > geoJsonfeatures.length || this.limit < 0) {
       this.limit = geoJsonfeatures.length;
     }

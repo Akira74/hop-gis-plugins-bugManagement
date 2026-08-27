@@ -42,8 +42,8 @@ public class DXFHatch extends DXFEntity {
   private int degenerateBoundaryPathCount = 0;
   private boolean gradientHatch = false;
   private Point elevationPoint = new Point();
-  private List boundaries = new ArrayList();
-  private List patterns = new ArrayList();
+  private final List boundaries = new ArrayList();
+  private final List patterns = new ArrayList();
   private String patternID = "";
   private double patternScale;
 

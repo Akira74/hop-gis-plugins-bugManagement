@@ -124,8 +124,7 @@ public class Shapefile {
    * @param geometryFactory the geometry factory to use to read the shapes
    */
   @SuppressWarnings({"unchecked", "rawtypes"})
-  public GeometryCollection read(GeometryFactory geometryFactory)
-      throws IOException, ShapefileException, Exception {
+  public GeometryCollection read(GeometryFactory geometryFactory) throws Exception {
 
     EndianDataInputStream file = getInputStream();
     // if(file==null) throw new
@@ -201,8 +200,7 @@ public class Shapefile {
    * @param ShapeFileDimension shapefile dimension (2=x,y ; 3=x,y,m ; 4=x,y,z,m)
    */
   @SuppressWarnings("unused")
-  public void write(GeometryCollection geometries, int ShapeFileDimension)
-      throws IOException, Exception {
+  public void write(GeometryCollection geometries, int ShapeFileDimension) throws Exception {
     EndianDataOutputStream file = getOutputStream();
     ShapefileHeader mainHeader = new ShapefileHeader(geometries, ShapeFileDimension);
     mainHeader.write(file);
@@ -240,7 +238,7 @@ public class Shapefile {
    */
   public synchronized void writeIndex(
       GeometryCollection geometries, EndianDataOutputStream file, int ShapeFileDimension)
-      throws IOException, Exception {
+      throws Exception {
     Geometry geom;
 
     ShapeHandler handler;

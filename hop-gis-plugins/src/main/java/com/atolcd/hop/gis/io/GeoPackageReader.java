@@ -53,20 +53,20 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 public class GeoPackageReader extends AbstractFileReader {
 
-  private static String GPKG_CONTENTS_TABLE_NAME = "gpkg_contents";
-  private static GeometryFactory geometryFactory = new GeometryFactory();
-  private static SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD");
-  private static SimpleDateFormat dateTimeFormat =
+  private static final String GPKG_CONTENTS_TABLE_NAME = "gpkg_contents";
+  private static final GeometryFactory geometryFactory = new GeometryFactory();
+  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD");
+  private static final SimpleDateFormat dateTimeFormat =
       new SimpleDateFormat(" YYYY-MM-DD HH:MM:SS.SSSZ");
-  private static SimpleDateFormat dateComplexFormat =
+  private static final SimpleDateFormat dateComplexFormat =
       new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
-  private List<SimpleDateFormat> knownPatterns = new ArrayList<SimpleDateFormat>();
+  private final List<SimpleDateFormat> knownPatterns = new ArrayList<SimpleDateFormat>();
 
-  private String gpkgFileName;
-  private boolean gpkgFileExist;
+  private final String gpkgFileName;
+  private final boolean gpkgFileExist;
 
   @SuppressWarnings("rawtypes")
-  private HashMap<String, UserTable> gpkgTables;
+  private final HashMap<String, UserTable> gpkgTables;
 
   private boolean gpkgContents;
 
@@ -317,12 +317,12 @@ public class GeoPackageReader extends AbstractFileReader {
             // byte[]
             if (field.getType().equals(FieldType.BINARY)) {
 
-              outValue = (byte[]) inValue;
+              outValue = inValue;
 
               // boolean
             } else if (field.getType().equals(FieldType.BOOLEAN)) {
 
-              outValue = (Boolean) inValue;
+              outValue = inValue;
 
               // date
             } else if (field.getType().equals(FieldType.DATE)) {
@@ -506,7 +506,7 @@ public class GeoPackageReader extends AbstractFileReader {
    */
   private static org.locationtech.jts.geom.Point toJtsPoint(mil.nga.sf.Point point) {
 
-    return geometryFactory.createPoint(toJtsCoordinate((mil.nga.sf.Point) point));
+    return geometryFactory.createPoint(toJtsCoordinate(point));
   }
 
   /**
@@ -544,8 +544,7 @@ public class GeoPackageReader extends AbstractFileReader {
 
     List<org.locationtech.jts.geom.LineString> lineStrings =
         new ArrayList<org.locationtech.jts.geom.LineString>();
-    for (mil.nga.sf.LineString linestring :
-        ((mil.nga.sf.MultiLineString) multiLineString).getLineStrings()) {
+    for (mil.nga.sf.LineString linestring : multiLineString.getLineStrings()) {
       lineStrings.add(toJtsLineString(linestring));
     }
 
@@ -568,7 +567,7 @@ public class GeoPackageReader extends AbstractFileReader {
     List<org.locationtech.jts.geom.LinearRing> interiorRings =
         new ArrayList<org.locationtech.jts.geom.LinearRing>();
 
-    for (mil.nga.sf.LineString ring : ((mil.nga.sf.Polygon) polygon).getRings()) {
+    for (mil.nga.sf.LineString ring : polygon.getRings()) {
 
       org.locationtech.jts.geom.LinearRing linearRing =
           geometryFactory.createLinearRing(toJtsCoordinates(ring.getPoints()));
@@ -601,10 +600,9 @@ public class GeoPackageReader extends AbstractFileReader {
 
     List<org.locationtech.jts.geom.Polygon> polygons =
         new ArrayList<org.locationtech.jts.geom.Polygon>();
-    for (mil.nga.sf.Polygon polygon : ((mil.nga.sf.MultiPolygon) multiPolygon).getPolygons()) {
+    for (mil.nga.sf.Polygon polygon : multiPolygon.getPolygons()) {
       polygons.add(toJtsPolygon(polygon));
     }
-    ;
 
     return geometryFactory.createMultiPolygon(
         polygons.toArray(new org.locationtech.jts.geom.Polygon[polygons.size()]));

@@ -17,8 +17,8 @@ import org.locationtech.jts.geom.Geometry;
 
 public class DXFWriter extends AbstractFileWriter {
 
-  private String dxfFileName;
-  private String layerName;
+  private final String dxfFileName;
+  private final String layerName;
   private String layerNameFieldName;
   private boolean forceTo2DGeometry;
   private int precision;

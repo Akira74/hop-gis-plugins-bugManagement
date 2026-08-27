@@ -2,10 +2,10 @@ package com.atolcd.gis.spatialite;
 
 public class GeometryProperties {
 
-  private int geometryType;
-  private int coordDimension;
-  private int srid;
-  private boolean spatialIndexEnabled;
+  private final int geometryType;
+  private final int coordDimension;
+  private final int srid;
+  private final boolean spatialIndexEnabled;
 
   public static int TYPE_GEOMETRY = 0;
   public static int TYPE_POINT = 1;
@@ -74,25 +74,25 @@ public class GeometryProperties {
 
   public String getJTSGeometryType() {
 
-    if (Integer.compare(geometryType, TYPE_POINT) == 0) {
+    if (geometryType == TYPE_POINT) {
       return "POINT";
 
-    } else if (Integer.compare(geometryType, TYPE_LINESTRING) == 0) {
+    } else if (geometryType == TYPE_LINESTRING) {
       return "LINESTRING";
 
-    } else if (Integer.compare(geometryType, TYPE_POLYGON) == 0) {
+    } else if (geometryType == TYPE_POLYGON) {
       return "POLYGON";
 
-    } else if (Integer.compare(geometryType, TYPE_MULTIPOINT) == 0) {
+    } else if (geometryType == TYPE_MULTIPOINT) {
       return "MULTIPOINT";
 
-    } else if (Integer.compare(geometryType, TYPE_MULTILINESTRING) == 0) {
+    } else if (geometryType == TYPE_MULTILINESTRING) {
       return "MULTILINESTRING";
 
-    } else if (Integer.compare(geometryType, TYPE_MULTIPOLYGON) == 0) {
+    } else if (geometryType == TYPE_MULTIPOLYGON) {
       return "MULTIPOLYGON";
 
-    } else if (Integer.compare(geometryType, TYPE_GEOMETRYCOLLECTION) == 0) {
+    } else if (geometryType == TYPE_GEOMETRYCOLLECTION) {
       return "GEOMETRYCOLLECTION";
 
     } else {

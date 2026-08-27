@@ -38,11 +38,11 @@ import org.locationtech.jts.util.GeometricShapeFactory;
 
 public class DXFReader {
 
-  private static GeometryFactory geometryFactory = new GeometryFactory();
+  private static final GeometryFactory geometryFactory = new GeometryFactory();
 
-  private String dxfFileName;
-  private boolean dxfFileExist;
-  private List<Layer> layers;
+  private final String dxfFileName;
+  private final boolean dxfFileExist;
+  private final List<Layer> layers;
 
   private boolean circleAsPolygon;
   private boolean ellipseAsPolygon;

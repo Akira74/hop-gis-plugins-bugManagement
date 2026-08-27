@@ -32,6 +32,7 @@ import com.atolcd.hop.gis.io.SVGWriter;
 import com.atolcd.hop.gis.io.ShapefileWriter;
 import com.atolcd.hop.gis.io.features.Feature;
 import com.atolcd.hop.gis.io.features.FeatureConverter;
+import java.io.File;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,7 +40,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import org.apache.hop.core.Const;
 import org.apache.hop.core.exception.HopException;
-import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.pipeline.Pipeline;
 import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransform;
@@ -47,7 +47,7 @@ import org.apache.hop.pipeline.transform.TransformMeta;
 
 public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutputData> {
 
-  private List<Feature> gisFeatures = new ArrayList<Feature>();
+  private final List<Feature> gisFeatures = new ArrayList<Feature>();
 
   public GisFileOutput(
       TransformMeta s,
@@ -69,12 +69,30 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
 
       AbstractFileWriter fileWriter = null;
 
+      // Zentrale Ermittlung des Ausgabedateinamens: entweder der einmalig aus
+      // dem Feld gelesene Wert (fileNameInField, siehe oben) oder der
+      // statische, konfigurierte Dateiname.
+      String outputFileName =
+          data.resolvedFileName != null ? data.resolvedFileName : resolve(meta.getOutputFileName());
+
+      // Zielordner automatisch anlegen, falls gewuenscht und nicht im
+      // Servlet-Modus (dort gibt es keinen Dateipfad).
+      if (meta.isCreateParentFolder() && !meta.isDataToServlet() && outputFileName != null) {
+        File parentFolder = new File(outputFileName).getParentFile();
+        if (parentFolder != null && !parentFolder.exists()) {
+          logBasic("Creating parent folder: " + parentFolder.getAbsolutePath());
+          if (!parentFolder.mkdirs()) {
+            throw new HopException(
+                "Unable to create parent folder '" + parentFolder.getAbsolutePath() + "'");
+          }
+        }
+      }
+
       // ESRI_SHP
       if (meta.getOutputFormat().equalsIgnoreCase("ESRI_SHP")) {
 
         fileWriter =
-            new ShapefileWriter(
-                resolve(meta.getOutputFileName()), meta.getGeometryFieldName(), meta.getEncoding());
+            new ShapefileWriter(outputFileName, meta.getGeometryFieldName(), meta.getEncoding());
 
         // Forcer en 2D
         String forceTo2D =
@@ -105,10 +123,7 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
           // meta.getEncoding());
         } else {
           fileWriter =
-              new GeoJSONWriter(
-                  resolve(meta.getOutputFileName()),
-                  meta.getGeometryFieldName(),
-                  meta.getEncoding());
+              new GeoJSONWriter(outputFileName, meta.getGeometryFieldName(), meta.getEncoding());
         }
 
         // Exporter id
@@ -130,10 +145,7 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
 
         } else {
           fileWriter =
-              new KMLWriter(
-                  resolve(meta.getOutputFileName()),
-                  meta.getGeometryFieldName(),
-                  meta.getEncoding());
+              new KMLWriter(outputFileName, meta.getGeometryFieldName(), meta.getEncoding());
         }
 
         // Forcer en 2D
@@ -206,10 +218,7 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
                         GisOutputFormatParameterDef.TYPE_FIXED, "DXF_LAYER_NAME"));
         fileWriter =
             new DXFWriter(
-                resolve(meta.getOutputFileName()),
-                layerName,
-                meta.getGeometryFieldName(),
-                meta.getEncoding());
+                outputFileName, layerName, meta.getGeometryFieldName(), meta.getEncoding());
 
         String layerNameFieldName =
             resolve(
@@ -257,10 +266,7 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
 
         } else {
           fileWriter =
-              new GPXWriter(
-                  resolve(meta.getOutputFileName()),
-                  meta.getGeometryFieldName(),
-                  meta.getEncoding());
+              new GPXWriter(outputFileName, meta.getGeometryFieldName(), meta.getEncoding());
         }
 
         // Version
@@ -364,7 +370,7 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
 
         fileWriter =
             new GeoPackageWriter(
-                resolve(meta.getOutputFileName()),
+                outputFileName,
                 resolve(
                     (String)
                         meta.getInputParameterValue(
@@ -474,10 +480,7 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
 
         } else {
           fileWriter =
-              new SVGWriter(
-                  resolve(meta.getOutputFileName()),
-                  meta.getGeometryFieldName(),
-                  meta.getEncoding());
+              new SVGWriter(outputFileName, meta.getGeometryFieldName(), meta.getEncoding());
         }
 
         // Largeur
@@ -658,8 +661,32 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
     if (first) {
 
       first = false;
-      data.outputRowMeta = (IRowMeta) getInputRowMeta().clone();
+      data.outputRowMeta = getInputRowMeta().clone();
       meta.getFields(data.outputRowMeta, getTransformName(), null, null, this, metadataProvider);
+
+      // Vereinfachte Variante von "Accept file name from field" (siehe
+      // GisFileOutputMeta.fileNameInField): der Feldwert wird EINMALIG aus der
+      // ersten Zeile gelesen und fuer die gesamte (einzige) Ausgabedatei
+      // verwendet. Es werden KEINE mehreren Dateien pro unterschiedlichem
+      // Feldwert geschrieben, anders als beim Standard-TextFileOutput.
+      if (meta.isFileNameInField()) {
+        int fileNameFieldIndex = data.outputRowMeta.indexOfValue(meta.getFileNameField());
+        if (fileNameFieldIndex >= 0) {
+          try {
+            data.resolvedFileName = data.outputRowMeta.getString(r, fileNameFieldIndex);
+          } catch (org.apache.hop.core.exception.HopValueException e) {
+            throw new HopException(
+                "Unable to read file name from field '" + meta.getFileNameField() + "'", e);
+          }
+        } else {
+          throw new HopException(
+              "File name field '"
+                  + meta.getFileNameField()
+                  + "' could not be found in the input"
+                  + " row");
+        }
+      }
+
       logBasic("Initialized successfully");
     }
 
@@ -690,7 +717,7 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
       while (processRow() && !isStopped())
         ;
     } catch (Exception e) {
-      logError("Unexpected error : " + e.toString());
+      logError("Unexpected error : " + e);
       logError(Const.getStackTracker(e));
       setErrors(1);
       stopAll();

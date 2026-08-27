@@ -35,9 +35,9 @@ import org.xml.sax.ContentHandler;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface SAXSerializer extends ContentHandler, Configurable {
-  public String getSuffix();
+  String getSuffix();
 
-  public String getMimeType();
+  String getMimeType();
 
-  public void setOutput(OutputStream out);
+  void setOutput(OutputStream out);
 }
