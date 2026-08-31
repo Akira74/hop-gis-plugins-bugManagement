@@ -404,9 +404,9 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
         });
 
     // Nom de fichier depuis un champ - Checkbox
-    // Hinweis (vereinfachte Variante, siehe GisFileOutputMeta.fileNameInField):
-    // der Feldwert wird EINMALIG aus der ersten Zeile gelesen, nicht pro Zeile
-    // neu (kein Schreiben mehrerer Dateien wie beim Standard-TextFileOutput).
+    // Note (simplified variant, see GisFileOutputMeta.fileNameInField):
+    // the field value is read ONCE from the first row, not re-evaluated per row
+    // (no writing of multiple files as in the standard TextFileOutput).
     wlFileNameInField = new Label(shell, SWT.RIGHT);
     wlFileNameInField.setText(BaseMessages.getString(PKG, "GisFileOutput.FileNameInField.Label"));
     PropsUi.setLook(wlFileNameInField);
@@ -872,8 +872,8 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     return fieldNamesFromType;
   }
 
-  // Aktiviert/deaktiviert das Dateiname-Feld je nach Checkbox-Status
-  // (fileNameInField), analog zum Standard-TextFileOutput-Dialog.
+  // Enables/disables the file name field depending on the checkbox state
+  // (fileNameInField), analogous to the standard TextFileOutput dialog.
   private void activeFileNameField() {
     boolean fileNameInField = wFileNameInField.getSelection();
     wlFileNameField.setEnabled(fileNameInField);
@@ -885,8 +885,8 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
 
   private boolean gotFileNameFieldOptions = false;
 
-  // Befuellt die Feldliste fuer wFileNameField "lazy" beim ersten Fokus,
-  // analog zum getFields()-Muster in TextFileOutputDialog.
+  // Populates the field list for wFileNameField "lazily" on first focus,
+  // analogous to the getFields() pattern in TextFileOutputDialog.
   private void populateFileNameFieldOptions() {
     if (!gotFileNameFieldOptions) {
       try {

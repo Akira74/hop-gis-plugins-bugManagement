@@ -63,14 +63,14 @@ public class GisFileInput extends BaseTransform<GisFileInputMeta, GisFileInputDa
 
       first = false;
 
-      // "Do not start until data": generischer Synchronisations-Schalter.
-      // Blockiert (sofern ein eingehender Hop existiert) bis der Vorgaenger
-      // mindestens eine Zeile sendet oder das Ende seines Datenstroms
-      // signalisiert. Der Zeileninhalt wird bewusst ignoriert - es geht nur
-      // darum, dass der Vorgaenger (z.B. "Execute a process" mit OGR/GDAL)
-      // nachweislich gelaufen/fertig ist, bevor die Datei geoeffnet wird.
-      // Ohne eingehenden Hop liefert getRow() sofort null (kein Blockieren),
-      // die Option ist damit fuer bestehende Pipelines gefahrlos.
+      // "Do not start until data": generic synchronization switch.
+      // Blocks (if an incoming hop exists) until the upstream transform
+      // sends at least one row or signals the end of its
+      // data stream. The row content is deliberately ignored - the only purpose
+      // is to ensure that the upstream transform (e.g. "Execute a process" with OGR/GDAL)
+      // has verifiably run/finished before the file is opened.
+      // Without an incoming hop, getRow() immediately returns null (no blocking),
+      // making the option safe for existing pipelines.
       if (meta.isWaitForPreviousTransform()) {
         logBasic("Waiting for previous transform before opening file...");
         getRow();

@@ -103,11 +103,11 @@ public class GisGeometryInfoMeta extends BaseTransformMeta<GisGeometryInfo, GisG
     this.geometryFieldName = geometryFieldName;
   }
 
-  // WICHTIG: Hops reflection-basierte (De-)Serialisierung sucht Getter/Setter
-  // anhand des exakten Feldnamens (hier: outputFieldList) - NICHT anhand der
-  // @HopMetadataProperty-Annotation oder irgendeines anderen Methodennamens.
-  // Diese beiden Methoden sind daher zwingend erforderlich, zusaetzlich zur
-  // LinkedHashMap-Wrapper-API unten (die weiterhin fuer Dialog/Runtime bleibt).
+  // IMPORTANT: Hop's reflection-based (de-)serialization looks up getters/setters
+  // by the exact field name (here: outputFieldList) - NOT by the
+  // @HopMetadataProperty annotation or any other method name.
+  // These two methods are therefore mandatory, in addition to the
+  // LinkedHashMap wrapper API below (which remains for dialog/runtime use).
   public List<GisGeometryInfoOutputField> getOutputFieldList() {
     return outputFieldList;
   }
@@ -116,10 +116,10 @@ public class GisGeometryInfoMeta extends BaseTransformMeta<GisGeometryInfo, GisG
     this.outputFieldList = outputFieldList;
   }
 
-  // Oeffentliche API bleibt unveraendert (LinkedHashMap<String,String>), damit
-  // Dialog und Laufzeit-Klasse nicht angepasst werden muessen. Intern wird
-  // jetzt aber outputFieldList (siehe oben) serialisiert, da Hop seit 2.18
-  // keine Maps annotieren kann, nur Listen von POJOs.
+  // Public API remains unchanged (LinkedHashMap<String,String>) so that
+  // the dialog and runtime class do not need to be adapted. Internally,
+  // outputFieldList (see above) is now serialized instead, since Hop 2.18
+  // can no longer annotate maps, only lists of POJOs.
   public LinkedHashMap<String, String> getOutputFields() {
     LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
     for (GisGeometryInfoOutputField field : outputFieldList) {
@@ -135,10 +135,10 @@ public class GisGeometryInfoMeta extends BaseTransformMeta<GisGeometryInfo, GisG
     }
   }
 
-  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
-  // BaseTransformMeta.getXml() nicht mehr aufgerufen - die Serialisierung
-  // erfolgt jetzt ausschliesslich reflection-basiert ueber die
-  // @HopMetadataProperty-Annotationen oben.
+  // Note: getXml() has been removed. Since Apache Hop 2.18,
+  // BaseTransformMeta.getXml() is no longer called - serialization now
+  // happens exclusively via reflection using the
+  // @HopMetadataProperty annotations above.
 
   @Override
   public void getFields(
@@ -177,10 +177,10 @@ public class GisGeometryInfoMeta extends BaseTransformMeta<GisGeometryInfo, GisG
     return retval;
   }
 
-  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml()
-  // (siehe oben). ACHTUNG: Bereits gespeicherte .hpl-Dateien mit dem alten
-  // Format enthalten diese Tags nicht - einmal neu speichern behebt das
-  // dauerhaft.
+  // Note: loadXml() has been removed - for the same reason as getXml()
+  // (see above). CAUTION: .hpl files already saved in the old format do not
+  // contain these tags - saving them once more will fix this
+  // permanently.
 
   public void setDefault() {}
 

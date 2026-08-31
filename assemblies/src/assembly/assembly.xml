@@ -42,7 +42,6 @@
         <include>com.atolcd.gis:spatialite:jar</include>
         <include>com.atolcd.gis:concave-hull:jar</include>
 
-        <include>org.locationtech.spatial4j:spatial4j:jar</include>
         <include>org.locationtech.proj4j:proj4j:jar</include>
         <include>mil.nga.sf:sf-proj:jar</include>
         <include>org.apache.hop:hop-databases-oracle:jar</include>

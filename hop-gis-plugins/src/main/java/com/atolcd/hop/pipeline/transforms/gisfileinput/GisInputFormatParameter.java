@@ -32,9 +32,9 @@ public class GisInputFormatParameter {
   @HopMetadataProperty(key = "value")
   private String value;
 
-  // No-Arg-Konstruktor: wird von Hops Reflection-basierter (De-)Serialisierung
-  // (@HopMetadataProperty) benoetigt, um die Liste beim Laden aus der .hpl
-  // wieder mit Objekten zu befuellen.
+  // No-arg constructor: required by Hop's reflection-based (de-)serialization
+  // (@HopMetadataProperty) to repopulate the list with objects
+  // when loading from the .hpl file.
   public GisInputFormatParameter() {}
 
   public GisInputFormatParameter(String key, String value) {

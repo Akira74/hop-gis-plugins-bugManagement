@@ -86,12 +86,11 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
   private Long rowLimit;
 
   /**
-   * Generischer Synchronisations-Schalter: wenn aktiv, wartet der Transform vor dem Oeffnen der
-   * Datei auf mindestens eine Zeile (oder das Ende des Datenstroms) von einem eingehenden Hop. Der
-   * Zeileninhalt selbst wird ignoriert - es geht ausschliesslich darum, dass ein vorgeschalteter
-   * Transform (z.B. "Execute a process" mit OGR/GDAL) nachweislich fertig/gestartet ist, bevor
-   * diese Datei gelesen wird. Ohne eingehenden Hop hat diese Option keine Wirkung (getRow() liefert
-   * dann sofort null).
+   * Generic synchronization switch: when active, the transform waits before opening the file for at
+   * least one row (or the end of the data stream) from an incoming hop. The row content itself is
+   * ignored - the only purpose is to ensure that an upstream transform (e.g. "Execute a process"
+   * with OGR/GDAL) has verifiably finished/started before this file is read. Without an incoming
+   * hop, this option has no effect (getRow() then immediately returns null).
    */
   @HopMetadataProperty(key = "waitForPreviousTransform")
   private boolean waitForPreviousTransform;
@@ -263,10 +262,10 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
     this.waitForPreviousTransform = waitForPreviousTransform;
   }
 
-  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
-  // BaseTransformMeta.getXml() nicht mehr aufgerufen (@Deprecated seit 2.10.0,
-  // ignoriert seit 2.18) - die Serialisierung erfolgt jetzt ausschliesslich
-  // reflection-basiert ueber die @HopMetadataProperty-Annotationen oben.
+  // Note: getXml() has been removed. Since Apache Hop 2.18,
+  // BaseTransformMeta.getXml() is no longer called (@Deprecated since 2.10.0,
+  // ignored since 2.18) - serialization now happens exclusively via
+  // reflection using the @HopMetadataProperty annotations above.
 
   @Override
   public void getFields(
@@ -371,13 +370,13 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
     return retval;
   }
 
-  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml()
-  // (siehe oben). Das Laden erfolgt jetzt automatisch ueber die
-  // @HopMetadataProperty-Annotationen. ACHTUNG: Bereits gespeicherte .hpl-Dateien,
-  // die mit der alten (fehlerhaften) Serialisierung gespeichert wurden, enthalten
-  // KEIN <rowLimit> und KEINE <params> - beim erstmaligen Oeffnen dieser
-  // Alt-Dateien bleibt rowLimit dann null. Einmal neu speichern behebt das
-  // dauerhaft, da ab dann die korrekten Tags geschrieben werden.
+  // Note: loadXml() has been removed - for the same reason as getXml()
+  // (see above). Loading now happens automatically via the
+  // @HopMetadataProperty annotations. CAUTION: .hpl files already saved
+  // with the old (faulty) serialization contain
+  // NO <rowLimit> and NO <params> - the first time these
+  // legacy files are opened, rowLimit remains null. Saving them once more
+  // fixes this permanently, since the correct tags are written from then on.
 
   public void setDefault() {
 

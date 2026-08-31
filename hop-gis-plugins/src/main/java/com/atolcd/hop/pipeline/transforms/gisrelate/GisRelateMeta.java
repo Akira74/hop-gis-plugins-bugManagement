@@ -190,10 +190,10 @@ public class GisRelateMeta extends BaseTransformMeta<GisRelate, GisRelateData> {
     this.distanceValue = distanceValue;
   }
 
-  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
-  // BaseTransformMeta.getXml() nicht mehr aufgerufen - die Serialisierung
-  // erfolgt jetzt ausschliesslich reflection-basiert ueber die
-  // @HopMetadataProperty-Annotationen oben.
+  // Note: getXml() has been removed. Since Apache Hop 2.18,
+  // BaseTransformMeta.getXml() is no longer called - serialization now
+  // happens exclusively via reflection using the
+  // @HopMetadataProperty annotations above.
 
   @Override
   public void getFields(
@@ -236,10 +236,10 @@ public class GisRelateMeta extends BaseTransformMeta<GisRelate, GisRelateData> {
     return retval;
   }
 
-  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml()
-  // (siehe oben). ACHTUNG: Bereits gespeicherte .hpl-Dateien mit dem alten
-  // Format enthalten diese Tags nicht - einmal neu speichern behebt das
-  // dauerhaft.
+  // Note: loadXml() has been removed - for the same reason as getXml()
+  // (see above). CAUTION: .hpl files already saved in the old format do not
+  // contain these tags - saving them once more will fix this
+  // permanently.
 
   public void setDefault() {
     operator = "CONTAINS";

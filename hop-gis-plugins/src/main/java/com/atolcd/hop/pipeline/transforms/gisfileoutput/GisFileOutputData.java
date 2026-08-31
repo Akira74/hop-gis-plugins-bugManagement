@@ -33,9 +33,9 @@ public class GisFileOutputData extends BaseTransformData {
   public OutputStreamWriter writer;
 
   /**
-   * Einmalig (aus der ersten Zeile) ermittelter Ausgabedateiname, wenn fileNameInField aktiv ist
-   * (siehe GisFileOutputMeta). Bleibt null, wenn die Option nicht genutzt wird - dann wird
-   * weiterhin der statische outputFileName aus der Meta verwendet.
+   * Output file name determined once (from the first row) when fileNameInField is active (see
+   * GisFileOutputMeta). Remains null if the option is not used - in that case the static
+   * outputFileName from the meta continues to be used.
    */
   public String resolvedFileName;
 

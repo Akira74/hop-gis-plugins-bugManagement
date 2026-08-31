@@ -384,7 +384,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     fdRowLimit.top = new FormAttachment(wEncoding, margin);
     wRowLimit.setLayoutData(fdRowLimit);
 
-    // "Do not start until data": generischer Synchronisations-Schalter (siehe
+    // "Do not start until data": generic synchronization switch (see
     // GisFileInputMeta.waitForPreviousTransform).
     wlWaitForPreviousTransform = new Label(wOptionnalGroup, SWT.RIGHT);
     wlWaitForPreviousTransform.setText(
@@ -425,12 +425,12 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     wOk = new Button(shell, SWT.PUSH);
     wOk.setText(BaseMessages.getString(PKG, "System.Button.OK"));
     wPreview = new Button(shell, SWT.PUSH);
-    // Annahme: "System.Button.Preview" ist ein bereits vorhandener globaler
-    // Hop-Core-i18n-Key (analog zu "System.Button.OK"/"System.Button.Cancel"
-    // oben, sowie "System.Button.Browse" beim FileName-Button). Falls dieser
-    // Key in eurer Hop-Version nicht existiert, zeigt der Button ersatzweise
-    // den rohen Schluessel an (kein Compile-Fehler) - dann bitte durch einen
-    // eigenen Key in euren messages_*.properties ersetzen.
+    // Assumption: "System.Button.Preview" is an already existing global
+    // Hop core i18n key (analogous to "System.Button.OK"/"System.Button.Cancel"
+    // above, and "System.Button.Browse" on the FileName button). If this
+    // key does not exist in your Hop version, the button will instead display
+    // the raw key (no compile error) - in that case please replace it with your
+    // own key in your messages_*.properties.
     wPreview.setText(BaseMessages.getString(PKG, "System.Button.Preview"));
     wCancel = new Button(shell, SWT.PUSH);
     wCancel.setText(BaseMessages.getString(PKG, "System.Button.Cancel"));
@@ -584,8 +584,8 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
       wEncoding.setText(input.getEncoding());
     }
 
-    // Absicherung: bei .hpl-Dateien, die vor dem Serialisierungs-Fix gespeichert
-    // wurden (fehlendes <rowLimit>-Tag), ist getRowLimit() null.
+    // Safeguard: for .hpl files saved before the serialization fix
+    // (missing <rowLimit> tag), getRowLimit() is null.
     wRowLimit.setText(input.getRowLimit() != null ? input.getRowLimit().toString() : "0");
     wWaitForPreviousTransform.setSelection(input.isWaitForPreviousTransform());
 
@@ -605,10 +605,10 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     dispose();
   }
 
-  // Schreibt die aktuellen Dialog-Werte in das uebergebene Meta-Objekt.
-  // Wird sowohl von ok() (mit dem echten "input") als auch von preview() (mit
-  // einem temporaeren Meta-Objekt, OHNE den Dialog zu schliessen) genutzt -
-  // Muster uebernommen aus TextFileInputDialog.getInfo(meta, preview).
+  // Writes the current dialog values into the given meta object.
+  // Used both by ok() (with the real "input") and by preview() (with
+  // a temporary meta object, WITHOUT closing the dialog) -
+  // pattern adopted from TextFileInputDialog.getInfo(meta, preview).
   private void getInfo(GisFileInputMeta meta) {
 
     String formatKey = getFormatKey(wInputFormat.getText());
@@ -640,12 +640,12 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     meta.setWaitForPreviousTransform(wWaitForPreviousTransform.getSelection());
   }
 
-  // Preview der Daten - Muster 1:1 uebernommen aus TextFileInputDialog.preview()
-  // (Apache Hop 2.19 Referenzimplementierung).
+  // Data preview - pattern adopted 1:1 from TextFileInputDialog.preview()
+  // (Apache Hop 2.19 reference implementation).
   private void preview() {
 
-    // Temporaeres Meta-Objekt mit den aktuellen (noch nicht gespeicherten)
-    // Dialog-Werten befuellen, OHNE das echte "input"-Objekt zu veraendern.
+    // Populate a temporary meta object with the current (not yet saved)
+    // dialog values, WITHOUT modifying the real "input" object.
     GisFileInputMeta oneMeta = new GisFileInputMeta();
     getInfo(oneMeta);
 

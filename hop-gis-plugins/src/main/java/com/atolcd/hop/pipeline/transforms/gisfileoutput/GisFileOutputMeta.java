@@ -79,21 +79,20 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
   private boolean dataToServlet;
 
   /**
-   * Vereinfachte Variante von "Accept file name from field" (im Vergleich zum
-   * Standard-TextFileOutput-Verhalten): Der Dateiname wird NICHT pro Zeile neu ausgewertet und es
-   * werden NICHT mehrere Dateien geschrieben. Stattdessen wird der Feldwert EINMALIG aus der ERSTEN
-   * verarbeiteten Zeile gelesen und fuer die gesamte (einzige) Ausgabedatei verwendet - passend zur
-   * bestehenden Architektur von GisFileOutput, die alle Features im Speicher sammelt und erst am
-   * Ende der Pipeline eine einzelne Datei schreibt.
+   * Simplified variant of "Accept file name from field" (compared to the standard TextFileOutput
+   * behavior): The file name is NOT re-evaluated per row and NOT multiple files are written.
+   * Instead, the field value is read ONCE from the FIRST processed row and used for the entire
+   * (single) output file - matching the existing architecture of GisFileOutput, which collects all
+   * features in memory and only writes a single file at the end of the pipeline.
    */
   @HopMetadataProperty(key = "fileNameInField")
   private boolean fileNameInField;
 
-  /** Feldname, aus dem der Dateiname einmalig gelesen wird (siehe fileNameInField). */
+  /** Field name from which the file name is read once (see fileNameInField). */
   @HopMetadataProperty(key = "fileNameField")
   private String fileNameField;
 
-  /** Legt den Zielordner automatisch an, falls er noch nicht existiert. */
+  /** Automatically creates the target folder if it does not already exist. */
   @HopMetadataProperty(key = "create_parent_folder", defaultBoolean = true)
   private boolean createParentFolder;
 
@@ -329,10 +328,10 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     this.createParentFolder = createParentFolder;
   }
 
-  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
-  // BaseTransformMeta.getXml() nicht mehr aufgerufen - die Serialisierung
-  // erfolgt jetzt ausschliesslich reflection-basiert ueber die
-  // @HopMetadataProperty-Annotationen oben.
+  // Note: getXml() has been removed. Since Apache Hop 2.18,
+  // BaseTransformMeta.getXml() is no longer called - serialization now
+  // happens exclusively via reflection using the
+  // @HopMetadataProperty annotations above.
 
   @Override
   public void getFields(
@@ -429,11 +428,11 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     return retval;
   }
 
-  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml() (siehe
-  // oben). Das Laden erfolgt jetzt automatisch ueber die
-  // @HopMetadataProperty-Annotationen. ACHTUNG: Bereits gespeicherte .hpl-Dateien
-  // mit dem alten Format enthalten diese Tags nicht - einmal neu speichern
-  // behebt das dauerhaft.
+  // Note: loadXml() has been removed - for the same reason as getXml() (see
+  // above). Loading now happens automatically via the
+  // @HopMetadataProperty annotations. CAUTION: .hpl files already saved
+  // in the old format do not contain these tags - saving them once more
+  // fixes this permanently.
 
   public void setDefault() {
 
