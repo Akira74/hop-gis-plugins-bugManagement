@@ -1,11 +1,11 @@
 package org.wololo.geojson;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class GeoJSONFactory {
 
@@ -46,8 +46,7 @@ public class GeoJSONFactory {
 
       JavaType javaType =
           mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class);
-      Map<String, Object> properties =
-          mapper.readValue(node.get("properties").traverse(), javaType);
+      Map<String, Object> properties = mapper.treeToValue(node.get("properties"), javaType);
       String type = node.get("type").asText();
       return new Crs(type, properties);
 
@@ -60,7 +59,7 @@ public class GeoJSONFactory {
     JsonNode geometryNode = node.get("geometry");
     JavaType javaType =
         mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class);
-    Map<String, Object> properties = mapper.readValue(node.get("properties").traverse(), javaType);
+    Map<String, Object> properties = mapper.treeToValue(node.get("properties"), javaType);
 
     Geometry geometry = null;
 
@@ -75,7 +74,7 @@ public class GeoJSONFactory {
   private static Geometry readGeometry(JsonNode node, String type)
       throws IOException, ClassNotFoundException {
     Geometry geometry =
-        (Geometry) mapper.readValue(node.traverse(), Class.forName("org.wololo.geojson." + type));
+        (Geometry) mapper.treeToValue(node, Class.forName("org.wololo.geojson." + type));
     return geometry;
   }
 }
