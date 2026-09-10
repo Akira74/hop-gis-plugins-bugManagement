@@ -93,7 +93,7 @@ public class GisCoordinateTransformation
     if (first) {
 
       first = false;
-      data.outputRowMeta = (IRowMeta) getInputRowMeta().clone();
+      data.outputRowMeta = getInputRowMeta().clone();
       meta.getFields(data.outputRowMeta, getTransformName(), null, null, this, metadataProvider);
 
       // Récupération de l'index de la colonne contenant la geométrie
@@ -157,7 +157,7 @@ public class GisCoordinateTransformation
 
           } else {
             throw new HopException(
-                "Transformation error : Unknown SRID for geometry " + inGeometry.toString());
+                "Transformation error : Unknown SRID for geometry " + inGeometry);
           }
         }
       }
@@ -232,7 +232,7 @@ public class GisCoordinateTransformation
       while (processRow() && !isStopped())
         ;
     } catch (Exception e) {
-      logError("Unexpected error : " + e.toString());
+      logError("Unexpected error : " + e);
       logError(Const.getStackTracker(e));
       setErrors(1);
       stopAll();

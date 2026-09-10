@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Shell;
     keywords = "i18n::GisFileOutput.keywords")
 public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileOutputData> {
 
-  private HashMap<String, GisOutputFormatDef> outputFormatDefs;
+  private final HashMap<String, GisOutputFormatDef> outputFormatDefs;
 
   @HopMetadataProperty(injectionKeyDescription = "GisFileOutput.FileFormat.Label")
   private String outputFormat;
@@ -79,21 +79,20 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
   private boolean dataToServlet;
 
   /**
-   * Vereinfachte Variante von "Accept file name from field" (im Vergleich zum
-   * Standard-TextFileOutput-Verhalten): Der Dateiname wird NICHT pro Zeile neu ausgewertet und es
-   * werden NICHT mehrere Dateien geschrieben. Stattdessen wird der Feldwert EINMALIG aus der ERSTEN
-   * verarbeiteten Zeile gelesen und fuer die gesamte (einzige) Ausgabedatei verwendet - passend zur
-   * bestehenden Architektur von GisFileOutput, die alle Features im Speicher sammelt und erst am
-   * Ende der Pipeline eine einzelne Datei schreibt.
+   * Simplified variant of "Accept file name from field" (compared to the standard TextFileOutput
+   * behavior): The file name is NOT re-evaluated per row and NOT multiple files are written.
+   * Instead, the field value is read ONCE from the FIRST processed row and used for the entire
+   * (single) output file - matching the existing architecture of GisFileOutput, which collects all
+   * features in memory and only writes a single file at the end of the pipeline.
    */
   @HopMetadataProperty(key = "fileNameInField")
   private boolean fileNameInField;
 
-  /** Feldname, aus dem der Dateiname einmalig gelesen wird (siehe fileNameInField). */
+  /** Field name from which the file name is read once (see fileNameInField). */
   @HopMetadataProperty(key = "fileNameField")
   private String fileNameField;
 
-  /** Legt den Zielordner automatisch an, falls er noch nicht existiert. */
+  /** Automatically creates the target folder if it does not already exist. */
   @HopMetadataProperty(key = "create_parent_folder", defaultBoolean = true)
   private boolean createParentFolder;
 
@@ -110,16 +109,12 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     GisOutputFormatDef shpDef =
         new GisOutputFormatDef("ESRI_SHP", new String[] {"*.shp;*.SHP"}, new String[] {"*.shp"});
     shpDef.addParameterFixedDef(
-        "FORCE_TO_2D",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "TRUE");
+        "FORCE_TO_2D", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "TRUE");
     shpDef.addParameterFixedDef(
         "ESRI_SHP_CREATE_PRJ",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "TRUE");
     this.outputFormatDefs.put("ESRI_SHP", shpDef);
 
@@ -136,18 +131,14 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     GisOutputFormatDef kmlDef =
         new GisOutputFormatDef("KML", new String[] {"*.kml;*.KML"}, new String[] {"*.kml"});
     kmlDef.addParameterFixedDef(
-        "FORCE_TO_2D",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "TRUE");
+        "FORCE_TO_2D", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "TRUE");
     kmlDef.addParameterFixedDef("KML_DOC_NAME", ValueMetaBase.TYPE_STRING, false);
     kmlDef.addParameterFixedDef("KML_DOC_DESCRIPTION", ValueMetaBase.TYPE_STRING, false);
     kmlDef.addParameterFixedDef(
         "KML_EXPORT_ATTRIBUTS",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "FALSE");
     kmlDef.addParameterFieldDef("KML_PLACEMARK_NAME", ValueMetaBase.TYPE_STRING, false);
     kmlDef.addParameterFieldDef("KML_PLACEMARK_DESCRIPTION", ValueMetaBase.TYPE_STRING, false);
@@ -157,11 +148,7 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     GisOutputFormatDef dxfDef =
         new GisOutputFormatDef("DXF", new String[] {"*.dxf;*.DXF"}, new String[] {"*.dxf"});
     dxfDef.addParameterFixedDef(
-        "FORCE_TO_2D",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "TRUE");
+        "FORCE_TO_2D", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "TRUE");
     dxfDef.addParameterFixedDef("DXF_LAYER_NAME", ValueMetaBase.TYPE_STRING, true, null, "0");
     dxfDef.addParameterFixedDef("DXF_COORD_PRECISION", ValueMetaBase.TYPE_INTEGER, true, null, "5");
     dxfDef.addParameterFieldDef("DXF_FEATURE_LAYER_NAME", ValueMetaBase.TYPE_STRING, false);
@@ -171,11 +158,7 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     GisOutputFormatDef gpxDef =
         new GisOutputFormatDef("GPX", new String[] {"*.gpx;*.GPX"}, new String[] {"*.gpx"});
     gpxDef.addParameterFixedDef(
-        "GPX_VERSION",
-        ValueMetaBase.TYPE_STRING,
-        true,
-        Arrays.asList(new String[] {"1.0", "1.1"}),
-        "1.1");
+        "GPX_VERSION", ValueMetaBase.TYPE_STRING, true, Arrays.asList("1.0", "1.1"), "1.1");
     gpxDef.addParameterFixedDef("GPX_META_NAME", ValueMetaBase.TYPE_STRING, false);
     gpxDef.addParameterFixedDef("GPX_META_DESCRIPTION", ValueMetaBase.TYPE_STRING, false);
     gpxDef.addParameterFixedDef("GPX_META_AUTHOR_NAME", ValueMetaBase.TYPE_STRING, false);
@@ -191,20 +174,12 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
         new GisOutputFormatDef(
             "GEOPACKAGE", new String[] {"*.gpkg;*.GPKG"}, new String[] {"*.gpkg"});
     gpkgDef.addParameterFixedDef(
-        "REPLACE_FILE",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "TRUE");
+        "REPLACE_FILE", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "TRUE");
     gpkgDef.addParameterFixedDef("DB_TABLE_NAME", ValueMetaBase.TYPE_STRING, true);
     gpkgDef.addParameterFixedDef(
         "DB_TABLE_COMMIT_LIMIT", ValueMetaBase.TYPE_INTEGER, true, null, "1000");
     gpkgDef.addParameterFixedDef(
-        "REPLACE_TABLE",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "FALSE");
+        "REPLACE_TABLE", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "FALSE");
     gpkgDef.addParameterFixedDef("GPKG_CONTENTS_IDENTIFIER", ValueMetaBase.TYPE_STRING, false);
     gpkgDef.addParameterFixedDef("GPKG_CONTENTS_DESCRIPTION", ValueMetaBase.TYPE_STRING, false);
     gpkgDef.addParameterFixedDef("GPKG_GEOMETRY_SRID", ValueMetaBase.TYPE_INTEGER, false);
@@ -213,22 +188,16 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
         ValueMetaBase.TYPE_STRING,
         false,
         Arrays.asList(
-            new String[] {
-              "POINT",
-              "LINESTRING",
-              "POLYGON",
-              "MULTIPOINT",
-              "MULTILINESTRING",
-              "MULTIPOLYGON",
-              "GEOMETRY"
-            }),
+            "POINT",
+            "LINESTRING",
+            "POLYGON",
+            "MULTIPOINT",
+            "MULTILINESTRING",
+            "MULTIPOLYGON",
+            "GEOMETRY"),
         "GEOMETRY");
     gpkgDef.addParameterFixedDef(
-        "FORCE_TO_2D",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "TRUE");
+        "FORCE_TO_2D", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "TRUE");
     gpkgDef.addParameterFieldDef("DB_TABLE_PK_FIELD", ValueMetaBase.TYPE_INTEGER, true);
     this.outputFormatDefs.put("GEOPACKAGE", gpkgDef);
 
@@ -246,13 +215,13 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
         "SVG_DOC_STYLESHEET_MODE",
         ValueMetaBase.TYPE_STRING,
         false,
-        Arrays.asList(new String[] {"RESSOURCE_EXTERNAL", "RESSOURCE_EMBEDDED"}),
+        Arrays.asList("RESSOURCE_EXTERNAL", "RESSOURCE_EMBEDDED"),
         "RESSOURCE_EXTERNAL");
     svgDef.addParameterFixedDef(
         "SVG_DOC_SYMBOL_MODE",
         ValueMetaBase.TYPE_STRING,
         false,
-        Arrays.asList(new String[] {"RESSOURCE_EXTERNAL", "RESSOURCE_EMBEDDED"}),
+        Arrays.asList("RESSOURCE_EXTERNAL", "RESSOURCE_EMBEDDED"),
         "RESSOURCE_EXTERNAL");
     svgDef.addParameterFieldDef("SVG_FEATURE_ID", ValueMetaBase.TYPE_STRING, false);
     svgDef.addParameterFieldDef("SVG_FEATURE_TITLE", ValueMetaBase.TYPE_STRING, false);
@@ -359,10 +328,10 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     this.createParentFolder = createParentFolder;
   }
 
-  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
-  // BaseTransformMeta.getXml() nicht mehr aufgerufen - die Serialisierung
-  // erfolgt jetzt ausschliesslich reflection-basiert ueber die
-  // @HopMetadataProperty-Annotationen oben.
+  // Note: getXml() has been removed. Since Apache Hop 2.18,
+  // BaseTransformMeta.getXml() is no longer called - serialization now
+  // happens exclusively via reflection using the
+  // @HopMetadataProperty annotations above.
 
   @Override
   public void getFields(
@@ -459,11 +428,11 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
     return retval;
   }
 
-  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml() (siehe
-  // oben). Das Laden erfolgt jetzt automatisch ueber die
-  // @HopMetadataProperty-Annotationen. ACHTUNG: Bereits gespeicherte .hpl-Dateien
-  // mit dem alten Format enthalten diese Tags nicht - einmal neu speichern
-  // behebt das dauerhaft.
+  // Note: loadXml() has been removed - for the same reason as getXml() (see
+  // above). Loading now happens automatically via the
+  // @HopMetadataProperty annotations. CAUTION: .hpl files already saved
+  // in the old format do not contain these tags - saving them once more
+  // fixes this permanently.
 
   public void setDefault() {
 
@@ -477,8 +446,8 @@ public class GisFileOutputMeta extends BaseTransformMeta<GisFileOutput, GisFileO
       PipelineMeta PipelineMeta,
       TransformMeta TransformMeta,
       IRowMeta prev,
-      String input[],
-      String output[],
+      String[] input,
+      String[] output,
       IRowMeta info) {
 
     CheckResult cr;

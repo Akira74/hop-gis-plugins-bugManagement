@@ -23,26 +23,26 @@ import java.util.Map;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface PropertiesEditor {
-  public static final String SERVICE = PropertiesEditor.class.getName();
+  String SERVICE = PropertiesEditor.class.getName();
 
   /**
    * Set the properties to edit.
    *
    * @param properties
    */
-  public void setProperties(Map properties);
+  void setProperties(Map properties);
 
   /**
    * Returns the changed properties or properties provided by the properties editor.
    *
    * @return
    */
-  public Map getProperties();
+  Map getProperties();
 
   /**
    * @param listener
    */
-  public void addPropertiesListener(PropertiesListener listener);
+  void addPropertiesListener(PropertiesListener listener);
 
-  public void removePropertiesListener(PropertiesListener listener);
+  void removePropertiesListener(PropertiesListener listener);
 }

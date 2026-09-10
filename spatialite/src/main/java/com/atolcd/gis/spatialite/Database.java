@@ -21,7 +21,7 @@ import org.sqlite.spatialite.io.GeometryBlobWriter;
 public class Database {
 
   // Tables utilis�es pour lire les m�tadonn�es
-  private static String SQL_TABLE_MASTER = "sqlite_master";
+  private static final String SQL_TABLE_MASTER = "sqlite_master";
   protected static String SQL_TABLE_CG = "geometry_columns";
   // private static String SQL_TABLE_SRS = "spatial_ref_sys";
 
@@ -33,18 +33,18 @@ public class Database {
   protected static String SQL_META_COL_GC_SRID = "srid";
   protected static String SQL_META_COL_GC_INDEX = "spatial_index_enabled";
 
-  private static String SQL_META_COL_NAME = "name";
-  private static String SQL_META_COL_TYPE = "type";
+  private static final String SQL_META_COL_NAME = "name";
+  private static final String SQL_META_COL_TYPE = "type";
 
-  private static String SQL_META_TYPE_TABLE = "table";
+  private static final String SQL_META_TYPE_TABLE = "table";
   // private static String SQL_META_TYPE_VIEW = "view";
 
-  private static GeometryBlobWriter geometryBlobWriter = new GeometryBlobWriter();
-  private static GeometryBlobReader geometryBlobReader = new GeometryBlobReader();
+  private static final GeometryBlobWriter geometryBlobWriter = new GeometryBlobWriter();
+  private static final GeometryBlobReader geometryBlobReader = new GeometryBlobReader();
 
   private Connection connection;
   private String fileName;
-  private HashMap<String, Table> tables;
+  private final HashMap<String, Table> tables;
   private boolean spatial;
 
   public Database() {
@@ -370,19 +370,19 @@ public class Database {
             row.addValue(field.getName(), geometry);
 
           } else if (field.getTypeAffinity().equals(Field.TYPE_INTEGER)) {
-            row.addValue(field.getName(), (Integer) value);
+            row.addValue(field.getName(), value);
 
           } else if (field.getTypeAffinity().equals(Field.TYPE_TEXT)) {
-            row.addValue(field.getName(), (String) value);
+            row.addValue(field.getName(), value);
 
           } else if (field.getTypeAffinity().equals(Field.TYPE_NONE)) {
-            row.addValue(field.getName(), (byte[]) value);
+            row.addValue(field.getName(), value);
 
           } else if (field.getTypeAffinity().equals(Field.TYPE_REAL)) {
-            row.addValue(field.getName(), (Float) value);
+            row.addValue(field.getName(), value);
 
           } else {
-            row.addValue(field.getName(), (Double) value);
+            row.addValue(field.getName(), value);
           }
 
         } else {

@@ -28,7 +28,6 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import org.apache.hop.core.Const;
 import org.apache.hop.core.exception.HopException;
-import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.core.row.RowDataUtil;
 import org.apache.hop.pipeline.Pipeline;
 import org.apache.hop.pipeline.PipelineMeta;
@@ -39,7 +38,7 @@ import org.locationtech.jts.geom.Geometry;
 public class GisGeometryInfo extends BaseTransform<GisGeometryInfoMeta, GisGeometryInfoData> {
 
   private Integer geometryFieldIndex;
-  private LinkedHashMap<String, Integer> outputMap = new LinkedHashMap<String, Integer>();
+  private final LinkedHashMap<String, Integer> outputMap = new LinkedHashMap<String, Integer>();
 
   public GisGeometryInfo(
       TransformMeta s,
@@ -65,7 +64,7 @@ public class GisGeometryInfo extends BaseTransform<GisGeometryInfoMeta, GisGeome
     if (first) {
 
       first = false;
-      data.outputRowMeta = (IRowMeta) getInputRowMeta().clone();
+      data.outputRowMeta = getInputRowMeta().clone();
       meta.getFields(data.outputRowMeta, getTransformName(), null, null, this, metadataProvider);
 
       // Récupération de l'index de la colonne contenant la géométrie
@@ -107,7 +106,7 @@ public class GisGeometryInfo extends BaseTransform<GisGeometryInfoMeta, GisGeome
       while (processRow() && !isStopped())
         ;
     } catch (Exception e) {
-      logError("Unexpected error : " + e.toString());
+      logError("Unexpected error : " + e);
       logError(Const.getStackTracker(e));
       setErrors(1);
       stopAll();

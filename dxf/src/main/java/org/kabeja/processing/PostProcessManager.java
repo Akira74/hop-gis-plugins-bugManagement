@@ -24,7 +24,7 @@ import org.kabeja.dxf.DXFDocument;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public class PostProcessManager {
-  private ArrayList processors = new ArrayList();
+  private final ArrayList processors = new ArrayList();
 
   public void addPostProcessor(PostProcessor pp) {
     processors.add(pp);

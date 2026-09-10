@@ -41,6 +41,7 @@ import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
 import org.apache.hop.pipeline.transform.ITransformDialog;
 import org.apache.hop.pipeline.transform.TransformMeta;
+import org.apache.hop.ui.core.PropsUi;
 import org.apache.hop.ui.core.dialog.EnterSelectionDialog;
 import org.apache.hop.ui.core.dialog.ErrorDialog;
 import org.apache.hop.ui.core.widget.TextVar;
@@ -79,7 +80,7 @@ import org.eclipse.swt.widgets.Text;
 public class GisCoordinateTransformationDialog extends BaseTransformDialog
     implements ITransformDialog {
 
-  private static Class<?> PKG = GisCoordinateTransformationDialog.class;
+  private static final Class<?> PKG = GisCoordinateTransformationDialog.class;
 
   // Groupes de contrôles
   private Group wInputCRSGroup;
@@ -134,10 +135,10 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
 
   private boolean gotPreviousFields = false;
 
-  private GisCoordinateTransformationMeta input;
-  private CRSFactory cRSFactory;
-  private RegistryManager registryManager;
-  private HashMap<String, String> crsOperationList = new HashMap<String, String>();
+  private final GisCoordinateTransformationMeta input;
+  private final CRSFactory cRSFactory;
+  private final RegistryManager registryManager;
+  private final HashMap<String, String> crsOperationList = new HashMap<String, String>();
 
   public GisCoordinateTransformationDialog(
       Shell parent, IVariables variables, Object in, PipelineMeta tr, String sname) {
@@ -161,7 +162,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     Display display = parent.getDisplay();
 
     shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
-    props.setLook(shell);
+    PropsUi.setLook(shell);
     setShellImage(shell, input);
 
     ModifyListener lsMod =
@@ -186,7 +187,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlTransformName = new Label(shell, SWT.RIGHT);
     wlTransformName.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.TransformName.Label"));
-    props.setLook(wlTransformName);
+    PropsUi.setLook(wlTransformName);
     fdlTransformName = new FormData();
     fdlTransformName.left = new FormAttachment(0, 0);
     fdlTransformName.right = new FormAttachment(middle, -margin);
@@ -194,7 +195,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlTransformName.setLayoutData(fdlTransformName);
     wTransformName = new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wTransformName.setText(transformName);
-    props.setLook(wTransformName);
+    PropsUi.setLook(wTransformName);
     wTransformName.addModifyListener(lsMod);
     fdTransformName = new FormData();
     fdTransformName.left = new FormAttachment(middle, 0);
@@ -206,7 +207,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlCrsOperation = new Label(shell, SWT.RIGHT);
     wlCrsOperation.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.CrsOperation.Label"));
-    props.setLook(wlCrsOperation);
+    PropsUi.setLook(wlCrsOperation);
     fdlCrsOperation = new FormData();
     fdlCrsOperation.left = new FormAttachment(0, 0);
     fdlCrsOperation.top = new FormAttachment(wTransformName, margin);
@@ -217,7 +218,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wCrsOperation.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.CrsOperation.ToolTip"));
     wCrsOperation.setEditable(false);
-    props.setLook(wCrsOperation);
+    PropsUi.setLook(wCrsOperation);
     wCrsOperation.addModifyListener(lsMod);
     fdCrsOperation = new FormData();
     fdCrsOperation.left = new FormAttachment(middle, 0);
@@ -236,7 +237,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlGeometryField = new Label(shell, SWT.RIGHT);
     wlGeometryField.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.GeometryFieldName.Label"));
-    props.setLook(wlGeometryField);
+    PropsUi.setLook(wlGeometryField);
     fdlGeometryField = new FormData();
     fdlGeometryField.left = new FormAttachment(0, 0);
     fdlGeometryField.top = new FormAttachment(wCrsOperation, margin);
@@ -247,7 +248,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wGeometryField.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.GeometryFieldName.ToolTip"));
     wGeometryField.setEditable(true);
-    props.setLook(wGeometryField);
+    PropsUi.setLook(wGeometryField);
     wGeometryField.addModifyListener(lsMod);
     fdGeometryField = new FormData();
     fdGeometryField.left = new FormAttachment(middle, 0);
@@ -268,7 +269,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlOutputGeometryField = new Label(shell, SWT.RIGHT);
     wlOutputGeometryField.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.OutputGeometryFieldName.Label"));
-    props.setLook(wlOutputGeometryField);
+    PropsUi.setLook(wlOutputGeometryField);
     fdlOutputGeometryField = new FormData();
     fdlOutputGeometryField.left = new FormAttachment(0, 0);
     fdlOutputGeometryField.top = new FormAttachment(wGeometryField, margin);
@@ -279,7 +280,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wOutputGeometryField.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.OutputGeometryFieldName.ToolTip"));
     wOutputGeometryField.setEditable(true);
-    props.setLook(wOutputGeometryField);
+    PropsUi.setLook(wOutputGeometryField);
     wOutputGeometryField.addModifyListener(lsMod);
     fdOutputGeometryField = new FormData();
     fdOutputGeometryField.left = new FormAttachment(middle, 0);
@@ -290,7 +291,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     // ///////////////////////////////////////////////
     // Début du groupe : CRS entrée
     wInputCRSGroup = new Group(shell, SWT.SHADOW_NONE);
-    props.setLook(wInputCRSGroup);
+    PropsUi.setLook(wInputCRSGroup);
     wInputCRSGroup.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.InputCRSGroup.Label"));
 
@@ -303,7 +304,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlCrsFromGeometry = new Label(wInputCRSGroup, SWT.RIGHT);
     wlCrsFromGeometry.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.CrsFromGeometry.Label"));
-    props.setLook(wlCrsFromGeometry);
+    PropsUi.setLook(wlCrsFromGeometry);
     fdlCrsFromGeometry = new FormData();
     fdlCrsFromGeometry.left = new FormAttachment(0, 0);
     fdlCrsFromGeometry.top = new FormAttachment(0, margin);
@@ -313,7 +314,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wCrsFromGeometry = new Button(wInputCRSGroup, SWT.CHECK);
     wCrsFromGeometry.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.CrsFromGeometry.ToolTip"));
-    props.setLook(wCrsFromGeometry);
+    PropsUi.setLook(wCrsFromGeometry);
     fdCrsFromGeometry = new FormData();
     fdCrsFromGeometry.left = new FormAttachment(middle, 0);
     fdCrsFromGeometry.top = new FormAttachment(0, margin);
@@ -331,7 +332,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlInputCRSAuthority = new Label(wInputCRSGroup, SWT.RIGHT);
     wlInputCRSAuthority.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.InputCRSAuthority.Label"));
-    props.setLook(wlInputCRSAuthority);
+    PropsUi.setLook(wlInputCRSAuthority);
     fdlInputCRSAuthority = new FormData();
     fdlInputCRSAuthority.left = new FormAttachment(0, 0);
     fdlInputCRSAuthority.top = new FormAttachment(wCrsFromGeometry, margin);
@@ -342,7 +343,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wInputCRSAuthority.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.InputCRSAuthority.ToolTip"));
     wInputCRSAuthority.setEditable(false);
-    props.setLook(wInputCRSAuthority);
+    PropsUi.setLook(wInputCRSAuthority);
     wInputCRSAuthority.addModifyListener(lsMod);
     fdInputCRSAuthority = new FormData();
     fdInputCRSAuthority.left = new FormAttachment(middle, 0);
@@ -363,7 +364,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlInputCRSCode = new Label(wInputCRSGroup, SWT.RIGHT);
     wlInputCRSCode.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.InputCRSCode.Label"));
-    props.setLook(wlInputCRSCode);
+    PropsUi.setLook(wlInputCRSCode);
     fdlInputCRSCode = new FormData();
     fdlInputCRSCode.left = new FormAttachment(0, 0);
     fdlInputCRSCode.top = new FormAttachment(wInputCRSAuthority, margin);
@@ -371,7 +372,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlInputCRSCode.setLayoutData(fdlInputCRSCode);
 
     wbInputCRSCode = new Button(wInputCRSGroup, SWT.PUSH | SWT.CENTER);
-    props.setLook(wbInputCRSCode);
+    PropsUi.setLook(wbInputCRSCode);
     wbInputCRSCode.setText("...");
     wbInputCRSCode.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.InputCRSCode.ToolTip"));
@@ -383,7 +384,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wInputCRSCode = new TextVar(variables, wInputCRSGroup, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wInputCRSCode.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.InputCRSCode.ToolTip"));
-    props.setLook(wInputCRSCode);
+    PropsUi.setLook(wInputCRSCode);
     wInputCRSCode.addModifyListener(lsMod);
     fdInputCRSCode = new FormData();
     fdInputCRSCode.left = new FormAttachment(middle, 0);
@@ -402,7 +403,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     // ///////////////////////////////////////////////
     // Début du groupe : CRS sortie
     wOutputCRSGroup = new Group(shell, SWT.SHADOW_NONE);
-    props.setLook(wOutputCRSGroup);
+    PropsUi.setLook(wOutputCRSGroup);
     wOutputCRSGroup.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.OutputCRSGroup.Label"));
 
@@ -415,7 +416,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlOutputCRSAuthority = new Label(wOutputCRSGroup, SWT.RIGHT);
     wlOutputCRSAuthority.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.OutputCRSAuthority.ToolTip"));
-    props.setLook(wlOutputCRSAuthority);
+    PropsUi.setLook(wlOutputCRSAuthority);
     fdlOutputCRSAuthority = new FormData();
     fdlOutputCRSAuthority.left = new FormAttachment(0, 0);
     fdlOutputCRSAuthority.top = new FormAttachment(0, margin);
@@ -426,7 +427,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wOutputCRSAuthority.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.OutputCRSAuthority.ToolTip"));
     wOutputCRSAuthority.setEditable(false);
-    props.setLook(wOutputCRSAuthority);
+    PropsUi.setLook(wOutputCRSAuthority);
     wOutputCRSAuthority.addModifyListener(lsMod);
     fdOutputCRSAuthority = new FormData();
     fdOutputCRSAuthority.left = new FormAttachment(middle, 0);
@@ -447,7 +448,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlOutputCRSCode = new Label(wOutputCRSGroup, SWT.RIGHT);
     wlOutputCRSCode.setText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.OutputCRSCode.Label"));
-    props.setLook(wlOutputCRSCode);
+    PropsUi.setLook(wlOutputCRSCode);
     fdlOutputCRSCode = new FormData();
     fdlOutputCRSCode.left = new FormAttachment(0, 0);
     fdlOutputCRSCode.top = new FormAttachment(wOutputCRSAuthority, margin);
@@ -455,7 +456,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wlOutputCRSCode.setLayoutData(fdlOutputCRSCode);
 
     wbOutputCRSCode = new Button(wOutputCRSGroup, SWT.PUSH | SWT.CENTER);
-    props.setLook(wbOutputCRSCode);
+    PropsUi.setLook(wbOutputCRSCode);
     wbOutputCRSCode.setText("...");
     wbOutputCRSCode.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.OutputCRSCode.Label"));
@@ -467,7 +468,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     wOutputCRSCode = new TextVar(variables, wOutputCRSGroup, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wOutputCRSCode.setToolTipText(
         BaseMessages.getString(PKG, "GisCoordinateTransformation.OutputCRSCode.ToolTip"));
-    props.setLook(wOutputCRSCode);
+    PropsUi.setLook(wOutputCRSCode);
     wOutputCRSCode.addModifyListener(lsMod);
     fdOutputCRSCode = new FormData();
     fdOutputCRSCode.left = new FormAttachment(middle, 0);
@@ -513,7 +514,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
 
             if (wInputCRSAuthority.getText() != null) {
 
-              String descriptions[] = loadRegistryInfo(wInputCRSAuthority.getText());
+              String[] descriptions = loadRegistryInfo(wInputCRSAuthority.getText());
 
               EnterSelectionDialog inputCodeDialog =
                   new EnterSelectionDialog(
@@ -571,7 +572,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
           public void widgetSelected(SelectionEvent e) {
             if (wOutputCRSAuthority.getText() != null) {
 
-              String descriptions[] = loadRegistryInfo(wOutputCRSAuthority.getText());
+              String[] descriptions = loadRegistryInfo(wOutputCRSAuthority.getText());
               EnterSelectionDialog inputCodeDialog =
                   new EnterSelectionDialog(
                       shell,
@@ -977,7 +978,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
               }
             }
 
-            String textFields[] = textFieldsTree.toArray(new String[] {});
+            String[] textFields = textFieldsTree.toArray(new String[] {});
 
             wGeometryField.setItems(textFields);
           }
@@ -1036,7 +1037,7 @@ public class GisCoordinateTransformationDialog extends BaseTransformDialog
     StringWriter writer = new StringWriter();
     try {
       IOUtils.copy(inputstream, writer);
-      String descriptions[] = writer.toString().split("[|]");
+      String[] descriptions = writer.toString().split("[|]");
       Arrays.sort(descriptions);
       return descriptions;
     } catch (IOException e) {

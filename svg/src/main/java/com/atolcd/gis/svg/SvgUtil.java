@@ -32,7 +32,7 @@ import org.locationtech.jts.geom.util.AffineTransformationBuilder;
 
 public class SvgUtil {
 
-  private static ShapeWriter shapeWriter = new ShapeWriter();
+  private static final ShapeWriter shapeWriter = new ShapeWriter();
 
   protected static String EXT_SVG = ".svg";
   protected static String EXT_PNG = ".png";
@@ -107,7 +107,7 @@ public class SvgUtil {
     Shape shape = shapeWriter.toShape(geometry);
     String pathData = "";
 
-    double tab[] = new double[6];
+    double[] tab = new double[6];
     PathIterator pathIterator = shape.getPathIterator(null);
 
     while (!pathIterator.isDone()) {
@@ -197,7 +197,7 @@ public class SvgUtil {
         || url.toExternalForm().toLowerCase().endsWith(EXT_JPEG)) {
 
       BufferedImage bufferedImage = null;
-      if (url.getProtocol().toString().equalsIgnoreCase("file")) {
+      if (url.getProtocol().equalsIgnoreCase("file")) {
         bufferedImage = ImageIO.read(new File(url.getFile()));
       } else {
         bufferedImage = ImageIO.read(url);
@@ -231,7 +231,7 @@ public class SvgUtil {
   private static String toBase64(URL url) throws Exception {
 
     InputStream inputStream;
-    if (url.getProtocol().toString().equalsIgnoreCase("file")) {
+    if (url.getProtocol().equalsIgnoreCase("file")) {
       inputStream = new FileInputStream(url.getFile());
     } else {
       inputStream = url.openStream();

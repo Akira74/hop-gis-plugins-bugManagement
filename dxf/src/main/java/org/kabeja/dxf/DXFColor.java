@@ -19,7 +19,7 @@ package org.kabeja.dxf;
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  */
 public class DXFColor {
-  private static int[][] rgbs = {
+  private static final int[][] rgbs = {
     {255, 0, 0},
     {255, 255, 0},
     {0, 255, 0},
@@ -107,14 +107,14 @@ public class DXFColor {
   public static String getRGBString(int dxfColorCode) {
     if ((dxfColorCode > 0) && ((dxfColorCode - 1) <= (rgbs.length - 1))) {
       // the StringBuffer is faster then the String concat
-      StringBuffer buf = new StringBuffer();
-      buf.append(rgbs[dxfColorCode - 1][0]);
-      buf.append(",");
-      buf.append(rgbs[dxfColorCode - 1][1]);
-      buf.append(",");
-      buf.append(rgbs[dxfColorCode - 1][2]);
+      String buf =
+          rgbs[dxfColorCode - 1][0]
+              + ","
+              + rgbs[dxfColorCode - 1][1]
+              + ","
+              + rgbs[dxfColorCode - 1][2];
 
-      return buf.toString();
+      return buf;
     }
 
     // default is black

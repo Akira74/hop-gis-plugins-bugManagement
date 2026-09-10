@@ -24,8 +24,8 @@ package com.atolcd.hop.pipeline.transforms.gisgroupby;
 
 import org.apache.hop.metadata.api.HopMetadataProperty;
 
-// Ersetzt das vormalige String[] groupField, damit Hops reflection-basierte
-// (@HopMetadataProperty) Serialisierung greift.
+// Replaces the former String[] groupField, so that Hop's reflection-based
+// (@HopMetadataProperty) serialization applies.
 public class GisGroupByField {
 
   @HopMetadataProperty(key = "name")

@@ -28,7 +28,7 @@ public class DXFBlock {
   private String layerID = DXFConstants.DEFAULT_LAYER;
   private String name = "";
   private String description = "";
-  private ArrayList<DXFEntity> entities;
+  private final ArrayList<DXFEntity> entities;
   private DXFDocument doc;
 
   /** */
@@ -46,7 +46,7 @@ public class DXFBlock {
 
     if (i.hasNext()) {
       while (i.hasNext()) {
-        DXFEntity entity = (DXFEntity) i.next();
+        DXFEntity entity = i.next();
         Bounds b = entity.getBounds();
 
         if (b.isValid()) {
@@ -136,7 +136,7 @@ public class DXFBlock {
     Iterator<DXFEntity> i = entities.iterator();
 
     while (i.hasNext()) {
-      DXFEntity entity = (DXFEntity) i.next();
+      DXFEntity entity = i.next();
       entity.setDXFDocument(doc);
     }
   }
@@ -153,7 +153,7 @@ public class DXFBlock {
     Iterator<DXFEntity> i = entities.iterator();
 
     while (i.hasNext()) {
-      DXFEntity entity = (DXFEntity) i.next();
+      DXFEntity entity = i.next();
       length += entity.getLength();
     }
 
@@ -175,7 +175,7 @@ public class DXFBlock {
     Iterator<DXFEntity> i = this.entities.iterator();
 
     while (i.hasNext()) {
-      DXFEntity e = (DXFEntity) i.next();
+      DXFEntity e = i.next();
 
       if (e.getID().equals(id)) {
         return e;

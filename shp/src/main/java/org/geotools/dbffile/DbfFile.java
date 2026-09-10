@@ -213,7 +213,7 @@ public class DbfFile implements DbfConsts {
   public byte[] GetDbfRec(int row) throws java.io.IOException { // [sstein
     // 9.Sept.08]
 
-    rFile.seek(data_offset + (rec_size * row));
+    rFile.seek(data_offset + ((long) rec_size * row));
 
     // Multi byte character modification thanks to Hisaji ONO
     byte[] strbuf = new byte[rec_size]; // <---- byte array buffer fo
@@ -273,7 +273,7 @@ public class DbfFile implements DbfConsts {
                 rec[end - 1] == 0))
           // [mmichaud 16 june 2010]
           end--; // trim trailing spaces
-        s = new String(rec, start, end - start, charset.name()); // [sstein
+        s = new String(rec, start, end - start, charset); // [sstein
         // 9.Sept.08]
         // +
         // [Matthias
@@ -309,9 +309,9 @@ public class DbfFile implements DbfConsts {
         if (isInteger) { // its an int
 
           try {
-            return new Integer(numb);
+            return Integer.valueOf(numb);
           } catch (java.lang.NumberFormatException e) {
-            return new Integer(0);
+            return Integer.valueOf(0);
           }
         } else { // its a float
 
@@ -387,7 +387,7 @@ public class DbfFile implements DbfConsts {
                       fielddef[i].fieldstart, fielddef[i].fieldstart + fielddef[i].fieldlen);
               record.addElement(Integer.valueOf(tt.trim()));
             } catch (java.lang.NumberFormatException e) {
-              record.addElement(new Integer(0));
+              record.addElement(Integer.valueOf(0));
             }
           } else { // its a float
 
@@ -456,7 +456,7 @@ public class DbfFile implements DbfConsts {
   public Integer[] getIntegerCol(int col, int start, int end)
       throws java.io.IOException, DbfFileException {
     Integer[] column = new Integer[end - start];
-    String record = new String();
+    String record = "";
     StringBuffer sb = new StringBuffer(numfields);
     int k = 0;
     int i = 0;
@@ -471,7 +471,7 @@ public class DbfFile implements DbfConsts {
 
     // move to start of data
     try {
-      rFile.seek(data_offset + (rec_size * start));
+      rFile.seek(data_offset + ((long) rec_size * start));
 
       for (i = start; i < end; i++) {
         sb.setLength(0);
@@ -482,11 +482,11 @@ public class DbfFile implements DbfConsts {
 
         try {
           column[i - start] =
-              new Integer(
+              Integer.valueOf(
                   record.substring(
                       fielddef[col].fieldstart, fielddef[col].fieldstart + fielddef[col].fieldlen));
         } catch (java.lang.NumberFormatException e) {
-          column[i - start] = new Integer(0);
+          column[i - start] = Integer.valueOf(0);
         }
       }
     } catch (java.io.EOFException e) {
@@ -540,7 +540,7 @@ public class DbfFile implements DbfConsts {
 
     // move to start of data
     try {
-      rFile.seek(data_offset + (rec_size * start));
+      rFile.seek(data_offset + ((long) rec_size * start));
 
       for (i = start; i < end; i++) {
         sb.setLength(0);
@@ -550,9 +550,8 @@ public class DbfFile implements DbfConsts {
 
         record = sb.toString();
         st =
-            new String(
-                record.substring(
-                    fielddef[col].fieldstart, fielddef[col].fieldstart + fielddef[col].fieldlen));
+            record.substring(
+                fielddef[col].fieldstart, fielddef[col].fieldstart + fielddef[col].fieldlen);
 
         if (st.indexOf('.') == -1) {
           st = st + ".0";
@@ -598,7 +597,7 @@ public class DbfFile implements DbfConsts {
   public String[] getStringCol(int col, int start, int end)
       throws DbfFileException, java.io.IOException {
     String[] column = new String[end - start];
-    String record = new String();
+    String record = "";
 
     // StringBuffer sb = new StringBuffer(numfields);
     int k = 0;
@@ -616,7 +615,7 @@ public class DbfFile implements DbfConsts {
 
     // move to start of data
     try {
-      rFile.seek(data_offset + (start * rec_size));
+      rFile.seek(data_offset + ((long) start * rec_size));
 
       for (i = start; i < end; i++) {
         // sb.setLength(0);
@@ -667,7 +666,7 @@ public class DbfFile implements DbfConsts {
 
     private void getDbfFileHeader(EndianDataInputStream file) throws IOException {
       int len;
-      dbf_id = (int) file.readUnsignedByteLE();
+      dbf_id = file.readUnsignedByteLE();
 
       if (DEBUG) {
         System.out.print("DbFi>Header id ");
@@ -677,15 +676,11 @@ public class DbfFile implements DbfConsts {
         System.out.println(dbf_id);
       }
 
-      if (dbf_id == 3) {
-        hasmemo = false;
-      } else {
-        hasmemo = true;
-      }
+      hasmemo = dbf_id != 3;
 
-      last_update_y = (int) file.readUnsignedByteLE() + DBF_CENTURY;
-      last_update_m = (int) file.readUnsignedByteLE();
-      last_update_d = (int) file.readUnsignedByteLE();
+      last_update_y = file.readUnsignedByteLE() + DBF_CENTURY;
+      last_update_m = file.readUnsignedByteLE();
+      last_update_d = file.readUnsignedByteLE();
 
       if (DEBUG) {
         System.out.print("DbFi>last update ");

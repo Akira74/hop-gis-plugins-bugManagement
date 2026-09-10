@@ -68,9 +68,9 @@ import org.locationtech.jts.geom.Polygon;
 
 public class GeoPackageWriter extends AbstractFileWriter {
 
-  private String gpkgFileName;
-  private String tableName;
-  private String pkFieldName;
+  private final String gpkgFileName;
+  private final String tableName;
+  private final String pkFieldName;
   private String contentsIdentifier;
   private String contentsDescription;
   private boolean forceTo2DGeometry;
@@ -120,7 +120,7 @@ public class GeoPackageWriter extends AbstractFileWriter {
     MANDATORY((byte) 1),
     OPTIONAL((byte) 2);
 
-    private byte code;
+    private final byte code;
 
     GpkgGeometryWithZType(byte code) {
       this.code = code;
@@ -134,7 +134,7 @@ public class GeoPackageWriter extends AbstractFileWriter {
   public enum GpkgGeometryWithMType {
     PROHIBITED((byte) 0);
 
-    private byte code;
+    private final byte code;
 
     GpkgGeometryWithMType(byte code) {
       this.code = code;
@@ -440,7 +440,7 @@ public class GeoPackageWriter extends AbstractFileWriter {
         try {
 
           if (this.commitLimit <= 0) {
-            this.commitLimit = (long) 1;
+            this.commitLimit = 1;
           }
 
           featureDao.getConnection().setAutoCommit(false);
@@ -563,7 +563,7 @@ public class GeoPackageWriter extends AbstractFileWriter {
         try {
 
           if (this.commitLimit <= 0) {
-            this.commitLimit = (long) 1;
+            this.commitLimit = 1;
           }
 
           attributesDao.getConnection().setAutoCommit(false);
@@ -665,7 +665,7 @@ public class GeoPackageWriter extends AbstractFileWriter {
               + ". The geometry of feature "
               + fid.toString()
               + " is not of type "
-              + this.assignedGeometryType.toString());
+              + this.assignedGeometryType);
     }
 
     // Si forcé à multi, test sur la géométrie forcé en multi-géométrie

@@ -66,7 +66,7 @@ import org.locationtech.jts.operation.union.UnaryUnionOp;
  * @since 2-jun-2003
  */
 public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
-  private static Class<?> PKG = GisGroupByMeta.class; // for i18n purposes,
+  private static final Class<?> PKG = GisGroupByMeta.class; // for i18n purposes,
   // needed by
   // Translator2!!
 
@@ -773,8 +773,6 @@ public class GisGroupBy extends BaseTransform<GisGroupByMeta, GisGroupByData> {
     for (int i = 0; i < data.groupnrs.length; i++) {
       data.groupMeta.addValueMeta(previousRowMeta.getValueMeta(data.groupnrs[i]));
     }
-
-    return;
   }
 
   /**

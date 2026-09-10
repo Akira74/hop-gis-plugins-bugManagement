@@ -26,5 +26,5 @@ public interface PropertiesListener {
    *
    * @param properties changed Properties
    */
-  public void propertiesChanged(Map properties);
+  void propertiesChanged(Map properties);
 }

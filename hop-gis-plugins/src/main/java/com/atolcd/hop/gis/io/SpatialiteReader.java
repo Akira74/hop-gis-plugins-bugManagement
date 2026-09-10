@@ -38,10 +38,10 @@ import org.locationtech.jts.geom.Geometry;
 
 public class SpatialiteReader extends AbstractFileReader {
 
-  private String spatialiteFileName;
-  private boolean spatialiteFileExist;
-  private Database database;
-  private boolean listContent;
+  private final String spatialiteFileName;
+  private final boolean spatialiteFileExist;
+  private final Database database;
+  private final boolean listContent;
 
   public SpatialiteReader(String fileName, String tableName, String charsetName)
       throws HopException {
@@ -56,11 +56,7 @@ public class SpatialiteReader extends AbstractFileReader {
       this.spatialiteFileName = checkFilename(fileName).getFile();
     }
 
-    if (tableName.equalsIgnoreCase("*")) {
-      this.listContent = true;
-    } else {
-      this.listContent = false;
-    }
+    this.listContent = tableName.equalsIgnoreCase("*");
 
     this.database = new Database();
 

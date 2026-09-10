@@ -48,7 +48,7 @@ public class SAXPrettyOutputter extends AbstractSAXSerializer implements SAXSeri
   private String dtd;
   private int indent = 0;
   private boolean parent = false;
-  private ArrayList textContentList = new ArrayList();
+  private final ArrayList textContentList = new ArrayList();
   protected HashMap rootxmlns = new HashMap();
   protected boolean gzip = false;
 
@@ -78,7 +78,7 @@ public class SAXPrettyOutputter extends AbstractSAXSerializer implements SAXSeri
         this.out.write(enc, start, enc.length);
 
         // textNode in this context
-        textContentList.set(textContentList.size() - 1, new Boolean(true));
+        textContentList.set(textContentList.size() - 1, Boolean.TRUE);
       }
     } catch (IOException e) {
       e.printStackTrace();

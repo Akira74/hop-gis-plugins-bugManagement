@@ -4,12 +4,12 @@ import com.atolcd.gis.svg.type.AbstractGraphic;
 
 public class Rectangle extends AbstractGraphic {
 
-  private double x;
-  private double y;
-  private double width;
-  private double height;
-  private double xRadius;
-  private double yRadius;
+  private final double x;
+  private final double y;
+  private final double width;
+  private final double height;
+  private final double xRadius;
+  private final double yRadius;
 
   public Rectangle(double x, double y, double width, double height) {
     this.x = x;

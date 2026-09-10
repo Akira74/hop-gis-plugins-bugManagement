@@ -263,19 +263,13 @@ public class Bounds {
       return false;
     }
 
-    if ((bounds.getMaximumY() <= this.min_y) || (bounds.getMinimumY() >= this.max_y)) {
-      // the given bounds are above or below
-      return false;
-    }
-
-    return true;
+    // the given bounds are above or below
+    return (!(bounds.getMaximumY() <= this.min_y)) && (!(bounds.getMinimumY() >= this.max_y));
   }
 
   public boolean contains(Point p) {
     if ((this.min_x <= p.getX()) && (this.max_x >= p.getX())) {
-      if ((this.min_y <= p.getY()) && (this.max_y >= p.getY())) {
-        return true;
-      }
+      return (this.min_y <= p.getY()) && (this.max_y >= p.getY());
     }
 
     return false;
@@ -290,10 +284,8 @@ public class Bounds {
   public boolean enclose(Bounds bounds) {
     if ((bounds.getMaximumX() <= this.max_x) && (bounds.getMinimumX() >= this.min_x)) {
       // the given bounds are on the left or right side of the bounds
-      if ((bounds.getMaximumY() <= this.max_y) && (bounds.getMinimumY() >= this.min_y)) {
-        // the given bounds are above or below
-        return true;
-      }
+      // the given bounds are above or below
+      return (bounds.getMaximumY() <= this.max_y) && (bounds.getMinimumY() >= this.min_y);
     }
 
     return false;

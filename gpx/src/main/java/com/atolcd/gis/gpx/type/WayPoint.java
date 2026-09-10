@@ -7,7 +7,7 @@ import org.locationtech.jts.geom.Geometry;
 
 public class WayPoint extends AbstractSpatialElement implements ISpatialElement {
 
-  private Coordinate coordinate;
+  private final Coordinate coordinate;
   private GregorianCalendar time;
   private String symbol;
 

@@ -4,7 +4,6 @@ import com.vividsolutions.jump.io.EndianDataOutputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,7 +28,7 @@ public class DbfFileWriter implements DbfConsts {
 
   int recLength = 0;
 
-  DbfFieldDef fields[];
+  DbfFieldDef[] fields;
 
   EndianDataOutputStream ls;
 
@@ -44,14 +43,12 @@ public class DbfFileWriter implements DbfConsts {
     ls = new EndianDataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
   }
 
-  public void writeHeader(DbfFieldDef f[], int nrecs) throws IOException {
+  public void writeHeader(DbfFieldDef[] f, int nrecs) throws IOException {
 
     NoFields = f.length;
     NoRecs = nrecs;
     fields = new DbfFieldDef[NoFields];
-    for (int i = 0; i < NoFields; i++) {
-      fields[i] = f[i];
-    }
+    System.arraycopy(f, 0, fields, 0, NoFields);
     ls.writeByteLE(3); // ID - dbase III with out memo
 
     // sort out the date
@@ -78,7 +75,7 @@ public class DbfFileWriter implements DbfConsts {
     // field descriptions
     for (int i = 0; i < NoFields; i++) {
       // patch from Hisaji Ono for Double byte characters
-      ls.write(fields[i].fieldname.toString().getBytes(charset.name()), 0, 11); // [Matthias
+      ls.write(fields[i].fieldname.toString().getBytes(charset), 0, 11); // [Matthias
       // Scholz
       // 04.Sept.2010]
       // Charset
@@ -153,7 +150,7 @@ public class DbfFileWriter implements DbfConsts {
           tmps.setLength(fields[i].fieldlen);
           // patch from Hisaji Ono for Double byte characters
           ls.write(
-              tmps.toString().getBytes(charset.name()),
+              tmps.toString().getBytes(charset),
               fields[i].fieldstart,
               fields[i].fieldlen); // [Matthias
           // Scholz
@@ -173,7 +170,7 @@ public class DbfFileWriter implements DbfConsts {
             else if (o instanceof Long) {
               fs = FormatedString.format(((Long) o).toString(), 0, fields[i].fieldlen);
             } else if (o instanceof java.math.BigDecimal) {
-              fs = FormatedString.format(((BigDecimal) o).toString(), 0, fields[i].fieldlen);
+              fs = FormatedString.format(o.toString(), 0, fields[i].fieldlen);
             } else
               ;
             if (fs.length() > fields[i].fieldlen) fs = FormatedString.format(0, fields[i].fieldlen);
@@ -185,9 +182,7 @@ public class DbfFileWriter implements DbfConsts {
                   FormatedString.format(
                       ((Double) o).toString(), fields[i].fieldnumdec, fields[i].fieldlen);
             } else if (o instanceof java.math.BigDecimal) {
-              fs =
-                  FormatedString.format(
-                      ((BigDecimal) o).toString(), fields[i].fieldnumdec, fields[i].fieldlen);
+              fs = FormatedString.format(o.toString(), fields[i].fieldnumdec, fields[i].fieldlen);
             } else
               ;
             if (fs.length() > fields[i].fieldlen)

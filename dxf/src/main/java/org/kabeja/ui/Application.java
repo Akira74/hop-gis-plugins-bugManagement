@@ -21,11 +21,11 @@ package org.kabeja.ui;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface Application extends Component {
-  public static final String SERVICE = Application.class.getName();
+  String SERVICE = Application.class.getName();
 
   /** Starts the application. */
-  public void start();
+  void start();
 
   /** Stops the application */
-  public void stop();
+  void stop();
 }

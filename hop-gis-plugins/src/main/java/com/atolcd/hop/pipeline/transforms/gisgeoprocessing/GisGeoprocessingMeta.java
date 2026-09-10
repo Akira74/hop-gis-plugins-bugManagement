@@ -55,7 +55,7 @@ public class GisGeoprocessingMeta
   private String operator;
 
   // Pour opérateurs avec une seule géométrie
-  private static String[] oneGeometryOperators =
+  private static final String[] oneGeometryOperators =
       new String[] {
         "BOUNDARY",
         "INTERIOR_POINT",
@@ -91,7 +91,7 @@ public class GisGeoprocessingMeta
   private String firstGeometryFieldName;
 
   // Pour opérateurs avec deux géométries
-  private static String[] twoGeometriesOperators =
+  private static final String[] twoGeometriesOperators =
       new String[] {
         "UNION",
         "DIFFERENCE",
@@ -106,22 +106,22 @@ public class GisGeoprocessingMeta
   private String secondGeometryFieldName;
 
   // Pour opérateurs avec possibilités de filtrage de géométries hétérogènes
-  private static String[] withExtractTypeOperators =
+  private static final String[] withExtractTypeOperators =
       new String[] {"UNION", "DIFFERENCE", "INTERSECTION", "SYM_DIFFERENCE"};
-  private static String[] extractTypes =
+  private static final String[] extractTypes =
       new String[] {"ALL", "PUNTAL_ONLY", "LINEAL_ONLY", "POLYGONAL_ONLY"};
 
   @HopMetadataProperty(injectionKeyDescription = "GisGeoprocessing.ExtractType.Label")
   private String extractType;
 
   // Filtrage de lignes
-  private static String[] returnTypes = new String[] {"ALL", "NOT_NULL"};
+  private static final String[] returnTypes = new String[] {"ALL", "NOT_NULL"};
 
   @HopMetadataProperty(injectionKeyDescription = "GisGeoprocessing.ReturnType.Label")
   private String returnType;
 
   // Pour opérateurs avec besoin de distance
-  private static String[] withDistanceOperators =
+  private static final String[] withDistanceOperators =
       new String[] {
         "CONCAVE_HULL",
         "BUFFER",
@@ -147,8 +147,8 @@ public class GisGeoprocessingMeta
   private String distanceValue;
 
   // Pour EXTENDED_BUFFER
-  private static String[] bufferJoinStyles = new String[] {"BEVEL", "MITRE", "ROUND"};
-  private static String[] bufferCapStyles = new String[] {"FLAT", "ROUND", "SQUARE"};
+  private static final String[] bufferJoinStyles = new String[] {"BEVEL", "MITRE", "ROUND"};
+  private static final String[] bufferCapStyles = new String[] {"FLAT", "ROUND", "SQUARE"};
 
   @HopMetadataProperty(
       injectionKeyDescription = "GisGeoprocessing.EXTENDED_BUFFER.SegmentsCount.Label")
@@ -304,10 +304,10 @@ public class GisGeoprocessingMeta
     this.extractType = extractType;
   }
 
-  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
-  // BaseTransformMeta.getXml() nicht mehr aufgerufen - die Serialisierung
-  // erfolgt jetzt ausschliesslich reflection-basiert ueber die
-  // @HopMetadataProperty-Annotationen oben.
+  // Note: getXml() has been removed. Since Apache Hop 2.18,
+  // BaseTransformMeta.getXml() is no longer called - serialization now
+  // happens exclusively via reflection using the
+  // @HopMetadataProperty annotations above.
 
   @Override
   public void getFields(
@@ -329,10 +329,10 @@ public class GisGeoprocessingMeta
     return retval;
   }
 
-  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml()
-  // (siehe oben). ACHTUNG: Bereits gespeicherte .hpl-Dateien mit dem alten
-  // Format enthalten diese Tags nicht - einmal neu speichern behebt das
-  // dauerhaft.
+  // Note: loadXml() has been removed - for the same reason as getXml()
+  // (see above). CAUTION: .hpl files already saved in the old format do not
+  // contain these tags - saving them once more will fix this
+  // permanently.
 
   public void setDefault() {
     operator = "CENTROID";
@@ -345,8 +345,8 @@ public class GisGeoprocessingMeta
       PipelineMeta transmeta,
       TransformMeta stepMeta,
       IRowMeta prev,
-      String input[],
-      String output[],
+      String[] input,
+      String[] output,
       IRowMeta info) {
 
     CheckResult cr;

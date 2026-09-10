@@ -23,7 +23,7 @@ import org.kabeja.dxf.DXFDocument;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface Handler {
-  public void setDXFDocument(DXFDocument doc);
+  void setDXFDocument(DXFDocument doc);
 
-  public void releaseDXFDocument();
+  void releaseDXFDocument();
 }

@@ -97,9 +97,8 @@ public class DxfTABLE_LAYER_ITEM extends DxfTABLE_ITEM {
   }
 
   public String toString() {
-    StringBuffer sb = new StringBuffer(super.toString());
-    sb.append(DxfGroup.toString(62, colorNumber));
-    sb.append(DxfGroup.toString(6, lineType));
-    return sb.toString();
+    String sb =
+        super.toString() + DxfGroup.toString(62, colorNumber) + DxfGroup.toString(6, lineType);
+    return sb;
   }
 }

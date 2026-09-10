@@ -23,9 +23,9 @@ import javax.swing.Action;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface ApplicationToolBar {
-  public static final String SERVICE = ApplicationToolBar.class.getName();
+  String SERVICE = ApplicationToolBar.class.getName();
 
-  public void addAction(Action action);
+  void addAction(Action action);
 
-  public void addAction(java.awt.Component component);
+  void addAction(java.awt.Component component);
 }

@@ -39,6 +39,7 @@ import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
 import org.apache.hop.pipeline.transform.ITransformDialog;
 import org.apache.hop.pipeline.transform.TransformMeta;
+import org.apache.hop.ui.core.PropsUi;
 import org.apache.hop.ui.core.dialog.EnterSelectionDialog;
 import org.apache.hop.ui.core.dialog.EnterStringDialog;
 import org.apache.hop.ui.core.dialog.ErrorDialog;
@@ -76,7 +77,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class GisFileOutputDialog extends BaseTransformDialog implements ITransformDialog {
 
-  private static Class<?> PKG = GisFileOutputMeta.class;
+  private static final Class<?> PKG = GisFileOutputMeta.class;
 
   // Groupes de contrôles
   private Group wOptionnalGroup;
@@ -140,7 +141,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
   private ColumnInfo[] paramsFieldColumnInfo;
   private ColumnInfo[] paramsFixedColumnInfo;
 
-  private GisFileOutputMeta input;
+  private final GisFileOutputMeta input;
 
   public GisFileOutputDialog(
       Shell parent, IVariables variables, Object in, PipelineMeta tr, String sname) {
@@ -155,7 +156,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     Display display = parent.getDisplay();
 
     shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
-    props.setLook(shell);
+    PropsUi.setLook(shell);
     setShellImage(shell, input);
 
     ModifyListener lsMod =
@@ -179,7 +180,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Nom du step
     wlTransformName = new Label(shell, SWT.RIGHT);
     wlTransformName.setText(BaseMessages.getString(PKG, "GisFileOutput.TransformName.Label"));
-    props.setLook(wlTransformName);
+    PropsUi.setLook(wlTransformName);
     fdlTransformName = new FormData();
     fdlTransformName.left = new FormAttachment(0, 0);
     fdlTransformName.right = new FormAttachment(middle, -margin);
@@ -187,7 +188,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wlTransformName.setLayoutData(fdlTransformName);
     wTransformName = new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wTransformName.setText(transformName);
-    props.setLook(wTransformName);
+    PropsUi.setLook(wTransformName);
     wTransformName.addModifyListener(lsMod);
     fdTransformName = new FormData();
     fdTransformName.left = new FormAttachment(middle, 0);
@@ -198,7 +199,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Type de fichier
     wlOutputFormat = new Label(shell, SWT.RIGHT);
     wlOutputFormat.setText(BaseMessages.getString(PKG, "GisFileOutput.FileFormat.Label"));
-    props.setLook(wlOutputFormat);
+    PropsUi.setLook(wlOutputFormat);
     fdlOutputFormat = new FormData();
     fdlOutputFormat.left = new FormAttachment(0, 0);
     fdlOutputFormat.right = new FormAttachment(middle, -margin);
@@ -208,7 +209,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wOutputFormat = new CCombo(shell, SWT.BORDER | SWT.READ_ONLY);
     wOutputFormat.setToolTipText(BaseMessages.getString(PKG, "GisFileOutput.FileFormat.ToolTip"));
     wOutputFormat.setEditable(false);
-    props.setLook(wOutputFormat);
+    PropsUi.setLook(wOutputFormat);
     wOutputFormat.addModifyListener(lsMod);
     fdOutputFormat = new FormData();
     fdOutputFormat.left = new FormAttachment(middle, 0);
@@ -271,7 +272,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Sortie vers servlet
     wlDataToServlet = new Label(shell, SWT.RIGHT);
     wlDataToServlet.setText(BaseMessages.getString(PKG, "GisFileOutput.DataToServlet.Label"));
-    props.setLook(wlDataToServlet);
+    PropsUi.setLook(wlDataToServlet);
     fdlDataToServlet = new FormData();
     fdlDataToServlet.left = new FormAttachment(0, 0);
     fdlDataToServlet.top = new FormAttachment(wOutputFormat, margin);
@@ -281,7 +282,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wDataToServlet = new Button(shell, SWT.CHECK);
     wDataToServlet.setToolTipText(
         BaseMessages.getString(PKG, "GisFileOutput.DataToServlet.ToolTip"));
-    props.setLook(wDataToServlet);
+    PropsUi.setLook(wDataToServlet);
     fdDataToServlet = new FormData();
     fdDataToServlet.left = new FormAttachment(middle, 0);
     fdDataToServlet.top = new FormAttachment(wOutputFormat, margin);
@@ -298,7 +299,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Ne pas créer de fichier au démmarage
     wlCreateFileAtEnd = new Label(shell, SWT.RIGHT);
     wlCreateFileAtEnd.setText(BaseMessages.getString(PKG, "GisFileOutput.CreateFileAtEnd.Label"));
-    props.setLook(wlCreateFileAtEnd);
+    PropsUi.setLook(wlCreateFileAtEnd);
     fdlCreateFileAtEnd = new FormData();
     fdlCreateFileAtEnd.left = new FormAttachment(0, 0);
     fdlCreateFileAtEnd.top = new FormAttachment(wDataToServlet, margin);
@@ -308,7 +309,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wCreateFileAtEnd = new Button(shell, SWT.CHECK);
     wCreateFileAtEnd.setToolTipText(
         BaseMessages.getString(PKG, "GisFileOutput.CreateFileAtEnd.ToolTip"));
-    props.setLook(wCreateFileAtEnd);
+    PropsUi.setLook(wCreateFileAtEnd);
     fdCreateFileAtEnd = new FormData();
     fdCreateFileAtEnd.left = new FormAttachment(middle, 0);
     fdCreateFileAtEnd.top = new FormAttachment(wDataToServlet, margin);
@@ -318,7 +319,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Fichier à écrire
     wlFileName = new Label(shell, SWT.RIGHT);
     wlFileName.setText(BaseMessages.getString(PKG, "GisFileOutput.FileName.Label"));
-    props.setLook(wlFileName);
+    PropsUi.setLook(wlFileName);
     fdlFileName = new FormData();
     fdlFileName.left = new FormAttachment(0, 0);
     fdlFileName.right = new FormAttachment(middle, -margin);
@@ -326,7 +327,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wlFileName.setLayoutData(fdlFileName);
 
     wbFileName = new Button(shell, SWT.PUSH | SWT.CENTER);
-    props.setLook(wbFileName);
+    PropsUi.setLook(wbFileName);
     wbFileName.setText(BaseMessages.getString(PKG, "System.Button.Browse"));
     fdbFileName = new FormData();
     fdbFileName.right = new FormAttachment(100, 0);
@@ -367,7 +368,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
 
     wFileName = new TextVar(variables, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wFileName.setToolTipText(BaseMessages.getString(PKG, "GisFileOutput.FileName.ToolTip"));
-    props.setLook(wFileName);
+    PropsUi.setLook(wFileName);
     wFileName.addModifyListener(lsMod);
     fdFileName = new FormData();
     fdFileName.left = new FormAttachment(middle, 0);
@@ -379,7 +380,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wlCreateParentFolder = new Label(shell, SWT.RIGHT);
     wlCreateParentFolder.setText(
         BaseMessages.getString(PKG, "GisFileOutput.CreateParentFolder.Label"));
-    props.setLook(wlCreateParentFolder);
+    PropsUi.setLook(wlCreateParentFolder);
     fdlCreateParentFolder = new FormData();
     fdlCreateParentFolder.left = new FormAttachment(0, 0);
     fdlCreateParentFolder.right = new FormAttachment(middle, -margin);
@@ -389,7 +390,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wCreateParentFolder = new Button(shell, SWT.CHECK);
     wCreateParentFolder.setToolTipText(
         BaseMessages.getString(PKG, "GisFileOutput.CreateParentFolder.ToolTip"));
-    props.setLook(wCreateParentFolder);
+    PropsUi.setLook(wCreateParentFolder);
     fdCreateParentFolder = new FormData();
     fdCreateParentFolder.left = new FormAttachment(middle, 0);
     fdCreateParentFolder.right = new FormAttachment(100, 0);
@@ -403,12 +404,12 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
         });
 
     // Nom de fichier depuis un champ - Checkbox
-    // Hinweis (vereinfachte Variante, siehe GisFileOutputMeta.fileNameInField):
-    // der Feldwert wird EINMALIG aus der ersten Zeile gelesen, nicht pro Zeile
-    // neu (kein Schreiben mehrerer Dateien wie beim Standard-TextFileOutput).
+    // Note (simplified variant, see GisFileOutputMeta.fileNameInField):
+    // the field value is read ONCE from the first row, not re-evaluated per row
+    // (no writing of multiple files as in the standard TextFileOutput).
     wlFileNameInField = new Label(shell, SWT.RIGHT);
     wlFileNameInField.setText(BaseMessages.getString(PKG, "GisFileOutput.FileNameInField.Label"));
-    props.setLook(wlFileNameInField);
+    PropsUi.setLook(wlFileNameInField);
     fdlFileNameInField = new FormData();
     fdlFileNameInField.left = new FormAttachment(0, 0);
     fdlFileNameInField.right = new FormAttachment(middle, -margin);
@@ -418,7 +419,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wFileNameInField = new Button(shell, SWT.CHECK);
     wFileNameInField.setToolTipText(
         BaseMessages.getString(PKG, "GisFileOutput.FileNameInField.ToolTip"));
-    props.setLook(wFileNameInField);
+    PropsUi.setLook(wFileNameInField);
     fdFileNameInField = new FormData();
     fdFileNameInField.left = new FormAttachment(middle, 0);
     fdFileNameInField.right = new FormAttachment(100, 0);
@@ -435,7 +436,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Nom de fichier depuis un champ - Nom du champ
     wlFileNameField = new Label(shell, SWT.RIGHT);
     wlFileNameField.setText(BaseMessages.getString(PKG, "GisFileOutput.FileNameField.Label"));
-    props.setLook(wlFileNameField);
+    PropsUi.setLook(wlFileNameField);
     fdlFileNameField = new FormData();
     fdlFileNameField.left = new FormAttachment(0, 0);
     fdlFileNameField.right = new FormAttachment(middle, -margin);
@@ -443,7 +444,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wlFileNameField.setLayoutData(fdlFileNameField);
 
     wFileNameField = new ComboVar(variables, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-    props.setLook(wFileNameField);
+    PropsUi.setLook(wFileNameField);
     wFileNameField.addModifyListener(lsMod);
     fdFileNameField = new FormData();
     fdFileNameField.left = new FormAttachment(middle, 0);
@@ -471,7 +472,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Colonne géométrie
     wlGeometryField = new Label(shell, SWT.RIGHT);
     wlGeometryField.setText(BaseMessages.getString(PKG, "GisFileOutput.GeometryFieldName.Label"));
-    props.setLook(wlGeometryField);
+    PropsUi.setLook(wlGeometryField);
     fdlGeometryField = new FormData();
     fdlGeometryField.left = new FormAttachment(0, 0);
     fdlGeometryField.top = new FormAttachment(wFileNameField, margin);
@@ -482,7 +483,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wGeometryField.setToolTipText(
         BaseMessages.getString(PKG, "GisFileOutput.GeometryFieldName.ToolTip"));
     wGeometryField.setEditable(true);
-    props.setLook(wGeometryField);
+    PropsUi.setLook(wGeometryField);
     wGeometryField.addModifyListener(lsMod);
     fdGeometryField = new FormData();
     fdGeometryField.left = new FormAttachment(middle, 0);
@@ -494,7 +495,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Début du groupe : Options
 
     wOptionnalGroup = new Group(shell, SWT.SHADOW_NONE);
-    props.setLook(wOptionnalGroup);
+    PropsUi.setLook(wOptionnalGroup);
     wOptionnalGroup.setText(BaseMessages.getString(PKG, "GisFileOutput.Optionnal.Label"));
 
     FormLayout optionnalGroupLayout = new FormLayout();
@@ -505,7 +506,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Encodage
     wlEncoding = new Label(wOptionnalGroup, SWT.RIGHT);
     wlEncoding.setText(BaseMessages.getString(PKG, "GisFileOutput.Encoding.Label"));
-    props.setLook(wlEncoding);
+    PropsUi.setLook(wlEncoding);
     fdlEncoding = new FormData();
     fdlEncoding.left = new FormAttachment(0, 0);
     fdlEncoding.top = new FormAttachment(0, margin);
@@ -515,7 +516,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wEncoding = new CCombo(wOptionnalGroup, SWT.BORDER | SWT.READ_ONLY);
     wEncoding.setToolTipText(BaseMessages.getString(PKG, "GisFileOutput.Encoding.ToolTip"));
     wEncoding.setEditable(true);
-    props.setLook(wEncoding);
+    PropsUi.setLook(wEncoding);
     wEncoding.addModifyListener(lsMod);
     fdEncoding = new FormData();
     fdEncoding.left = new FormAttachment(middle, 0);
@@ -535,7 +536,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Paramètres fixes
     wlFixedParams = new Label(shell, SWT.NONE);
     wlFixedParams.setText(BaseMessages.getString(PKG, "GisFileOutput.Params.Fixed.Label"));
-    props.setLook(wlFixedParams);
+    PropsUi.setLook(wlFixedParams);
     fdlFixedParams = new FormData();
     fdlFixedParams.left = new FormAttachment(0, 0);
     fdlFixedParams.top = new FormAttachment(wOptionnalGroup, margin);
@@ -570,7 +571,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     // Paramètres de champs
     wlFieldParams = new Label(shell, SWT.NONE);
     wlFieldParams.setText(BaseMessages.getString(PKG, "GisFileOutput.Params.Field.Label"));
-    props.setLook(wlFieldParams);
+    PropsUi.setLook(wlFieldParams);
     fdlFieldParams = new FormData();
     fdlFieldParams.left = new FormAttachment(0, 0);
     fdlFieldParams.top = new FormAttachment(wFixedParams, margin);
@@ -677,7 +678,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
                       + String.valueOf(parameterDef.isRequired()).toUpperCase()
                       + ".Label"));
           if (parameter.getValue() != null) {
-            tableItem.setText(3, getParamFixedValueLabel(parameter.getValue().toString()));
+            tableItem.setText(3, getParamFixedValueLabel(parameter.getValue()));
             // tableItem.setText(3,
             // getParamLabel(parameter.getValue().toString()));
           }
@@ -719,7 +720,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
                       + String.valueOf(parameterDef.isRequired()).toUpperCase()
                       + ".Label"));
           if (parameter.getValue() != null) {
-            tableItem.setText(3, parameter.getValue().toString());
+            tableItem.setText(3, parameter.getValue());
           }
           j++;
         }
@@ -829,7 +830,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
   // Liste les colonnes d'un certain type
   private String[] getFieldsFromType(String type, boolean includeBlank) {
 
-    String fieldNamesFromType[] = null;
+    String[] fieldNamesFromType = null;
 
     TransformMeta transformMeta = pipelineMeta.findTransform(transformName);
     if (transformMeta != null) {
@@ -871,8 +872,8 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     return fieldNamesFromType;
   }
 
-  // Aktiviert/deaktiviert das Dateiname-Feld je nach Checkbox-Status
-  // (fileNameInField), analog zum Standard-TextFileOutput-Dialog.
+  // Enables/disables the file name field depending on the checkbox state
+  // (fileNameInField), analogous to the standard TextFileOutput dialog.
   private void activeFileNameField() {
     boolean fileNameInField = wFileNameInField.getSelection();
     wlFileNameField.setEnabled(fileNameInField);
@@ -884,8 +885,8 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
 
   private boolean gotFileNameFieldOptions = false;
 
-  // Befuellt die Feldliste fuer wFileNameField "lazy" beim ersten Fokus,
-  // analog zum getFields()-Muster in TextFileOutputDialog.
+  // Populates the field list for wFileNameField "lazily" on first focus,
+  // analogous to the getFields() pattern in TextFileOutputDialog.
   private void populateFileNameFieldOptions() {
     if (!gotFileNameFieldOptions) {
       try {
@@ -914,7 +915,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
     wEncoding.removeAll();
     List<Charset> values = new ArrayList<Charset>(Charset.availableCharsets().values());
     for (int i = 0; i < values.size(); i++) {
-      Charset charSet = (Charset) values.get(i);
+      Charset charSet = values.get(i);
       wEncoding.add(charSet.displayName());
     }
 
@@ -1306,7 +1307,7 @@ public class GisFileOutputDialog extends BaseTransformDialog implements ITransfo
                       + BaseMessages.getString(
                           PKG, "GisFileOutput.Params.Dialog.PARAM_ALLOWED_VALUES.Description")
                       + " :\n"
-                      + values.toString();
+                      + values;
             }
 
             // Valeur vide dans la liste si champ non obligatoire

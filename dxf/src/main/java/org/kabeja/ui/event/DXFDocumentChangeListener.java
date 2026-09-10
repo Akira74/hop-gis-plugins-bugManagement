@@ -24,5 +24,5 @@ public interface DXFDocumentChangeListener {
    *
    * @param doc the changed or exchanged DXFDocument
    */
-  public void changed(DXFDocument doc);
+  void changed(DXFDocument doc);
 }

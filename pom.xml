@@ -235,12 +235,12 @@
     <dependency>
       <groupId>net.postgis</groupId>
       <artifactId>postgis-geometry</artifactId>
-      <version>2.5.1</version>
+      <version>2025.1.1</version>
     </dependency>
     <dependency>
       <groupId>net.postgis</groupId>
       <artifactId>postgis-jdbc</artifactId>
-      <version>2.5.1</version>
+      <version>2025.1.1</version>
     </dependency>
     <dependency>
       <groupId>oracle</groupId>
@@ -294,12 +294,12 @@
     <dependency>
       <groupId>mil.nga.geopackage</groupId>
       <artifactId>geopackage</artifactId>
-      <version>4.0.0</version>
+      <version>6.6.5</version>
     </dependency>
     <dependency>
       <groupId>mil.nga.geopackage</groupId>
       <artifactId>geopackage-core</artifactId>
-      <version>4.0.0</version>
+      <version>6.6.7</version>
     </dependency>
     <dependency>
       <groupId>mil.nga</groupId>

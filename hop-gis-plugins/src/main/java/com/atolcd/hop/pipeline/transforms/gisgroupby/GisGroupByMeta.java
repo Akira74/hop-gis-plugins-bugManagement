@@ -51,7 +51,7 @@ import org.apache.hop.pipeline.transform.TransformMeta;
     keywords = "i18n::GisGroupBy.keywords")
 public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData> {
 
-  private static Class<?> PKG = GisGroupByMeta.class;
+  private static final Class<?> PKG = GisGroupByMeta.class;
 
   public static final int TYPE_GROUP_NONE = 0;
 
@@ -208,8 +208,8 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
   }
 
   /**
-   * @return Returns the aggregateField as array (abgeleitet aus aggregateFields, nur lesend sicher
-   *     zu verwenden).
+   * @return Returns the aggregateField as an array (derived from aggregateFields, safe for
+   *     read-only use).
    */
   public String[] getAggregateField() {
     String[] result = new String[aggregateFields.size()];
@@ -248,8 +248,8 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
   }
 
   /**
-   * @return Returns the aggregateType als Array (abgeleitet aus aggregateFields, nur lesend sicher
-   *     zu verwenden).
+   * @return Returns the aggregateType as an array (derived from aggregateFields, safe for read-only
+   *     use).
    */
   public int[] getAggregateType() {
     int[] result = new int[aggregateFields.size()];
@@ -260,8 +260,7 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
   }
 
   /**
-   * @return Returns the groupField als Array (abgeleitet aus groupFields, nur lesend sicher zu
-   *     verwenden).
+   * @return Returns the groupField as an array (derived from groupFields, safe for read-only use).
    */
   public String[] getGroupField() {
     String[] result = new String[groupFields.size()];
@@ -286,8 +285,8 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
   }
 
   /**
-   * @return Returns the subjectField als Array (abgeleitet aus aggregateFields, nur lesend sicher
-   *     zu verwenden).
+   * @return Returns the subjectField as an array (derived from aggregateFields, safe for read-only
+   *     use).
    */
   public String[] getSubjectField() {
     String[] result = new String[aggregateFields.size()];
@@ -298,8 +297,8 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
   }
 
   /**
-   * @return Returns the valueField als Array (abgeleitet aus aggregateFields, nur lesend sicher zu
-   *     verwenden).
+   * @return Returns the valueField as an array (derived from aggregateFields, safe for read-only
+   *     use).
    */
   public String[] getValueField() {
     String[] result = new String[aggregateFields.size()];
@@ -309,11 +308,11 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
     return result;
   }
 
-  // Neue, empfohlene List-basierte API - direkter Zugriff auf die
-  // tatsaechlich serialisierten Felder. Der GisGroupByDialog nutzt diese API
-  // zum Schreiben (siehe ok()), da die alten Array-Getter oben bei jedem
-  // Aufruf ein NEUES Array erzeugen und ein In-Place-Schreibzugriff wie
-  // `getGroupField()[i] = ...` daher nicht mehr persistiert wuerde.
+  // New, recommended list-based API - direct access to the
+  // actually serialized fields. GisGroupByDialog uses this API
+  // for writing (see ok()), since the old array getters above create a
+  // NEW array on every call, so an in-place write access like
+  // `getGroupField()[i] = ...` would no longer be persisted.
   public List<GisGroupByField> getGroupFields() {
     return groupFields;
   }
@@ -528,12 +527,12 @@ public class GisGroupByMeta extends BaseTransformMeta<GisGroupBy, GisGroupByData
     r.addRowMeta(fields);
   }
 
-  // Hinweis: getXml() und loadXml() wurden entfernt. Seit Apache Hop 2.18
-  // werden diese Overrides nicht mehr aufgerufen - die Serialisierung erfolgt
-  // jetzt ausschliesslich reflection-basiert ueber die
-  // @HopMetadataProperty-Annotationen oben. ACHTUNG: Bereits gespeicherte
-  // .hpl-Dateien mit dem alten Format enthalten diese Tags nicht - einmal neu
-  // speichern behebt das dauerhaft.
+  // Note: getXml() and loadXml() have been removed. Since Apache Hop 2.18,
+  // these overrides are no longer called - serialization now happens
+  // exclusively via reflection using the
+  // @HopMetadataProperty annotations above. CAUTION: .hpl files already
+  // saved in the old format do not contain these tags - saving them once
+  // more fixes this permanently.
 
   @Override
   public void check(

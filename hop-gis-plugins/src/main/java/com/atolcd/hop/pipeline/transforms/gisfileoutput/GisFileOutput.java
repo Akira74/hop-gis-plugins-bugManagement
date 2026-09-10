@@ -40,7 +40,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import org.apache.hop.core.Const;
 import org.apache.hop.core.exception.HopException;
-import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.pipeline.Pipeline;
 import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransform;
@@ -48,7 +47,7 @@ import org.apache.hop.pipeline.transform.TransformMeta;
 
 public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutputData> {
 
-  private List<Feature> gisFeatures = new ArrayList<Feature>();
+  private final List<Feature> gisFeatures = new ArrayList<Feature>();
 
   public GisFileOutput(
       TransformMeta s,
@@ -70,14 +69,14 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
 
       AbstractFileWriter fileWriter = null;
 
-      // Zentrale Ermittlung des Ausgabedateinamens: entweder der einmalig aus
-      // dem Feld gelesene Wert (fileNameInField, siehe oben) oder der
-      // statische, konfigurierte Dateiname.
+      // Central determination of the output file name: either the value read
+      // once from the field (fileNameInField, see above) or the
+      // static, configured file name.
       String outputFileName =
           data.resolvedFileName != null ? data.resolvedFileName : resolve(meta.getOutputFileName());
 
-      // Zielordner automatisch anlegen, falls gewuenscht und nicht im
-      // Servlet-Modus (dort gibt es keinen Dateipfad).
+      // Automatically create the target folder if desired and not in
+      // servlet mode (there is no file path in that case).
       if (meta.isCreateParentFolder() && !meta.isDataToServlet() && outputFileName != null) {
         File parentFolder = new File(outputFileName).getParentFile();
         if (parentFolder != null && !parentFolder.exists()) {
@@ -662,14 +661,14 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
     if (first) {
 
       first = false;
-      data.outputRowMeta = (IRowMeta) getInputRowMeta().clone();
+      data.outputRowMeta = getInputRowMeta().clone();
       meta.getFields(data.outputRowMeta, getTransformName(), null, null, this, metadataProvider);
 
-      // Vereinfachte Variante von "Accept file name from field" (siehe
-      // GisFileOutputMeta.fileNameInField): der Feldwert wird EINMALIG aus der
-      // ersten Zeile gelesen und fuer die gesamte (einzige) Ausgabedatei
-      // verwendet. Es werden KEINE mehreren Dateien pro unterschiedlichem
-      // Feldwert geschrieben, anders als beim Standard-TextFileOutput.
+      // Simplified variant of "Accept file name from field" (see
+      // GisFileOutputMeta.fileNameInField): the field value is read ONCE from the
+      // first row and used for the entire (single) output file.
+      // NO multiple files are written per different
+      // field value, unlike the standard TextFileOutput.
       if (meta.isFileNameInField()) {
         int fileNameFieldIndex = data.outputRowMeta.indexOfValue(meta.getFileNameField());
         if (fileNameFieldIndex >= 0) {
@@ -718,7 +717,7 @@ public class GisFileOutput extends BaseTransform<GisFileOutputMeta, GisFileOutpu
       while (processRow() && !isStopped())
         ;
     } catch (Exception e) {
-      logError("Unexpected error : " + e.toString());
+      logError("Unexpected error : " + e);
       logError(Const.getStackTracker(e));
       setErrors(1);
       stopAll();

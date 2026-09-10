@@ -29,7 +29,7 @@ import org.apache.hop.core.exception.HopException;
 
 public interface FileWriter {
 
-  public void setFields(List<Field> fields);
+  void setFields(List<Field> fields);
 
-  public void writeFeatures(List<Feature> features) throws HopException;
+  void writeFeatures(List<Feature> features) throws HopException;
 }

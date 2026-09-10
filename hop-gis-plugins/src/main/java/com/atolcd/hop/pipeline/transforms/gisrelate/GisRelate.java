@@ -24,7 +24,7 @@ package com.atolcd.hop.pipeline.transforms.gisrelate;
 
 import com.atolcd.hop.core.row.value.GeometryInterface;
 import com.atolcd.hop.gis.utils.GeometryUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.hop.core.Const;
 import org.apache.hop.core.exception.HopException;
 import org.apache.hop.core.row.IRowMeta;

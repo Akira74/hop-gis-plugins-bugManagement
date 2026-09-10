@@ -28,5 +28,5 @@ public interface ProcessingUIComponent extends Component {
    *
    * @param manager
    */
-  public void setProcessingManager(ProcessingManager manager);
+  void setProcessingManager(ProcessingManager manager);
 }

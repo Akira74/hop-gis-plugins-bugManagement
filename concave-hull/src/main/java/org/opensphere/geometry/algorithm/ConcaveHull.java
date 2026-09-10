@@ -64,9 +64,9 @@ import org.opensphere.geometry.triangulation.model.Vertex;
  */
 public class ConcaveHull {
 
-  private GeometryFactory geomFactory;
-  private GeometryCollection geometries;
-  private double threshold;
+  private final GeometryFactory geomFactory;
+  private final GeometryCollection geometries;
+  private final double threshold;
 
   public HashMap<LineSegment, Integer> segments = new HashMap<LineSegment, Integer>();
   public HashMap<Integer, Edge> edges = new HashMap<Integer, Edge>();
@@ -276,7 +276,7 @@ public class ConcaveHull {
       Edge edgeB = this.edges.get(this.segments.get(sB));
       Edge edgeC = this.edges.get(this.segments.get(sC));
 
-      Triangle triangle = new Triangle(i, qet.isBorder() ? true : false);
+      Triangle triangle = new Triangle(i, qet.isBorder());
       triangle.addEdge(edgeA);
       triangle.addEdge(edgeB);
       triangle.addEdge(edgeC);

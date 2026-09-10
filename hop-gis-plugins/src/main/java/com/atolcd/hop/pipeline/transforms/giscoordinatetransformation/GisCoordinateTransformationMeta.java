@@ -171,8 +171,8 @@ public class GisCoordinateTransformationMeta
       PipelineMeta transmeta,
       TransformMeta stepMeta,
       IRowMeta prev,
-      String input[],
-      String output[],
+      String[] input,
+      String[] output,
       IRowMeta info,
       IVariables variables,
       IHopMetadataProvider metadataProvider) {

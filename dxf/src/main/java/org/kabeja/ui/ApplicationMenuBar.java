@@ -25,17 +25,17 @@ import javax.swing.JMenuItem;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface ApplicationMenuBar {
-  public static final String SERVICE = ApplicationMenuBar.class.getName();
-  public static final String MENU_ID_FILE = "menu.file";
-  public static final String MENU_ID_VIEW = "menu.view";
-  public static final String MENU_ID_EDIT = "menu.edit";
-  public static final String MENU_ID_HELP = "menu.help";
+  String SERVICE = ApplicationMenuBar.class.getName();
+  String MENU_ID_FILE = "menu.file";
+  String MENU_ID_VIEW = "menu.view";
+  String MENU_ID_EDIT = "menu.edit";
+  String MENU_ID_HELP = "menu.help";
 
-  public void setMenu(String menuID, JMenu menu);
+  void setMenu(String menuID, JMenu menu);
 
-  public boolean hasMenu(String id);
+  boolean hasMenu(String id);
 
-  public void setAction(String menuID, Action action);
+  void setAction(String menuID, Action action);
 
-  public void setJMenuItem(String menuID, JMenuItem item);
+  void setJMenuItem(String menuID, JMenuItem item);
 }

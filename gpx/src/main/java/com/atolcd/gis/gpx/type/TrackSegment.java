@@ -8,7 +8,7 @@ import org.locationtech.jts.geom.LineString;
 
 public class TrackSegment {
 
-  private List<WayPoint> points;
+  private final List<WayPoint> points;
 
   public TrackSegment() {
     this.points = new ArrayList<WayPoint>();

@@ -25,7 +25,7 @@ import org.kabeja.parser.entities.AbstractEntityHandler;
 public class DXFDimensionStyleTableHandler extends AbstractTableHandler {
   public static final int GROUPCODE_NAME = 2;
   private DXFDimensionStyle style;
-  private String key = "DIMSTYLE";
+  private final String key = "DIMSTYLE";
 
   /*
    * (non-Javadoc)

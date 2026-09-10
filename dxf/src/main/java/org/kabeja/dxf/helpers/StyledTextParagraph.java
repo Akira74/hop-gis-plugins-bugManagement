@@ -29,7 +29,7 @@ public class StyledTextParagraph {
   private boolean overline = false;
   private double fontHeight = 0.0;
   private String font = "";
-  private StringBuffer text = new StringBuffer();
+  private final StringBuffer text = new StringBuffer();
   private double width = 0.0;
   private double obliquiAngle = 0.0;
   private double characterspace = 0.0;

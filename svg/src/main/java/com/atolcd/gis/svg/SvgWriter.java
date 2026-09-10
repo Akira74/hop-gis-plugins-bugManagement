@@ -16,7 +16,6 @@ import com.atolcd.gis.svg.type.graphic.Text;
 import com.atolcd.gis.svg.type.graphic.Use;
 import com.atolcd.gis.svg.type.style.EmbeddedStyle;
 import com.atolcd.gis.svg.type.style.ExternalStyle;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
@@ -29,51 +28,51 @@ import org.jdom2.output.XMLOutputter;
 
 public class SvgWriter {
 
-  private static Namespace SVG_NS = Namespace.getNamespace("http://www.w3.org/2000/svg");
-  private static Namespace XLINK_NS =
+  private static final Namespace SVG_NS = Namespace.getNamespace("http://www.w3.org/2000/svg");
+  private static final Namespace XLINK_NS =
       Namespace.getNamespace("xlink", "http://www.w3.org/1999/xlink");
 
-  private static String SVG_TAG_ATT_TYPE = "type";
+  private static final String SVG_TAG_ATT_TYPE = "type";
 
-  private static String SVG_TAG = "svg";
-  private static String SVG_TAG_ATT_VERSION = "version";
-  private static String SVG_TAG_ATT_WIDTH = "width";
-  private static String SVG_TAG_ATT_HEIGHT = "height";
-  private static String SVG_TAG_ATT_VIEWBOX = "viewBox";
-  private static String SVG_TAG_ATT_ID = "id";
+  private static final String SVG_TAG = "svg";
+  private static final String SVG_TAG_ATT_VERSION = "version";
+  private static final String SVG_TAG_ATT_WIDTH = "width";
+  private static final String SVG_TAG_ATT_HEIGHT = "height";
+  private static final String SVG_TAG_ATT_VIEWBOX = "viewBox";
+  private static final String SVG_TAG_ATT_ID = "id";
 
-  private static String SVG_TAG_ATT_STYLE = "style";
-  private static String SVG_TAG_ATT_CLASS = "class";
-  private static String SVG_TAG_ATT_TRANSFORM = "transform";
+  private static final String SVG_TAG_ATT_STYLE = "style";
+  private static final String SVG_TAG_ATT_CLASS = "class";
+  private static final String SVG_TAG_ATT_TRANSFORM = "transform";
 
-  private static String SVG_TAG_ATT_X = "x";
-  private static String SVG_TAG_ATT_Y = "y";
+  private static final String SVG_TAG_ATT_X = "x";
+  private static final String SVG_TAG_ATT_Y = "y";
 
-  private static String SVG_TAG_TITLE = "title";
-  private static String SVG_TAG_DESC = "desc";
+  private static final String SVG_TAG_TITLE = "title";
+  private static final String SVG_TAG_DESC = "desc";
 
-  private static String SVG_TAG_STYLE = "style";
-  private static String SVG_TAG_G = "g";
-  private static String SVG_TAG_A = "a";
-  private static String SVG_TAG_DEFS = "defs";
-  private static String SVG_TAG_USE = "use";
-  private static String SVG_TAG_IMAGE = "image";
-  private static String SVG_TAG_TEXT = "text";
+  private static final String SVG_TAG_STYLE = "style";
+  private static final String SVG_TAG_G = "g";
+  private static final String SVG_TAG_A = "a";
+  private static final String SVG_TAG_DEFS = "defs";
+  private static final String SVG_TAG_USE = "use";
+  private static final String SVG_TAG_IMAGE = "image";
+  private static final String SVG_TAG_TEXT = "text";
 
-  private static String XLINK_TAG_ATT_HREF = "href";
-  private static String XLINK_TAG_ATT_SHOW = "show";
+  private static final String XLINK_TAG_ATT_HREF = "href";
+  private static final String XLINK_TAG_ATT_SHOW = "show";
 
-  private static String SVG_TAG_CIRCLE = "circle";
-  private static String SVG_TAG_ATT_CX = "cx";
-  private static String SVG_TAG_ATT_CY = "cy";
-  private static String SVG_TAG_ATT_R = "r";
+  private static final String SVG_TAG_CIRCLE = "circle";
+  private static final String SVG_TAG_ATT_CX = "cx";
+  private static final String SVG_TAG_ATT_CY = "cy";
+  private static final String SVG_TAG_ATT_R = "r";
 
-  private static String SVG_TAG_RECT = "rect";
-  private static String SVG_TAG_ATT_RX = "rx";
-  private static String SVG_TAG_ATT_RY = "ry";
+  private static final String SVG_TAG_RECT = "rect";
+  private static final String SVG_TAG_ATT_RX = "rx";
+  private static final String SVG_TAG_ATT_RY = "ry";
 
-  private static String SVG_TAG_PATH = "path";
-  private static String SVG_TAG_ATT_D = "d";
+  private static final String SVG_TAG_PATH = "path";
+  private static final String SVG_TAG_ATT_D = "d";
 
   public void write(Document svgDocument, Writer writer, String charsetName) throws IOException {
 
@@ -85,8 +84,7 @@ public class SvgWriter {
     writer.close();
   }
 
-  public void write(Document svgDocument, String filename, String charsetName)
-      throws FileNotFoundException, IOException {
+  public void write(Document svgDocument, String filename, String charsetName) throws IOException {
 
     org.jdom2.Document document = getSvgDocument(svgDocument);
     Format format = Format.getPrettyFormat();
@@ -97,8 +95,7 @@ public class SvgWriter {
     fileOutputStream.close();
   }
 
-  private org.jdom2.Document getSvgDocument(Document svgDocument)
-      throws FileNotFoundException, IOException {
+  private org.jdom2.Document getSvgDocument(Document svgDocument) throws IOException {
 
     // Svg
     Element svgElt = new Element(SVG_TAG, SVG_NS);

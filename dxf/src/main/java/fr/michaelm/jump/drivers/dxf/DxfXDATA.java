@@ -9,9 +9,9 @@ public class DxfXDATA {
   public static int GROUPCODE_XDATA_INTEGER = 1070;
   public static int GROUPCODE_XDATA_LONG = 1071;
 
-  private String name;
-  private int code;
-  private Object value;
+  private final String name;
+  private final int code;
+  private final Object value;
 
   public DxfXDATA(String name, int code, Object value) {
     this.name = name;

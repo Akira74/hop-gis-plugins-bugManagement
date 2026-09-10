@@ -10,8 +10,8 @@ import org.locationtech.jts.geom.Envelope;
 
 public class DXFWriter {
 
-  private String dxfFileName;
-  private List<Layer> layers;
+  private final String dxfFileName;
+  private final List<Layer> layers;
 
   public DXFWriter(String fileName) {
 

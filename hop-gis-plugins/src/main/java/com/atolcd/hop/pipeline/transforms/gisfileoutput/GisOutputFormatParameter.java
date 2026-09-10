@@ -32,8 +32,8 @@ public class GisOutputFormatParameter {
   @HopMetadataProperty(key = "value")
   private String value;
 
-  // No-Arg-Konstruktor: wird von Hops Reflection-basierter (De-)Serialisierung
-  // (@HopMetadataProperty) benoetigt.
+  // No-arg constructor: required by Hop's reflection-based (de-)serialization
+  // (@HopMetadataProperty).
   public GisOutputFormatParameter() {}
 
   public GisOutputFormatParameter(String key, String value) {

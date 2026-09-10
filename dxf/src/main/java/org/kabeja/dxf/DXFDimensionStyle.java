@@ -101,7 +101,7 @@ public class DXFDimensionStyle {
   public static final String PROPERTY_DIMTVP = "145";
   public static final String PROPERTY_DIMTZIN = "284";
   public static final String PROPERTY_DIMZIN = "78";
-  private HashMap<String, String> properties = new HashMap<String, String>();
+  private final HashMap<String, String> properties = new HashMap<String, String>();
   private int flags = 0;
   private String name = "";
 
@@ -114,18 +114,18 @@ public class DXFDimensionStyle {
   }
 
   public String getProperty(String name) {
-    return (String) properties.get(name);
+    return properties.get(name);
   }
 
   public int getIntegerProperty(String name) {
-    String value = (String) properties.get(name);
+    String value = properties.get(name);
 
     return Integer.parseInt(value);
   }
 
   public int getIntegerProperty(String name, int defaultValue) {
     if (hasProperty(name)) {
-      String value = (String) properties.get(name);
+      String value = properties.get(name);
 
       return Integer.parseInt(value);
     } else {
@@ -134,14 +134,14 @@ public class DXFDimensionStyle {
   }
 
   public double getDoubleProperty(String name) {
-    String value = (String) properties.get(name);
+    String value = properties.get(name);
 
     return Double.parseDouble(value);
   }
 
   public double getDoubleProperty(String name, double defaultValue) {
     if (hasProperty(name)) {
-      String value = (String) properties.get(name);
+      String value = properties.get(name);
 
       return Double.parseDouble(value);
     } else {
@@ -150,24 +150,16 @@ public class DXFDimensionStyle {
   }
 
   public boolean getBooleanProperty(String name) {
-    String value = (String) properties.get(name);
+    String value = properties.get(name);
 
-    if ("1".equals(value)) {
-      return true;
-    } else {
-      return false;
-    }
+    return "1".equals(value);
   }
 
   public boolean getBooleanProperty(String name, boolean defaultValue) {
     if (hasProperty(name)) {
-      String value = (String) properties.get(name);
+      String value = properties.get(name);
 
-      if ("1".equals(value)) {
-        return true;
-      } else {
-        return false;
-      }
+      return "1".equals(value);
     } else {
       return defaultValue;
     }

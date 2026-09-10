@@ -21,7 +21,7 @@ package org.kabeja.ui;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface Startable extends Component {
-  public void start();
+  void start();
 
-  public void stop();
+  void stop();
 }

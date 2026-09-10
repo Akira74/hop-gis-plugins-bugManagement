@@ -98,10 +98,6 @@ public class DXFLineType {
   }
 
   public boolean isScaleToFit() {
-    if (alignment == 83) {
-      return true;
-    }
-
-    return false;
+    return alignment == 83;
   }
 }

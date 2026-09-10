@@ -36,6 +36,7 @@ import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
 import org.apache.hop.pipeline.transform.ITransformDialog;
 import org.apache.hop.pipeline.transform.TransformMeta;
+import org.apache.hop.ui.core.PropsUi;
 import org.apache.hop.ui.core.dialog.ErrorDialog;
 import org.apache.hop.ui.core.dialog.MessageDialogWithToggle;
 import org.apache.hop.ui.core.widget.ColumnInfo;
@@ -64,7 +65,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 public class GisGroupByDialog extends BaseTransformDialog implements ITransformDialog {
-  private static Class<?> PKG = GisGroupByMeta.class;
+  private static final Class<?> PKG = GisGroupByMeta.class;
 
   public static final String STRING_SORT_WARNING_PARAMETER = "GroupSortWarning";
 
@@ -121,7 +122,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
   private FormData fdGet, fdGetAgg;
   private Listener lsGet, lsGetAgg;
 
-  private GisGroupByMeta input;
+  private final GisGroupByMeta input;
 
   private boolean backupAllRows;
 
@@ -129,7 +130,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
 
   private ColumnInfo[] ciReturn;
 
-  private Map<String, Integer> inputFields;
+  private final Map<String, Integer> inputFields;
 
   public GisGroupByDialog(
       Shell parent, IVariables variables, Object in, PipelineMeta transMeta, String sname) {
@@ -143,7 +144,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     Display display = parent.getDisplay();
 
     shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
-    props.setLook(shell);
+    PropsUi.setLook(shell);
     setShellImage(shell, input);
 
     ModifyListener lsMod =
@@ -168,7 +169,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     // transformName line
     wlTransformName = new Label(shell, SWT.RIGHT);
     wlTransformName.setText(BaseMessages.getString(PKG, "GisGroupBy.TransformName.Label"));
-    props.setLook(wlTransformName);
+    PropsUi.setLook(wlTransformName);
     fdlTransformName = new FormData();
     fdlTransformName.left = new FormAttachment(0, 0);
     fdlTransformName.right = new FormAttachment(middle, -margin);
@@ -176,7 +177,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     wlTransformName.setLayoutData(fdlTransformName);
     wTransformName = new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wTransformName.setText(transformName);
-    props.setLook(wTransformName);
+    PropsUi.setLook(wTransformName);
     wTransformName.addModifyListener(lsMod);
     fdTransformName = new FormData();
     fdTransformName.left = new FormAttachment(middle, 0);
@@ -187,14 +188,14 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     // Include all rows?
     wlAllRows = new Label(shell, SWT.RIGHT);
     wlAllRows.setText(BaseMessages.getString(PKG, "GroupByDialog.AllRows.Label"));
-    props.setLook(wlAllRows);
+    PropsUi.setLook(wlAllRows);
     fdlAllRows = new FormData();
     fdlAllRows.left = new FormAttachment(0, 0);
     fdlAllRows.top = new FormAttachment(wTransformName, margin);
     fdlAllRows.right = new FormAttachment(middle, -margin);
     wlAllRows.setLayoutData(fdlAllRows);
     wAllRows = new Button(shell, SWT.CHECK);
-    props.setLook(wAllRows);
+    PropsUi.setLook(wAllRows);
     fdAllRows = new FormData();
     fdAllRows.left = new FormAttachment(middle, 0);
     fdAllRows.top = new FormAttachment(wTransformName, margin);
@@ -211,7 +212,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
 
     wlSortDir = new Label(shell, SWT.RIGHT);
     wlSortDir.setText(BaseMessages.getString(PKG, "GroupByDialog.TempDir.Label"));
-    props.setLook(wlSortDir);
+    PropsUi.setLook(wlSortDir);
     fdlSortDir = new FormData();
     fdlSortDir.left = new FormAttachment(0, 0);
     fdlSortDir.right = new FormAttachment(middle, -margin);
@@ -219,7 +220,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     wlSortDir.setLayoutData(fdlSortDir);
 
     wbSortDir = new Button(shell, SWT.PUSH | SWT.CENTER);
-    props.setLook(wbSortDir);
+    PropsUi.setLook(wbSortDir);
     wbSortDir.setText(BaseMessages.getString(PKG, "GroupByDialog.Browse.Button"));
     fdbSortDir = new FormData();
     fdbSortDir.right = new FormAttachment(100, 0);
@@ -227,7 +228,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     wbSortDir.setLayoutData(fdbSortDir);
 
     wSortDir = new TextVar(variables, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-    props.setLook(wSortDir);
+    PropsUi.setLook(wSortDir);
     wSortDir.addModifyListener(lsMod);
     fdSortDir = new FormData();
     fdSortDir.left = new FormAttachment(middle, 0);
@@ -258,14 +259,14 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     // Prefix line...
     wlPrefix = new Label(shell, SWT.RIGHT);
     wlPrefix.setText(BaseMessages.getString(PKG, "GroupByDialog.FilePrefix.Label"));
-    props.setLook(wlPrefix);
+    PropsUi.setLook(wlPrefix);
     fdlPrefix = new FormData();
     fdlPrefix.left = new FormAttachment(0, 0);
     fdlPrefix.right = new FormAttachment(middle, -margin);
     fdlPrefix.top = new FormAttachment(wbSortDir, margin * 2);
     wlPrefix.setLayoutData(fdlPrefix);
     wPrefix = new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-    props.setLook(wPrefix);
+    PropsUi.setLook(wPrefix);
     wPrefix.addModifyListener(lsMod);
     fdPrefix = new FormData();
     fdPrefix.left = new FormAttachment(middle, 0);
@@ -276,14 +277,14 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     // Include all rows?
     wlAddLineNr = new Label(shell, SWT.RIGHT);
     wlAddLineNr.setText(BaseMessages.getString(PKG, "GroupByDialog.AddLineNr.Label"));
-    props.setLook(wlAddLineNr);
+    PropsUi.setLook(wlAddLineNr);
     fdlAddLineNr = new FormData();
     fdlAddLineNr.left = new FormAttachment(0, 0);
     fdlAddLineNr.top = new FormAttachment(wPrefix, margin);
     fdlAddLineNr.right = new FormAttachment(middle, -margin);
     wlAddLineNr.setLayoutData(fdlAddLineNr);
     wAddLineNr = new Button(shell, SWT.CHECK);
-    props.setLook(wAddLineNr);
+    PropsUi.setLook(wAddLineNr);
     fdAddLineNr = new FormData();
     fdAddLineNr.left = new FormAttachment(middle, 0);
     fdAddLineNr.top = new FormAttachment(wPrefix, margin);
@@ -301,14 +302,14 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     // LineNrField line...
     wlLineNrField = new Label(shell, SWT.RIGHT);
     wlLineNrField.setText(BaseMessages.getString(PKG, "GroupByDialog.LineNrField.Label"));
-    props.setLook(wlLineNrField);
+    PropsUi.setLook(wlLineNrField);
     fdlLineNrField = new FormData();
     fdlLineNrField.left = new FormAttachment(0, 0);
     fdlLineNrField.right = new FormAttachment(middle, -margin);
     fdlLineNrField.top = new FormAttachment(wAddLineNr, margin);
     wlLineNrField.setLayoutData(fdlLineNrField);
     wLineNrField = new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-    props.setLook(wLineNrField);
+    PropsUi.setLook(wLineNrField);
     wLineNrField.addModifyListener(lsMod);
     fdLineNrField = new FormData();
     fdLineNrField.left = new FormAttachment(middle, 0);
@@ -322,7 +323,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     wlAlwaysAddResult.setText(BaseMessages.getString(PKG, "GroupByDialog.AlwaysAddResult.Label"));
     wlAlwaysAddResult.setToolTipText(
         BaseMessages.getString(PKG, "GroupByDialog.AlwaysAddResult.ToolTip"));
-    props.setLook(wlAlwaysAddResult);
+    PropsUi.setLook(wlAlwaysAddResult);
     fdlAlwaysAddResult = new FormData();
     fdlAlwaysAddResult.left = new FormAttachment(0, 0);
     fdlAlwaysAddResult.top = new FormAttachment(wLineNrField, margin);
@@ -331,7 +332,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     wAlwaysAddResult = new Button(shell, SWT.CHECK);
     wAlwaysAddResult.setToolTipText(
         BaseMessages.getString(PKG, "GroupByDialog.AlwaysAddResult.ToolTip"));
-    props.setLook(wAlwaysAddResult);
+    PropsUi.setLook(wAlwaysAddResult);
     fdAlwaysAddResult = new FormData();
     fdAlwaysAddResult.left = new FormAttachment(middle, 0);
     fdAlwaysAddResult.top = new FormAttachment(wLineNrField, margin);
@@ -340,7 +341,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
 
     wlGroup = new Label(shell, SWT.NONE);
     wlGroup.setText(BaseMessages.getString(PKG, "GroupByDialog.Group.Label"));
-    props.setLook(wlGroup);
+    PropsUi.setLook(wlGroup);
     fdlGroup = new FormData();
     fdlGroup.left = new FormAttachment(0, 0);
     fdlGroup.top = new FormAttachment(wAlwaysAddResult, margin);
@@ -384,7 +385,7 @@ public class GisGroupByDialog extends BaseTransformDialog implements ITransformD
     // THE Aggregate fields
     wlAgg = new Label(shell, SWT.NONE);
     wlAgg.setText(BaseMessages.getString(PKG, "GroupByDialog.Aggregates.Label"));
-    props.setLook(wlAgg);
+    PropsUi.setLook(wlAgg);
     fdlAgg = new FormData();
     fdlAgg.left = new FormAttachment(0, 0);
     fdlAgg.top = new FormAttachment(wGroup, margin);

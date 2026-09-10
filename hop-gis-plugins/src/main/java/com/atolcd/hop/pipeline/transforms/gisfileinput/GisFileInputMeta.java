@@ -63,9 +63,9 @@ import org.eclipse.swt.widgets.Shell;
     keywords = "i18n::GisFileInput.keywords")
 public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInputData> {
 
-  private static Class<?> PKG = GisFileInputMeta.class;
+  private static final Class<?> PKG = GisFileInputMeta.class;
 
-  private HashMap<String, GisInputFormatDef> inputFormatDefs;
+  private final HashMap<String, GisInputFormatDef> inputFormatDefs;
 
   @HopMetadataProperty(injectionKeyDescription = "GisFileInput.FileFormat.Label")
   private String inputFormat;
@@ -85,6 +85,16 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
   @HopMetadataProperty(key = "rowLimit", injectionKeyDescription = "GisFileInput.RowLimit.Label")
   private Long rowLimit;
 
+  /**
+   * Generic synchronization switch: when active, the transform waits before opening the file for at
+   * least one row (or the end of the data stream) from an incoming hop. The row content itself is
+   * ignored - the only purpose is to ensure that an upstream transform (e.g. "Execute a process"
+   * with OGR/GDAL) has verifiably finished/started before this file is read. Without an incoming
+   * hop, this option has no effect (getRow() then immediately returns null).
+   */
+  @HopMetadataProperty(key = "waitForPreviousTransform")
+  private boolean waitForPreviousTransform;
+
   public GisFileInputMeta() {
     super();
 
@@ -95,16 +105,12 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
     GisInputFormatDef shpDef =
         new GisInputFormatDef("ESRI_SHP", new String[] {"*.shp;*.SHP"}, new String[] {"*.shp"});
     shpDef.addParameterDef(
-        "FORCE_TO_2D",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "TRUE");
+        "FORCE_TO_2D", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "TRUE");
     shpDef.addParameterDef(
         "FORCE_TO_MULTIGEOMETRY",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "FALSE");
     this.inputFormatDefs.put("ESRI_SHP", shpDef);
 
@@ -118,7 +124,7 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
         "FORCE_TO_MULTIGEOMETRY",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "FALSE");
     this.inputFormatDefs.put("GEOJSON", geojsonDef);
 
@@ -129,7 +135,7 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
         "FORCE_TO_MULTIGEOMETRY",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "FALSE");
     this.inputFormatDefs.put("MAPINFO_MIF", mapinfoDef);
 
@@ -149,31 +155,27 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
         "FORCE_TO_MULTIGEOMETRY",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "FALSE");
     dxfDef.addParameterDef(
-        "READ_XDATA",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "FALSE");
+        "READ_XDATA", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "FALSE");
     dxfDef.addParameterDef(
         "CIRCLE_AS_POLYGON",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "FALSE");
     dxfDef.addParameterDef(
         "ELLIPSE_AS_POLYGON",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "FALSE");
     dxfDef.addParameterDef(
         "LINE_AS_POLYGON",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "FALSE");
     this.inputFormatDefs.put("DXF", dxfDef);
 
@@ -181,11 +183,7 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
     GisInputFormatDef gpxDef =
         new GisInputFormatDef("GPX", new String[] {"*.gpx;*.GPX"}, new String[] {"*.gpx"});
     gpxDef.addParameterDef(
-        "FORCE_TO_2D",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "TRUE");
+        "FORCE_TO_2D", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "TRUE");
     this.inputFormatDefs.put("GPX", gpxDef);
 
     // GeoPackage
@@ -194,16 +192,12 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
             "GEOPACKAGE", new String[] {"*.gpkg;*.GPKG"}, new String[] {"*.gpkg"});
     gpkgDef.addParameterDef("DB_TABLE_NAME", ValueMetaBase.TYPE_STRING, true);
     gpkgDef.addParameterDef(
-        "FORCE_TO_2D",
-        ValueMetaBase.TYPE_BOOLEAN,
-        true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
-        "TRUE");
+        "FORCE_TO_2D", ValueMetaBase.TYPE_BOOLEAN, true, Arrays.asList("TRUE", "FALSE"), "TRUE");
     gpkgDef.addParameterDef(
         "FORCE_TO_MULTIGEOMETRY",
         ValueMetaBase.TYPE_BOOLEAN,
         true,
-        Arrays.asList(new String[] {"TRUE", "FALSE"}),
+        Arrays.asList("TRUE", "FALSE"),
         "FALSE");
     this.inputFormatDefs.put("GEOPACKAGE", gpkgDef);
   }
@@ -260,10 +254,18 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
     this.rowLimit = rowLimit;
   }
 
-  // Hinweis: getXml() wurde entfernt. Seit Apache Hop 2.18 wird
-  // BaseTransformMeta.getXml() nicht mehr aufgerufen (@Deprecated seit 2.10.0,
-  // ignoriert seit 2.18) - die Serialisierung erfolgt jetzt ausschliesslich
-  // reflection-basiert ueber die @HopMetadataProperty-Annotationen oben.
+  public boolean isWaitForPreviousTransform() {
+    return waitForPreviousTransform;
+  }
+
+  public void setWaitForPreviousTransform(boolean waitForPreviousTransform) {
+    this.waitForPreviousTransform = waitForPreviousTransform;
+  }
+
+  // Note: getXml() has been removed. Since Apache Hop 2.18,
+  // BaseTransformMeta.getXml() is no longer called (@Deprecated since 2.10.0,
+  // ignored since 2.18) - serialization now happens exclusively via
+  // reflection using the @HopMetadataProperty annotations above.
 
   @Override
   public void getFields(
@@ -368,13 +370,13 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
     return retval;
   }
 
-  // Hinweis: loadXml() wurde entfernt - aus demselben Grund wie getXml()
-  // (siehe oben). Das Laden erfolgt jetzt automatisch ueber die
-  // @HopMetadataProperty-Annotationen. ACHTUNG: Bereits gespeicherte .hpl-Dateien,
-  // die mit der alten (fehlerhaften) Serialisierung gespeichert wurden, enthalten
-  // KEIN <rowLimit> und KEINE <params> - beim erstmaligen Oeffnen dieser
-  // Alt-Dateien bleibt rowLimit dann null. Einmal neu speichern behebt das
-  // dauerhaft, da ab dann die korrekten Tags geschrieben werden.
+  // Note: loadXml() has been removed - for the same reason as getXml()
+  // (see above). Loading now happens automatically via the
+  // @HopMetadataProperty annotations. CAUTION: .hpl files already saved
+  // with the old (faulty) serialization contain
+  // NO <rowLimit> and NO <params> - the first time these
+  // legacy files are opened, rowLimit remains null. Saving them once more
+  // fixes this permanently, since the correct tags are written from then on.
 
   public void setDefault() {
 
@@ -388,8 +390,8 @@ public class GisFileInputMeta extends BaseTransformMeta<GisFileInput, GisFileInp
       PipelineMeta transmeta,
       TransformMeta stepMeta,
       IRowMeta prev,
-      String input[],
-      String output[],
+      String[] input,
+      String[] output,
       IRowMeta info,
       IVariables variables,
       IHopMetadataProvider metadataProvider) {

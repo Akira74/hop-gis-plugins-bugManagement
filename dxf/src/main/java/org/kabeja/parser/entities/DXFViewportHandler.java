@@ -68,7 +68,7 @@ public class DXFViewportHandler extends AbstractEntityHandler {
   public static final int GROUPCODE_PLOTSTYLE_NAME = 1;
   public static final int GROUPCODE_FROZEN_LAYER = 341;
   public static final int GROUPCODE_FROZEN_LAYER_XDATA = 1003;
-  private int[] xDataConvert =
+  private final int[] xDataConvert =
       new int[] {
         1000, 1002, 1070, 17, 27, 37, 16, 26, 36, 51, 45, 12, 22, 42, 43, 44, 90, 72, 90, 90, 90,
         90, 90, 90, 50, 13, 23, 14, 24, 15, 25, 90, 1002

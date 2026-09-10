@@ -4,17 +4,17 @@ import org.locationtech.jts.geom.Geometry;
 
 public interface ISpatialElement extends IElement {
 
-  public void setComment(String comment);
+  void setComment(String comment);
 
-  public void setSource(String source);
+  void setSource(String source);
 
-  public void setType(String type);
+  void setType(String type);
 
-  public String getComment();
+  String getComment();
 
-  public String getSource();
+  String getSource();
 
-  public String getType();
+  String getType();
 
-  public Geometry getGeometry();
+  Geometry getGeometry();
 }

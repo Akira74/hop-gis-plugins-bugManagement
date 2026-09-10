@@ -25,7 +25,7 @@ import org.kabeja.dxf.DXFEntity;
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  */
 public class HatchBoundaryLoop {
-  private List edges = new ArrayList();
+  private final List edges = new ArrayList();
   private boolean outermost = true;
 
   /**

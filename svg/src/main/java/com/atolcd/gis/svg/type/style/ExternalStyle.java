@@ -4,7 +4,7 @@ import com.atolcd.gis.svg.type.AbstractStyle;
 
 public class ExternalStyle extends AbstractStyle {
 
-  private String href;
+  private final String href;
 
   public ExternalStyle(String href) {
     this.href = href;

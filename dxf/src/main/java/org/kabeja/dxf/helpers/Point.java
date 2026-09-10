@@ -80,8 +80,7 @@ public class Point {
   }
 
   public boolean equals(Object obj) {
-    if (obj instanceof Point) {
-      Point p = (Point) obj;
+    if (obj instanceof Point p) {
       double d = DXFConstants.POINT_CONNECTION_RADIUS;
 
       if ((Math.abs(x - p.getX()) <= d) && (Math.abs(y - p.getY()) <= d)) {

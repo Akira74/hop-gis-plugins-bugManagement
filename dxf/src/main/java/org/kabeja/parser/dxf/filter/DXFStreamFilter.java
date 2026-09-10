@@ -27,12 +27,12 @@ public interface DXFStreamFilter extends DXFHandler {
    *
    * @param handler
    */
-  public void setDXFHandler(DXFHandler handler);
+  void setDXFHandler(DXFHandler handler);
 
   /**
    * Setup properties for the DXFStreamFilter. Will called before the parsing starts.
    *
    * @param properties
    */
-  public void setProperties(Map properties);
+  void setProperties(Map properties);
 }

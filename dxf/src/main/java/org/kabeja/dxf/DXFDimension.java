@@ -309,7 +309,6 @@ public class DXFDimension extends DXFEntity {
         bounds.setMinimumX(bounds.getMinimumX() + this.insertPoint.getX());
         bounds.setMaximumY(bounds.getMaximumY() + this.insertPoint.getY());
         bounds.setMinimumY(bounds.getMinimumY() + this.insertPoint.getY());
-        ;
       }
     } else {
       bounds.setValid(false);

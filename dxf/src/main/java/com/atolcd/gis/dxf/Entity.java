@@ -17,11 +17,11 @@ public class Entity {
   public static String TYPE_BLOCK = "BLOCK";
   public static String TYPE_POINT = "POINT";
 
-  private String id;
+  private final String id;
   private Geometry geometry;
   private String type;
   private String text;
-  private List<ExtendedData> extendedData;
+  private final List<ExtendedData> extendedData;
 
   public Entity(String id, Geometry geometry, String type, String text) {
     this.id = id;

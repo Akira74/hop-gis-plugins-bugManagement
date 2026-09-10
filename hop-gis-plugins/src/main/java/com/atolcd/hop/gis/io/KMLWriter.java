@@ -54,10 +54,10 @@ import org.locationtech.jts.geom.Polygon;
 
 public class KMLWriter extends AbstractFileWriter {
 
-  private Writer writer;
-  private boolean isServletOutput;
+  private final Writer writer;
+  private final boolean isServletOutput;
 
-  private String kmlFileName;
+  private final String kmlFileName;
 
   private boolean forceTo2DGeometry;
   private boolean exportWithAttributs;
@@ -308,7 +308,7 @@ public class KMLWriter extends AbstractFileWriter {
             placemark.createAndSetMultiGeometry();
         for (int i = 0; i < geometry.getNumGeometries(); i++) {
 
-          kmlMultiGeometry.addToGeometry(getAsKmlPoint((Point) ((Point) geometry).getGeometryN(i)));
+          kmlMultiGeometry.addToGeometry(getAsKmlPoint((Point) geometry.getGeometryN(i)));
         }
         // MULTILINESTRING
       } else if (geometry instanceof MultiLineString) {
@@ -317,8 +317,7 @@ public class KMLWriter extends AbstractFileWriter {
             placemark.createAndSetMultiGeometry();
         for (int i = 0; i < geometry.getNumGeometries(); i++) {
 
-          kmlMultiGeometry.addToGeometry(
-              getAsKmlLineString((LineString) ((MultiLineString) geometry).getGeometryN(i)));
+          kmlMultiGeometry.addToGeometry(getAsKmlLineString((LineString) geometry.getGeometryN(i)));
         }
         // MULTIPOLYGON
       } else if (geometry instanceof MultiPolygon) {
@@ -327,8 +326,7 @@ public class KMLWriter extends AbstractFileWriter {
             placemark.createAndSetMultiGeometry();
         for (int i = 0; i < geometry.getNumGeometries(); i++) {
 
-          kmlMultiGeometry.addToGeometry(
-              getAsKmlPolygon((Polygon) ((MultiPolygon) geometry).getGeometryN(i)));
+          kmlMultiGeometry.addToGeometry(getAsKmlPolygon((Polygon) geometry.getGeometryN(i)));
         }
         // GEOMETRYCOLLECTION
       } else if (geometry instanceof GeometryCollection) {
@@ -349,21 +347,21 @@ public class KMLWriter extends AbstractFileWriter {
 
             for (int j = 0; j < currentGeometry.getNumGeometries(); j++) {
               kmlMultiGeometry.addToGeometry(
-                  getAsKmlPoint((Point) ((Point) currentGeometry).getGeometryN(j)));
+                  getAsKmlPoint((Point) currentGeometry.getGeometryN(j)));
             }
 
           } else if (currentGeometry instanceof MultiLineString) {
 
             for (int j = 0; j < currentGeometry.getNumGeometries(); j++) {
               kmlMultiGeometry.addToGeometry(
-                  getAsKmlLineString((LineString) ((LineString) currentGeometry).getGeometryN(j)));
+                  getAsKmlLineString((LineString) currentGeometry.getGeometryN(j)));
             }
 
           } else if (currentGeometry instanceof MultiPolygon) {
 
             for (int j = 0; j < currentGeometry.getNumGeometries(); j++) {
               kmlMultiGeometry.addToGeometry(
-                  getAsKmlPolygon((Polygon) ((Polygon) currentGeometry).getGeometryN(j)));
+                  getAsKmlPolygon((Polygon) currentGeometry.getGeometryN(j)));
             }
           }
         }

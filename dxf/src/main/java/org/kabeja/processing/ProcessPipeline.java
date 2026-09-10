@@ -35,8 +35,8 @@ import org.xml.sax.SAXException;
  */
 public class ProcessPipeline {
   private ProcessingManager manager;
-  private List postProcessorConfigs = new ArrayList();
-  private List saxFilterConfigs = new ArrayList();
+  private final List postProcessorConfigs = new ArrayList();
+  private final List saxFilterConfigs = new ArrayList();
   private SAXGenerator generator;
   private Map serializerProperties = new HashMap();
   private Map generatorProperties = new HashMap();

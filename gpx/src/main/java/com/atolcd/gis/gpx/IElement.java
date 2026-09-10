@@ -2,11 +2,11 @@ package com.atolcd.gis.gpx;
 
 public interface IElement {
 
-  public void setName(String name);
+  void setName(String name);
 
-  public void setDescription(String description);
+  void setDescription(String description);
 
-  public String getName();
+  String getName();
 
-  public String getDescription();
+  String getDescription();
 }

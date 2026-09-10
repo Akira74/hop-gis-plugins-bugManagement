@@ -28,7 +28,7 @@ import java.util.List;
 
 public class Feature {
 
-  private List<Value> values;
+  private final List<Value> values;
 
   public Feature() {
 

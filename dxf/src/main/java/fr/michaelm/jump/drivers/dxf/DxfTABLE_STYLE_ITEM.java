@@ -170,14 +170,15 @@ public class DxfTABLE_STYLE_ITEM extends DxfTABLE_ITEM {
   }
 
   public String toString() {
-    StringBuffer sb = new StringBuffer(super.toString());
-    sb.append(DxfGroup.toString(40, textHeight, 3));
-    sb.append(DxfGroup.toString(41, widthFactor, 3));
-    sb.append(DxfGroup.toString(50, obliqueAngle, 3));
-    sb.append(DxfGroup.toString(71, textGenerationFlags));
-    sb.append(DxfGroup.toString(42, lastHeightUsed, 3));
-    sb.append(DxfGroup.toString(3, primaryFontFileName));
-    sb.append(DxfGroup.toString(4, bigFontFileName));
-    return sb.toString();
+    String sb =
+        super.toString()
+            + DxfGroup.toString(40, textHeight, 3)
+            + DxfGroup.toString(41, widthFactor, 3)
+            + DxfGroup.toString(50, obliqueAngle, 3)
+            + DxfGroup.toString(71, textGenerationFlags)
+            + DxfGroup.toString(42, lastHeightUsed, 3)
+            + DxfGroup.toString(3, primaryFontFileName)
+            + DxfGroup.toString(4, bigFontFileName);
+    return sb;
   }
 }

@@ -27,5 +27,5 @@ public interface Serviceable {
    *
    * @param manager
    */
-  public void setServiceManager(ServiceManager manager);
+  void setServiceManager(ServiceManager manager);
 }

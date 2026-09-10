@@ -24,10 +24,10 @@ package com.atolcd.hop.pipeline.transforms.gisgroupby;
 
 import org.apache.hop.metadata.api.HopMetadataProperty;
 
-// Ersetzt die vormaligen parallelen Arrays (aggregateField[], subjectField[],
-// aggregateType[], valueField[]), damit Hops reflection-basierte
-// (@HopMetadataProperty) Serialisierung greift. Die Tag-Namen entsprechen
-// denen der alten manuellen XML-Serialisierung.
+// Replaces the former parallel arrays (aggregateField[], subjectField[],
+// aggregateType[], valueField[]), so that Hop's reflection-based
+// (@HopMetadataProperty) serialization applies. The tag names correspond to
+// those of the old manual XML serialization.
 public class GisGroupByAggregateField {
 
   @HopMetadataProperty(key = "aggregate")
@@ -36,9 +36,9 @@ public class GisGroupByAggregateField {
   @HopMetadataProperty(key = "subject")
   private String subjectField;
 
-  // Wird als String (Code, z.B. "SUM") gespeichert statt als int, damit die
-  // .hpl-Datei robust gegen interne Nummerierungsaenderungen bleibt - genau
-  // wie im alten Format ueber getTypeDesc()/getType().
+  // Stored as a String (code, e.g. "SUM") instead of an int, so the
+  // .hpl file remains robust against internal numbering changes - just
+  // like in the old format via getTypeDesc()/getType().
   @HopMetadataProperty(key = "type")
   private String typeDesc;
 

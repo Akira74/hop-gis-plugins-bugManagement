@@ -9,7 +9,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 
 public class DxfFile {
@@ -124,16 +123,14 @@ public class DxfFile {
           fw.close();
         } catch (IOException ioe) {
         }
-      ;
     }
-    return;
   }
 
   public static String point2Dxf(Geometry geometry, String layerName, int precision) {
 
     StringBuffer sb = new StringBuffer(DxfGroup.toString(0, "POINT"));
     sb.append(DxfGroup.toString(8, layerName));
-    Coordinate coord = ((Point) geometry).getCoordinate();
+    Coordinate coord = geometry.getCoordinate();
     sb.append(DxfGroup.toString(10, coord.x, precision));
     sb.append(DxfGroup.toString(20, coord.y, precision));
     if (!Double.isNaN(coord.z)) {

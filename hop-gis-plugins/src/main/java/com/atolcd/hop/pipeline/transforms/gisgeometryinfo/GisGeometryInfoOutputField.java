@@ -24,9 +24,9 @@ package com.atolcd.hop.pipeline.transforms.gisgeometryinfo;
 
 import org.apache.hop.metadata.api.HopMetadataProperty;
 
-// Ersetzt die vormalige LinkedHashMap<String, String> outputFields, damit
-// Hops reflection-basierte (@HopMetadataProperty) Serialisierung greift -
-// eine Map wird von Hop nicht unterstuetzt, eine Liste von POJOs schon.
+// Replaces the former LinkedHashMap<String, String> outputFields, so that
+// Hop's reflection-based (@HopMetadataProperty) serialization applies -
+// Hop does not support a map, but does support a list of POJOs.
 public class GisGeometryInfoOutputField {
 
   @HopMetadataProperty(key = "infoKey")
@@ -35,8 +35,7 @@ public class GisGeometryInfoOutputField {
   @HopMetadataProperty(key = "infoFieldname")
   private String infoFieldname;
 
-  // No-Arg-Konstruktor: wird von Hops Reflection-basierter Deserialisierung
-  // benoetigt.
+  // No-arg constructor: required by Hop's reflection-based deserialization.
   public GisGeometryInfoOutputField() {}
 
   public GisGeometryInfoOutputField(String infoKey, String infoFieldname) {

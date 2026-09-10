@@ -28,10 +28,10 @@ import java.util.List;
 
 public class GisInputFormatDef {
 
-  private String key;
-  private String[] extensions;
-  private String[] extensionsNames;
-  private LinkedHashMap<String, GisInputFormatParameterDef> parameterDefs;
+  private final String key;
+  private final String[] extensions;
+  private final String[] extensionsNames;
+  private final LinkedHashMap<String, GisInputFormatParameterDef> parameterDefs;
 
   public GisInputFormatDef(String key, String[] extensions, String[] extensionsNames) {
     this.key = key;

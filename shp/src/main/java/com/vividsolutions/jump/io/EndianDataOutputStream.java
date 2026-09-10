@@ -40,7 +40,7 @@ import java.io.IOException;
  * real java.io.DataOutputStream to actually do the writing.
  */
 public class EndianDataOutputStream {
-  private java.io.DataOutputStream outputStream;
+  private final java.io.DataOutputStream outputStream;
 
   /** Creates new EndianDataOutputStream */
   public EndianDataOutputStream(java.io.OutputStream out) {

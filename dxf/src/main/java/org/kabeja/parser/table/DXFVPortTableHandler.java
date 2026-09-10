@@ -58,7 +58,7 @@ public class DXFVPortTableHandler extends AbstractTableHandler {
       case GROUPCODE_VPORT_NAME:
         viewport.setViewportID(value.getValue());
 
-        if ("*active".equals(value.getValue().toLowerCase())) {
+        if ("*active".equalsIgnoreCase(value.getValue())) {
           viewport.setActive(true);
         }
 

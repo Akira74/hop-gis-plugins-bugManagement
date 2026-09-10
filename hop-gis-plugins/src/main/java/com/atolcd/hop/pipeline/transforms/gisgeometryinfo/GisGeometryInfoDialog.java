@@ -39,6 +39,7 @@ import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
 import org.apache.hop.pipeline.transform.ITransformDialog;
 import org.apache.hop.pipeline.transform.TransformMeta;
+import org.apache.hop.ui.core.PropsUi;
 import org.apache.hop.ui.core.dialog.ErrorDialog;
 import org.apache.hop.ui.core.widget.ColumnInfo;
 import org.apache.hop.ui.core.widget.TableView;
@@ -67,7 +68,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class GisGeometryInfoDialog extends BaseTransformDialog implements ITransformDialog {
 
-  private static Class<?> PKG = GisGeometryInfoMeta.class;
+  private static final Class<?> PKG = GisGeometryInfoMeta.class;
 
   private Label wlGeometryField;
   private CCombo wGeometryField;
@@ -80,7 +81,7 @@ public class GisGeometryInfoDialog extends BaseTransformDialog implements ITrans
 
   private ColumnInfo[] outputsColumnInfo;
 
-  private GisGeometryInfoMeta input;
+  private final GisGeometryInfoMeta input;
 
   public GisGeometryInfoDialog(
       Shell parent, IVariables variables, Object in, PipelineMeta tr, String sname) {
@@ -95,7 +96,7 @@ public class GisGeometryInfoDialog extends BaseTransformDialog implements ITrans
     Display display = parent.getDisplay();
 
     shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
-    props.setLook(shell);
+    PropsUi.setLook(shell);
     setShellImage(shell, input);
 
     ModifyListener lsMod =
@@ -119,7 +120,7 @@ public class GisGeometryInfoDialog extends BaseTransformDialog implements ITrans
     // Nom du step
     wlTransformName = new Label(shell, SWT.RIGHT);
     wlTransformName.setText(BaseMessages.getString(PKG, "GisGeometryInfo.TransformName.Label"));
-    props.setLook(wlTransformName);
+    PropsUi.setLook(wlTransformName);
     fdlTransformName = new FormData();
     fdlTransformName.left = new FormAttachment(0, 0);
     fdlTransformName.right = new FormAttachment(middle, -margin);
@@ -127,7 +128,7 @@ public class GisGeometryInfoDialog extends BaseTransformDialog implements ITrans
     wlTransformName.setLayoutData(fdlTransformName);
     wTransformName = new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wTransformName.setText(transformName);
-    props.setLook(wTransformName);
+    PropsUi.setLook(wTransformName);
     wTransformName.addModifyListener(lsMod);
     fdTransformName = new FormData();
     fdTransformName.left = new FormAttachment(middle, 0);
@@ -138,7 +139,7 @@ public class GisGeometryInfoDialog extends BaseTransformDialog implements ITrans
     // Géométrie
     wlGeometryField = new Label(shell, SWT.RIGHT);
     wlGeometryField.setText(BaseMessages.getString(PKG, "GisGeometryInfo.GeometryFieldName.Label"));
-    props.setLook(wlGeometryField);
+    PropsUi.setLook(wlGeometryField);
     fdlGeometryField = new FormData();
     fdlGeometryField.left = new FormAttachment(0, 0);
     fdlGeometryField.top = new FormAttachment(wTransformName, margin);
@@ -149,7 +150,7 @@ public class GisGeometryInfoDialog extends BaseTransformDialog implements ITrans
     wGeometryField.setToolTipText(
         BaseMessages.getString(PKG, "GisGeometryInfo.GeometryFieldName.ToolTip"));
     wGeometryField.setEditable(false);
-    props.setLook(wGeometryField);
+    PropsUi.setLook(wGeometryField);
     wGeometryField.addModifyListener(lsMod);
     fdGeometryField = new FormData();
     fdGeometryField.left = new FormAttachment(middle, 0);
@@ -166,7 +167,7 @@ public class GisGeometryInfoDialog extends BaseTransformDialog implements ITrans
     // Sorties
     wlOutputs = new Label(shell, SWT.NONE);
     wlOutputs.setText(BaseMessages.getString(PKG, "GisGeometryInfo.Outputs.Label"));
-    props.setLook(wlOutputs);
+    PropsUi.setLook(wlOutputs);
     fdlOutputs = new FormData();
     fdlOutputs.left = new FormAttachment(0, 0);
     fdlOutputs.top = new FormAttachment(wGeometryField, margin);
@@ -316,7 +317,7 @@ public class GisGeometryInfoDialog extends BaseTransformDialog implements ITrans
   // Liste les colonnes d'un certain type
   private String[] getFieldsFromType(String type) {
 
-    String fieldNamesFromType[] = null;
+    String[] fieldNamesFromType = null;
 
     TransformMeta transformMeta = pipelineMeta.findTransform(transformName);
     if (transformMeta != null) {

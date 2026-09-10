@@ -26,7 +26,7 @@ import org.kabeja.parser.entities.DXFEntityHandler;
  */
 public class DXFEntitiesSectionHandler extends AbstractSectionHandler
     implements DXFSectionHandler, HandlerManager {
-  private static String SECTION_KEY = "ENTITIES";
+  private static final String SECTION_KEY = "ENTITIES";
   public static final int ENTITY_START = 0;
   protected Hashtable handlers = new Hashtable();
   protected DXFEntityHandler handler = null;

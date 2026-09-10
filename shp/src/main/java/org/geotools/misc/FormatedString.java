@@ -111,7 +111,7 @@ public class FormatedString {
     return start.trim();
   }
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     System.out.println(args[0] + " " + FormatedString.format(args[0], 6));
   }
 }

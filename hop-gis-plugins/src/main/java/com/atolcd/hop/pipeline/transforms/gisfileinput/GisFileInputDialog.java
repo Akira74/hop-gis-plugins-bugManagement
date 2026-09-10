@@ -36,6 +36,7 @@ import org.apache.hop.pipeline.PipelineMeta;
 import org.apache.hop.pipeline.PipelinePreviewFactory;
 import org.apache.hop.pipeline.transform.BaseTransformMeta;
 import org.apache.hop.pipeline.transform.ITransformDialog;
+import org.apache.hop.ui.core.PropsUi;
 import org.apache.hop.ui.core.dialog.EnterNumberDialog;
 import org.apache.hop.ui.core.dialog.EnterSelectionDialog;
 import org.apache.hop.ui.core.dialog.EnterStringDialog;
@@ -73,7 +74,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class GisFileInputDialog extends BaseTransformDialog implements ITransformDialog {
 
-  private static Class<?> PKG = GisFileInputDialog.class;
+  private static final Class<?> PKG = GisFileInputDialog.class;
 
   // Groupes de contrôles
   private Group wOptionnalGroup;
@@ -110,11 +111,16 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
   private Text wRowLimit;
   private FormData fdlRowLimit, fdRowLimit;
 
+  // "Do not start until data" - Synchronisations-Schalter
+  private Label wlWaitForPreviousTransform;
+  private Button wWaitForPreviousTransform;
+  private FormData fdlWaitForPreviousTransform, fdWaitForPreviousTransform;
+
   private ColumnInfo[] paramsColumnInfo;
 
   private Button wPreview;
 
-  private GisFileInputMeta input;
+  private final GisFileInputMeta input;
 
   public GisFileInputDialog(
       Shell parent, IVariables variables, Object in, PipelineMeta tr, String sname) {
@@ -129,7 +135,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     Display display = parent.getDisplay();
 
     shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
-    props.setLook(shell);
+    PropsUi.setLook(shell);
     setShellImage(shell, input);
 
     ModifyListener lsMod =
@@ -153,7 +159,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     // Nom du step
     wlTransformName = new Label(shell, SWT.RIGHT);
     wlTransformName.setText(BaseMessages.getString(PKG, "GisFileInput.TransformName.Label"));
-    props.setLook(wlTransformName);
+    PropsUi.setLook(wlTransformName);
     fdlTransformName = new FormData();
     fdlTransformName.left = new FormAttachment(0, 0);
     fdlTransformName.right = new FormAttachment(middle, -margin);
@@ -162,7 +168,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
 
     wTransformName = new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wTransformName.setText(transformName);
-    props.setLook(wTransformName);
+    PropsUi.setLook(wTransformName);
     wTransformName.addModifyListener(lsMod);
     fdTransformName = new FormData();
     fdTransformName.left = new FormAttachment(middle, 0);
@@ -173,7 +179,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     // Type de fichier
     wlInputFormat = new Label(shell, SWT.RIGHT);
     wlInputFormat.setText(BaseMessages.getString(PKG, "GisFileInput.FileFormat.Label"));
-    props.setLook(wlInputFormat);
+    PropsUi.setLook(wlInputFormat);
     fdlInputFormat = new FormData();
     fdlInputFormat.left = new FormAttachment(0, 0);
     fdlInputFormat.right = new FormAttachment(middle, -margin);
@@ -183,7 +189,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     wInputFormat = new CCombo(shell, SWT.BORDER | SWT.READ_ONLY);
     wInputFormat.setToolTipText(BaseMessages.getString(PKG, "GisFileInput.FileFormat.ToolTip"));
     wInputFormat.setEditable(false);
-    props.setLook(wInputFormat);
+    PropsUi.setLook(wInputFormat);
     wInputFormat.addModifyListener(lsMod);
     fdInputFormat = new FormData();
     fdInputFormat.left = new FormAttachment(middle, 0);
@@ -245,7 +251,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     // Fichier à lire
     wlFileName = new Label(shell, SWT.RIGHT);
     wlFileName.setText(BaseMessages.getString(PKG, "GisFileInput.FileName.Label"));
-    props.setLook(wlFileName);
+    PropsUi.setLook(wlFileName);
     fdlFileName = new FormData();
     fdlFileName.left = new FormAttachment(0, 0);
     fdlFileName.right = new FormAttachment(middle, -margin);
@@ -253,7 +259,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     wlFileName.setLayoutData(fdlFileName);
 
     wbFileName = new Button(shell, SWT.PUSH | SWT.CENTER);
-    props.setLook(wbFileName);
+    PropsUi.setLook(wbFileName);
     wbFileName.setText(BaseMessages.getString(PKG, "System.Button.Browse"));
     fdbFileName = new FormData();
     fdbFileName.right = new FormAttachment(100, 0);
@@ -294,7 +300,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
 
     wFileName = new TextVar(variables, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wFileName.setToolTipText(BaseMessages.getString(PKG, "GisFileInput.FileName.ToolTip"));
-    props.setLook(wFileName);
+    PropsUi.setLook(wFileName);
     wFileName.addModifyListener(lsMod);
     fdFileName = new FormData();
     fdFileName.left = new FormAttachment(middle, 0);
@@ -305,7 +311,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     // Colonne géométrie
     wlGeometryField = new Label(shell, SWT.RIGHT);
     wlGeometryField.setText(BaseMessages.getString(PKG, "GisFileInput.GeometryFieldName.Label"));
-    props.setLook(wlGeometryField);
+    PropsUi.setLook(wlGeometryField);
     fdlGeometryField = new FormData();
     fdlGeometryField.left = new FormAttachment(0, 0);
     fdlGeometryField.top = new FormAttachment(wbFileName, margin);
@@ -316,7 +322,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     wGeometryField.setToolTipText(
         BaseMessages.getString(PKG, "GisFileInput.GeometryFieldName.ToolTip"));
     wGeometryField.setEditable(true);
-    props.setLook(wGeometryField);
+    PropsUi.setLook(wGeometryField);
     wGeometryField.addModifyListener(lsMod);
     fdGeometryField = new FormData();
     fdGeometryField.left = new FormAttachment(middle, 0);
@@ -328,7 +334,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     // Début du groupe : Options
 
     wOptionnalGroup = new Group(shell, SWT.SHADOW_NONE);
-    props.setLook(wOptionnalGroup);
+    PropsUi.setLook(wOptionnalGroup);
     wOptionnalGroup.setText(BaseMessages.getString(PKG, "GisFileInput.Optionnal.Label"));
 
     FormLayout optionnalGroupLayout = new FormLayout();
@@ -339,7 +345,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     // Encodage
     wlEncoding = new Label(wOptionnalGroup, SWT.RIGHT);
     wlEncoding.setText(BaseMessages.getString(PKG, "GisFileInput.Encoding.Label"));
-    props.setLook(wlEncoding);
+    PropsUi.setLook(wlEncoding);
     fdlEncoding = new FormData();
     fdlEncoding.left = new FormAttachment(0, 0);
     fdlEncoding.top = new FormAttachment(0, margin);
@@ -349,7 +355,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     wEncoding = new CCombo(wOptionnalGroup, SWT.BORDER | SWT.READ_ONLY);
     wEncoding.setToolTipText(BaseMessages.getString(PKG, "GisFileInput.Encoding.ToolTip"));
     wEncoding.setEditable(true);
-    props.setLook(wEncoding);
+    PropsUi.setLook(wEncoding);
     wEncoding.addModifyListener(lsMod);
     fdEncoding = new FormData();
     fdEncoding.left = new FormAttachment(middle, 0);
@@ -360,7 +366,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     // Limite
     wlRowLimit = new Label(wOptionnalGroup, SWT.RIGHT);
     wlRowLimit.setText(BaseMessages.getString(PKG, "GisFileInput.RowLimit.Label"));
-    props.setLook(wlRowLimit);
+    PropsUi.setLook(wlRowLimit);
     fdlRowLimit = new FormData();
     fdlRowLimit.left = new FormAttachment(0, 0);
     fdlRowLimit.top = new FormAttachment(wEncoding, margin);
@@ -370,13 +376,41 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     wRowLimit = new Text(wOptionnalGroup, SWT.BORDER | SWT.READ_ONLY);
     wRowLimit.setToolTipText(BaseMessages.getString(PKG, "GisFileInput.RowLimit.ToolTip"));
     wRowLimit.setEditable(true);
-    props.setLook(wRowLimit);
+    PropsUi.setLook(wRowLimit);
     wRowLimit.addModifyListener(lsMod);
     fdRowLimit = new FormData();
     fdRowLimit.left = new FormAttachment(middle, 0);
     fdRowLimit.right = new FormAttachment(100, 0);
     fdRowLimit.top = new FormAttachment(wEncoding, margin);
     wRowLimit.setLayoutData(fdRowLimit);
+
+    // "Do not start until data": generic synchronization switch (see
+    // GisFileInputMeta.waitForPreviousTransform).
+    wlWaitForPreviousTransform = new Label(wOptionnalGroup, SWT.RIGHT);
+    wlWaitForPreviousTransform.setText(
+        BaseMessages.getString(PKG, "GisFileInput.WaitForPreviousTransform.Label"));
+    PropsUi.setLook(wlWaitForPreviousTransform);
+    fdlWaitForPreviousTransform = new FormData();
+    fdlWaitForPreviousTransform.left = new FormAttachment(0, 0);
+    fdlWaitForPreviousTransform.right = new FormAttachment(middle, -margin);
+    fdlWaitForPreviousTransform.top = new FormAttachment(wRowLimit, margin);
+    wlWaitForPreviousTransform.setLayoutData(fdlWaitForPreviousTransform);
+
+    wWaitForPreviousTransform = new Button(wOptionnalGroup, SWT.CHECK);
+    wWaitForPreviousTransform.setToolTipText(
+        BaseMessages.getString(PKG, "GisFileInput.WaitForPreviousTransform.ToolTip"));
+    PropsUi.setLook(wWaitForPreviousTransform);
+    fdWaitForPreviousTransform = new FormData();
+    fdWaitForPreviousTransform.left = new FormAttachment(middle, 0);
+    fdWaitForPreviousTransform.right = new FormAttachment(100, 0);
+    fdWaitForPreviousTransform.top = new FormAttachment(wlWaitForPreviousTransform, 0, SWT.CENTER);
+    wWaitForPreviousTransform.setLayoutData(fdWaitForPreviousTransform);
+    wWaitForPreviousTransform.addSelectionListener(
+        new SelectionAdapter() {
+          public void widgetSelected(SelectionEvent e) {
+            input.setChanged();
+          }
+        });
 
     fdOptionnalGroup = new FormData();
     fdOptionnalGroup.left = new FormAttachment(0, margin);
@@ -391,12 +425,12 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     wOk = new Button(shell, SWT.PUSH);
     wOk.setText(BaseMessages.getString(PKG, "System.Button.OK"));
     wPreview = new Button(shell, SWT.PUSH);
-    // Annahme: "System.Button.Preview" ist ein bereits vorhandener globaler
-    // Hop-Core-i18n-Key (analog zu "System.Button.OK"/"System.Button.Cancel"
-    // oben, sowie "System.Button.Browse" beim FileName-Button). Falls dieser
-    // Key in eurer Hop-Version nicht existiert, zeigt der Button ersatzweise
-    // den rohen Schluessel an (kein Compile-Fehler) - dann bitte durch einen
-    // eigenen Key in euren messages_*.properties ersetzen.
+    // Assumption: "System.Button.Preview" is an already existing global
+    // Hop core i18n key (analogous to "System.Button.OK"/"System.Button.Cancel"
+    // above, and "System.Button.Browse" on the FileName button). If this
+    // key does not exist in your Hop version, the button will instead display
+    // the raw key (no compile error) - in that case please replace it with your
+    // own key in your messages_*.properties.
     wPreview.setText(BaseMessages.getString(PKG, "System.Button.Preview"));
     wCancel = new Button(shell, SWT.PUSH);
     wCancel.setText(BaseMessages.getString(PKG, "System.Button.Cancel"));
@@ -405,7 +439,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     // Paramètres
     wlParams = new Label(shell, SWT.NONE);
     wlParams.setText(BaseMessages.getString(PKG, "GisFileInput.Params.Label"));
-    props.setLook(wlParams);
+    PropsUi.setLook(wlParams);
     fdlParams = new FormData();
     fdlParams.left = new FormAttachment(0, 0);
     fdlParams.top = new FormAttachment(wOptionnalGroup, margin);
@@ -516,7 +550,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
                       + String.valueOf(parameterDef.isRequired()).toUpperCase()
                       + ".Label"));
           if (parameter.getValue() != null) {
-            tableItem.setText(3, getParamValueLabel(parameter.getValue().toString()));
+            tableItem.setText(3, getParamValueLabel(parameter.getValue()));
           }
           i++;
         }
@@ -550,9 +584,10 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
       wEncoding.setText(input.getEncoding());
     }
 
-    // Absicherung: bei .hpl-Dateien, die vor dem Serialisierungs-Fix gespeichert
-    // wurden (fehlendes <rowLimit>-Tag), ist getRowLimit() null.
+    // Safeguard: for .hpl files saved before the serialization fix
+    // (missing <rowLimit> tag), getRowLimit() is null.
     wRowLimit.setText(input.getRowLimit() != null ? input.getRowLimit().toString() : "0");
+    wWaitForPreviousTransform.setSelection(input.isWaitForPreviousTransform());
 
     wTransformName.selectAll();
   }
@@ -570,10 +605,10 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     dispose();
   }
 
-  // Schreibt die aktuellen Dialog-Werte in das uebergebene Meta-Objekt.
-  // Wird sowohl von ok() (mit dem echten "input") als auch von preview() (mit
-  // einem temporaeren Meta-Objekt, OHNE den Dialog zu schliessen) genutzt -
-  // Muster uebernommen aus TextFileInputDialog.getInfo(meta, preview).
+  // Writes the current dialog values into the given meta object.
+  // Used both by ok() (with the real "input") and by preview() (with
+  // a temporary meta object, WITHOUT closing the dialog) -
+  // pattern adopted from TextFileInputDialog.getInfo(meta, preview).
   private void getInfo(GisFileInputMeta meta) {
 
     String formatKey = getFormatKey(wInputFormat.getText());
@@ -602,14 +637,15 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
         wRowLimit.getText() != null && !wRowLimit.getText().trim().isEmpty()
             ? Long.valueOf(wRowLimit.getText().trim())
             : 0L);
+    meta.setWaitForPreviousTransform(wWaitForPreviousTransform.getSelection());
   }
 
-  // Preview der Daten - Muster 1:1 uebernommen aus TextFileInputDialog.preview()
-  // (Apache Hop 2.19 Referenzimplementierung).
+  // Data preview - pattern adopted 1:1 from TextFileInputDialog.preview()
+  // (Apache Hop 2.19 reference implementation).
   private void preview() {
 
-    // Temporaeres Meta-Objekt mit den aktuellen (noch nicht gespeicherten)
-    // Dialog-Werten befuellen, OHNE das echte "input"-Objekt zu veraendern.
+    // Populate a temporary meta object with the current (not yet saved)
+    // dialog values, WITHOUT modifying the real "input" object.
     GisFileInputMeta oneMeta = new GisFileInputMeta();
     getInfo(oneMeta);
 
@@ -678,7 +714,7 @@ public class GisFileInputDialog extends BaseTransformDialog implements ITransfor
     wEncoding.removeAll();
     List<Charset> values = new ArrayList<Charset>(Charset.availableCharsets().values());
     for (int i = 0; i < values.size(); i++) {
-      Charset charSet = (Charset) values.get(i);
+      Charset charSet = values.get(i);
       wEncoding.add(charSet.displayName());
     }
 

@@ -40,7 +40,7 @@ import org.locationtech.jts.geom.Polygon;
 
 public final class CoordinateTransformer {
 
-  private static GeometryFactory geometryFactory = new GeometryFactory();
+  private static final GeometryFactory geometryFactory = new GeometryFactory();
 
   /**
    * Conversion d'une géométrie JTS d'un système de coordonnées vers un autre
@@ -140,7 +140,7 @@ public final class CoordinateTransformer {
     LinearRing exteriorRing =
         geometryFactory.createLinearRing(
             tranformLineString(polygon.getExteriorRing(), transformation).getCoordinates());
-    LinearRing interiorRings[] = new LinearRing[polygon.getNumInteriorRing()];
+    LinearRing[] interiorRings = new LinearRing[polygon.getNumInteriorRing()];
     for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
       interiorRings[i] =
           geometryFactory.createLinearRing(
@@ -176,7 +176,7 @@ public final class CoordinateTransformer {
   private static MultiLineString tranformMultiLineString(
       MultiLineString multiLineString, CoordinateOperation transformation) throws HopException {
 
-    LineString lineStrings[] = new LineString[multiLineString.getNumGeometries()];
+    LineString[] lineStrings = new LineString[multiLineString.getNumGeometries()];
     for (int i = 0; i < multiLineString.getNumGeometries(); i++) {
       lineStrings[i] =
           tranformLineString((LineString) multiLineString.getGeometryN(i), transformation);
@@ -196,7 +196,7 @@ public final class CoordinateTransformer {
   private static MultiPolygon tranformMultiPolygon(
       MultiPolygon multiPolygon, CoordinateOperation transformation) throws HopException {
 
-    Polygon polygons[] = new Polygon[multiPolygon.getNumGeometries()];
+    Polygon[] polygons = new Polygon[multiPolygon.getNumGeometries()];
     for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
       polygons[i] = tranformPolygon((Polygon) multiPolygon.getGeometryN(i), transformation);
     }
@@ -216,7 +216,7 @@ public final class CoordinateTransformer {
       GeometryCollection geometryCollection, CoordinateOperation transformation)
       throws HopException {
 
-    Geometry geometries[] = new Geometry[geometryCollection.getNumGeometries()];
+    Geometry[] geometries = new Geometry[geometryCollection.getNumGeometries()];
     for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
 
       Geometry geometry = geometryCollection.getGeometryN(i);
@@ -263,9 +263,9 @@ public final class CoordinateTransformer {
    * @throws HopException
    */
   private static Coordinate[] tranformCoordinates(
-      Coordinate coordinates[], CoordinateOperation transformation) throws HopException {
+      Coordinate[] coordinates, CoordinateOperation transformation) throws HopException {
 
-    Coordinate outCoordinates[] = new Coordinate[coordinates.length];
+    Coordinate[] outCoordinates = new Coordinate[coordinates.length];
     for (int i = 0; i < coordinates.length; i++) {
       outCoordinates[i] = transformCoordinate(coordinates[i], transformation);
     }

@@ -22,9 +22,9 @@ import org.kabeja.parser.objects.DXFObjectHandler;
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  */
 public class DXFObjectsSectionHandler extends AbstractSectionHandler implements HandlerManager {
-  private static String SECTION_KEY = "OBJECTS";
+  private static final String SECTION_KEY = "OBJECTS";
   public static final int OBJECT_START = 0;
-  private HashMap handlers = new HashMap();
+  private final HashMap handlers = new HashMap();
   private DXFObjectHandler handler;
   private boolean parseObject = false;
 

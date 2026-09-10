@@ -43,12 +43,12 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 public class ShapefileReader extends AbstractFileReader {
 
-  private static GeometryFactory geometryFactory = new GeometryFactory();
+  private static final GeometryFactory geometryFactory = new GeometryFactory();
 
-  private String shpFileName;
+  private final String shpFileName;
   private String dbfFileName;
-  private boolean dbfFileExist;
-  private boolean shpFileExist;
+  private final boolean dbfFileExist;
+  private final boolean shpFileExist;
 
   public ShapefileReader(String fileName, String geometryFieldName, String charsetName)
       throws HopException {

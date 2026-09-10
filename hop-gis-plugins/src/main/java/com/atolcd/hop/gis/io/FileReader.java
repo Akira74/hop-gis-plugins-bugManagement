@@ -29,13 +29,13 @@ import org.apache.hop.core.exception.HopException;
 
 public interface FileReader {
 
-  public void setLimit(long limit);
+  void setLimit(long limit);
 
-  public void setForceToMultiGeometry(boolean forceToMultiGeometry);
+  void setForceToMultiGeometry(boolean forceToMultiGeometry);
 
-  public void setForceTo2DGeometry(boolean forceTo2DGeometry);
+  void setForceTo2DGeometry(boolean forceTo2DGeometry);
 
-  public List<Field> getFields();
+  List<Field> getFields();
 
-  public List<Feature> getFeatures() throws HopException;
+  List<Feature> getFeatures() throws HopException;
 }

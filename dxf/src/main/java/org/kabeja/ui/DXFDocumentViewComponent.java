@@ -24,17 +24,17 @@ import org.kabeja.dxf.DXFDocument;
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  */
 public interface DXFDocumentViewComponent extends Component {
-  public static final String SERVICE = DXFDocumentViewComponent.class.getName();
+  String SERVICE = DXFDocumentViewComponent.class.getName();
 
   /**
    * @return the title of the component
    */
-  abstract String getTitle();
+  String getTitle();
 
   /**
    * @return the view of this component
    */
-  abstract JComponent getView();
+  JComponent getView();
 
   /**
    * Show the DXFDocument in the view of this component
@@ -42,5 +42,5 @@ public interface DXFDocumentViewComponent extends Component {
    * @param doc
    * @throws UIException
    */
-  abstract void showDXFDocument(DXFDocument doc) throws UIException;
+  void showDXFDocument(DXFDocument doc) throws UIException;
 }

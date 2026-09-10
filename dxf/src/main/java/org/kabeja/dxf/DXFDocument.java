@@ -30,22 +30,22 @@ import org.kabeja.dxf.objects.DXFObject;
 public class DXFDocument {
   public static String PROPERTY_ENCODING = "encoding";
   public static final double DEFAULT_MARGIN = 5;
-  private Hashtable layers = new Hashtable();
-  private Hashtable blocks = new Hashtable();
-  private HashMap lineTypes = new HashMap();
-  private HashMap dimensionStyles = new HashMap();
-  private HashMap textStyles = new HashMap();
+  private final Hashtable layers = new Hashtable();
+  private final Hashtable blocks = new Hashtable();
+  private final HashMap lineTypes = new HashMap();
+  private final HashMap dimensionStyles = new HashMap();
+  private final HashMap textStyles = new HashMap();
 
   // the user coordinate systems
-  private Hashtable ucs = new Hashtable();
-  private Hashtable properties = new Hashtable();
-  private List viewports = new ArrayList();
+  private final Hashtable ucs = new Hashtable();
+  private final Hashtable properties = new Hashtable();
+  private final List viewports = new ArrayList();
   private Bounds bounds = new Bounds();
-  private double margin;
+  private final double margin;
   private DXFHeader header = new DXFHeader();
-  private HashMap objects = new HashMap();
-  private HashMap patterns = new HashMap();
-  private List views = new ArrayList();
+  private final HashMap objects = new HashMap();
+  private final HashMap patterns = new HashMap();
+  private final List views = new ArrayList();
   private DXFDictionary rootDictionary = new DXFDictionary();
 
   public DXFDocument() {
@@ -216,6 +216,7 @@ public class DXFDocument {
    * @deprecated use getBounds().getHeight() instead
    * @return
    */
+  @Deprecated
   public double getHeight() {
     return this.bounds.getHeight();
   }
@@ -224,6 +225,7 @@ public class DXFDocument {
    * @deprecated use getBounds().getWidth() instead
    * @return
    */
+  @Deprecated
   public double getWidth() {
     return this.bounds.getWidth();
   }

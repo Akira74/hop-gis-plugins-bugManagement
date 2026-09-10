@@ -21,9 +21,9 @@ package org.kabeja.ui.event;
  * @author simon
  */
 public interface DXFDocumentChangeEventProvider {
-  public static final String SERVICE = DXFDocumentChangeEventProvider.class.getName();
+  String SERVICE = DXFDocumentChangeEventProvider.class.getName();
 
-  public void addDXFDocumentChangeListener(DXFDocumentChangeListener listener);
+  void addDXFDocumentChangeListener(DXFDocumentChangeListener listener);
 
-  public void removeDXFDocumentChangeListener(DXFDocumentChangeListener listener);
+  void removeDXFDocumentChangeListener(DXFDocumentChangeListener listener);
 }

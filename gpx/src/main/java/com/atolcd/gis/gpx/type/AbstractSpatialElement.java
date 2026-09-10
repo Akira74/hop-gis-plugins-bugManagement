@@ -4,7 +4,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 public abstract class AbstractSpatialElement extends AbstractElement {
 
-  private static GeometryFactory geometryFactory = new GeometryFactory();
+  private static final GeometryFactory geometryFactory = new GeometryFactory();
 
   private String comment;
   private String source;

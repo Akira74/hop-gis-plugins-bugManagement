@@ -10,9 +10,9 @@ public class ByteOrderDataOutputStream extends OutputStream {
   private final OutputStream delegate;
   private final int byteOrder;
 
-  private byte[] buf1 = new byte[1];
-  private byte[] buf4 = new byte[4];
-  private byte[] buf8 = new byte[8];
+  private final byte[] buf1 = new byte[1];
+  private final byte[] buf4 = new byte[4];
+  private final byte[] buf8 = new byte[8];
 
   public ByteOrderDataOutputStream(OutputStream os, ByteOrder byteOrder) {
     this.delegate = os;
